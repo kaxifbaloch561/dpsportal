@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import SplashScreen from "@/components/SplashScreen";
 import LoginPage from "@/components/LoginPage";
-import LandingPage from "@/components/LandingPage";
+import HomePage from "@/components/HomePage";
 
 type AppPhase = "splash" | "login" | "landing";
 
@@ -19,7 +19,7 @@ const Index = () => {
     return <LoginPage onLoginSuccess={handleLoginSuccess} />;
   }
 
-  return <LandingPage />;
+  return <HomePage />;
 };
 
 export default Index;
