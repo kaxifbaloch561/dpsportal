@@ -1,14 +1,25 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useCallback } from "react";
+import SplashScreen from "@/components/SplashScreen";
+import LoginPage from "@/components/LoginPage";
+import LandingPage from "@/components/LandingPage";
+
+type AppPhase = "splash" | "login" | "landing";
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [phase, setPhase] = useState<AppPhase>("splash");
+
+  const handleSplashFinished = useCallback(() => setPhase("login"), []);
+  const handleLoginSuccess = useCallback(() => setPhase("landing"), []);
+
+  if (phase === "splash") {
+    return <SplashScreen onFinished={handleSplashFinished} />;
+  }
+
+  if (phase === "login") {
+    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  return <LandingPage />;
 };
 
 export default Index;
