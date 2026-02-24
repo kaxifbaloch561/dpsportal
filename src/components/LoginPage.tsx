@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, BookOpen, GraduationCap, Users } from "lucide-react";
+import { Eye, EyeOff, BookOpen } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 
 interface LoginPageProps {
@@ -10,18 +10,6 @@ const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"student" | "teacher" | "admin">("student");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onLoginSuccess();
-  };
-
-  const roles = [
-    { key: "student" as const, label: "Student", icon: GraduationCap },
-    { key: "teacher" as const, label: "Teacher", icon: BookOpen },
-    { key: "admin" as const, label: "Admin", icon: Users },
-  ];
 
   return (
     <div
@@ -46,30 +34,18 @@ const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8" style={{ animation: "slideDown 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
           <img src={schoolLogo} alt="DPS SIBI" className="w-24 h-24 mb-3" />
-          <h1 className="text-2xl font-bold text-foreground">Welcome Back</h1>
+          <h1 className="text-2xl font-bold text-foreground">Teacher Login</h1>
           <p className="text-muted-foreground text-sm">Divisional Public School, SIBI</p>
         </div>
 
-        {/* Role selector */}
-        <div className="flex gap-2 mb-6 p-1 bg-muted rounded-full" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s", opacity: 0 }}>
-          {roles.map((r) => (
-            <button
-              key={r.key}
-              onClick={() => setRole(r.key)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                role === r.key
-                  ? "bg-primary text-primary-foreground shadow-lg"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <r.icon size={16} />
-              {r.label}
-            </button>
-          ))}
+        {/* Teacher badge */}
+        <div className="flex items-center justify-center gap-2 mb-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold shadow-lg" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s", opacity: 0 }}>
+          <BookOpen size={16} />
+          Teacher Portal
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.7s", opacity: 0 }}>
+        <form onSubmit={(e) => { e.preventDefault(); onLoginSuccess(); }} className="space-y-4" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.7s", opacity: 0 }}>
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">Email or ID</label>
             <input
