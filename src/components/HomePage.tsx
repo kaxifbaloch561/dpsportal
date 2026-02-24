@@ -1,3 +1,5 @@
+import schoolLogo from "@/assets/school-logo.png";
+
 const HomePage = () => {
   return (
     <div
@@ -14,14 +16,23 @@ const HomePage = () => {
       <div className="fixed top-[40%] left-[35%] w-[200px] h-[200px] bg-blob-green blur-[40px] opacity-60" style={{ borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%", animation: "floatBlob 10s ease-in-out infinite 2s" }} />
 
       <div
-        className="w-full max-w-[1400px] min-h-[85vh] bg-card/95 backdrop-blur-xl relative overflow-hidden flex items-center justify-center"
+        className="w-full max-w-[1400px] min-h-[85vh] bg-card/95 backdrop-blur-xl relative overflow-hidden flex flex-col"
         style={{
           borderRadius: "40px",
           boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
           animation: "containerSpring 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
         }}
       >
-        <p className="text-muted-foreground text-lg font-medium">Welcome to DPS SIBI</p>
+        {/* Top header with logo */}
+        <div className="flex items-center gap-4 p-8" style={{ animation: "slideDown 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
+          <img src={schoolLogo} alt="DPS SIBI" className="w-16 h-16" />
+          <span className="text-3xl font-black text-foreground tracking-tight">DPS.AI</span>
+        </div>
+
+        {/* Main content area */}
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-muted-foreground text-lg font-medium">Welcome to DPS SIBI</p>
+        </div>
       </div>
     </div>
   );
