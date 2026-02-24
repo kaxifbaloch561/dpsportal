@@ -24,9 +24,9 @@ const HomePage = () => {
         }}
       >
         {/* Top header with logo */}
-        <div className="flex items-center gap-4 p-8" style={{ animation: "slideDown 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
+        <div className="flex flex-col items-center gap-3 pt-10 pb-6" style={{ animation: "slideDown 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
           <img src={schoolLogo} alt="DPS SIBI" className="w-24 h-24" />
-          <span className="text-base font-bold text-foreground tracking-tight">DPS Portal</span>
+          <h1 className="text-sm font-semibold text-foreground tracking-widest uppercase font-sans">DPS Portal</h1>
         </div>
 
         {/* Main content area */}
