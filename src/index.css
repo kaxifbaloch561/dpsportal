@@ -184,3 +184,24 @@
   0% { opacity: 0; transform: scale(0.8) translateX(50px); }
   100% { opacity: 1; transform: scale(1) translateX(0); }
 }
+
+@keyframes cardEntrance {
+  0% { opacity: 0; transform: scale(0.7) translateY(30px) rotate(-3deg); }
+  60% { opacity: 1; transform: scale(1.03) translateY(-5px) rotate(0.5deg); }
+  100% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
