@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { classesData, getChapters } from "@/data/classesData";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 import {
   Accordion,
   AccordionContent,
@@ -20,6 +21,12 @@ const ChaptersPage = () => {
   return (
     <PageShell>
       <DashboardHeader showBack subtitle={`${cls.name} — ${subject.name} — Chapters`} />
+      <BreadcrumbNav crumbs={[
+        { label: "Dashboard", path: "/dashboard" },
+        { label: cls.name, path: `/class/${cls.id}` },
+        { label: subject.name, path: `/class/${cls.id}/subject/${subject.id}` },
+        { label: "Chapters" },
+      ]} />
 
       <div className="flex-1 px-8 pb-8 overflow-y-auto">
         <h2

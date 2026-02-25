@@ -5,6 +5,7 @@ import { subjectStyles } from "@/components/SubjectBadge";
 import { ChevronRight } from "lucide-react";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 
 const SubjectsPage = () => {
   const { classId } = useParams();
@@ -16,6 +17,10 @@ const SubjectsPage = () => {
   return (
     <PageShell>
       <DashboardHeader showBack subtitle={`${cls.name} — Choose a subject`} />
+      <BreadcrumbNav crumbs={[
+        { label: "Dashboard", path: "/dashboard" },
+        { label: cls.name },
+      ]} />
 
       <div className="flex-1 px-8 pb-8">
         <h2

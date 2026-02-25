@@ -4,6 +4,7 @@ import { classesData } from "@/data/classesData";
 import { Send, Bot, User } from "lucide-react";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 
 interface Message {
   role: "user" | "assistant";
@@ -55,6 +56,12 @@ const ChatbotPage = () => {
         showBack
         subtitle={`${cls.name} — ${subject.name} — Chatbot`}
       />
+      <BreadcrumbNav crumbs={[
+        { label: "Dashboard", path: "/dashboard" },
+        { label: cls.name, path: `/class/${cls.id}` },
+        { label: subject.name, path: `/class/${cls.id}/subject/${subject.id}` },
+        { label: "Chatbot" },
+      ]} />
 
       <div className="flex-1 flex flex-col px-8 pb-6 overflow-hidden">
         {/* Chat area */}
