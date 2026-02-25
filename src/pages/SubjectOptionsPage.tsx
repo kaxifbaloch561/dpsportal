@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { classesData } from "@/data/classesData";
 import { MessageSquare, BookOpen, ClipboardList } from "lucide-react";
+import SubjectIcon from "@/components/SubjectIcon";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 
@@ -42,15 +43,16 @@ const SubjectOptionsPage = () => {
       <DashboardHeader showBack subtitle={`${cls.name} — ${subject.name}`} />
 
       <div className="flex-1 px-8 pb-8 flex flex-col items-center justify-center">
-        <h2
-          className="text-2xl font-bold text-foreground mb-2 text-center"
+        <div
+          className="flex items-center gap-3 mb-2"
           style={{
             animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
             opacity: 0,
           }}
         >
-          {subject.icon} {subject.name}
-        </h2>
+          <SubjectIcon name={subject.icon} size={28} className="text-primary" />
+          <h2 className="text-2xl font-bold text-foreground">{subject.name}</h2>
+        </div>
         <p className="text-muted-foreground text-sm mb-10" style={{ animation: "slideUp 0.8s ease forwards 0.4s", opacity: 0 }}>
           What would you like to do?
         </p>

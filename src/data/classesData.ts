@@ -11,23 +11,23 @@ export interface ClassData {
 }
 
 const commonSubjects: Subject[] = [
-  { id: "english", name: "English", icon: "📖" },
-  { id: "mathematics", name: "Mathematics", icon: "🔢" },
-  { id: "urdu", name: "Urdu", icon: "✍️" },
-  { id: "islamiat", name: "Islamiat", icon: "🕌" },
+  { id: "english", name: "English", icon: "BookText" },
+  { id: "mathematics", name: "Mathematics", icon: "Calculator" },
+  { id: "urdu", name: "Urdu", icon: "PenLine" },
+  { id: "islamiat", name: "Islamiat", icon: "Moon" },
 ];
 
 const scienceSubjects: Subject[] = [
   ...commonSubjects,
-  { id: "science", name: "Science", icon: "🔬" },
-  { id: "computer", name: "Computer", icon: "💻" },
-  { id: "social-studies", name: "Social Studies", icon: "🌍" },
+  { id: "science", name: "Science", icon: "FlaskConical" },
+  { id: "computer", name: "Computer", icon: "Monitor" },
+  { id: "social-studies", name: "Social Studies", icon: "Globe" },
 ];
 
 export const classesData: ClassData[] = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
   name: `Class ${i + 1}`,
-  subjects: i < 5 ? [...commonSubjects, { id: "general-science", name: "General Science", icon: "🧪" }, { id: "social-studies", name: "Social Studies", icon: "🌍" }] : scienceSubjects,
+  subjects: i < 5 ? [...commonSubjects, { id: "general-science", name: "General Science", icon: "Atom" }, { id: "social-studies", name: "Social Studies", icon: "Globe" }] : scienceSubjects,
 }));
 
 export interface Chapter {
