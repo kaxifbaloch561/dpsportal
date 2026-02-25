@@ -5,6 +5,7 @@ import { Send, Bot, User } from "lucide-react";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   role: "user" | "assistant";
@@ -32,22 +33,38 @@ const ChatbotPage = () => {
     if (!text || isLoading) return;
 
     const userMsg: Message = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
 
-    // Placeholder response — will be replaced with Longcat.chat API call
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke("chatbot", {
+        body: {
+          messages: updatedMessages.map((m) => ({ role: m.role, content: m.content })),
+          subject: subject.name,
+          className: cls.name,
+        },
+      });
+
+      if (error) throw error;
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.reply },
+      ]);
+    } catch (err: unknown) {
+      console.error("Chatbot error:", err);
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content:
-            "The AI chatbot is not connected yet. Once the Longcat.chat API is integrated, I will answer only from your syllabus content.",
+          content: "Sorry, something went wrong. Please try again.",
         },
       ]);
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
   };
 
   return (
