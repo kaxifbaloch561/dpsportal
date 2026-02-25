@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { classesData } from "@/data/classesData";
 import { Send, Bot, User, Sparkles, MessageCircle, Zap, BookOpen, HelpCircle } from "lucide-react";
+import schoolLogo from "@/assets/school-logo.png";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -138,7 +139,7 @@ const ChatbotPage = () => {
                       boxShadow: `0 20px 60px -12px ${theme.glow}66`,
                     }}
                   >
-                    <Bot size={52} className="text-white relative z-10" />
+                    <img src={schoolLogo} alt="School Logo" className="w-16 h-16 object-contain relative z-10" />
                     {/* Inner shimmer */}
                     <div
                       className="absolute inset-0 opacity-40"
