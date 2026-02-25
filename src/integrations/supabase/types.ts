@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chapter_qa: {
+        Row: {
+          answer: string
+          chapter_id: string | null
+          class_id: number
+          created_at: string
+          id: string
+          keywords: string[]
+          question: string
+          search_vector: unknown
+          subject_id: string
+        }
+        Insert: {
+          answer: string
+          chapter_id?: string | null
+          class_id: number
+          created_at?: string
+          id?: string
+          keywords?: string[]
+          question: string
+          search_vector?: unknown
+          subject_id: string
+        }
+        Update: {
+          answer?: string
+          chapter_id?: string | null
+          class_id?: number
+          created_at?: string
+          id?: string
+          keywords?: string[]
+          question?: string
+          search_vector?: unknown
+          subject_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
