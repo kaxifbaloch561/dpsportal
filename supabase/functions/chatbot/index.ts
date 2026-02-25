@@ -22,14 +22,14 @@ serve(async (req) => {
 
     const systemPrompt = `You are DPS.AI, an intelligent academic assistant for ${className} - ${subject}. You answer ONLY from the official syllabus content for this subject. Your responses must be accurate, helpful, and educational. If a question is not part of the syllabus, respond with exactly: "This question is not part of your syllabus." Do not answer questions unrelated to the subject.`;
 
-    const response = await fetch("https://api.longcat.chat/v1/chat/completions", {
+    const response = await fetch("https://api.longcat.chat/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LONGCAT_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "LongCat-Flash-Chat",
         temperature: 0.2,
         messages: [
           { role: "system", content: systemPrompt },
