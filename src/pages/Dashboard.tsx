@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { classesData } from "@/data/classesData";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 
 const classGradients = [
   "from-[hsl(235,78%,65%)] to-[hsl(260,70%,60%)]",
@@ -22,6 +23,7 @@ const Dashboard = () => {
   return (
     <PageShell>
       <DashboardHeader subtitle="Select your class to begin" />
+      <BreadcrumbNav crumbs={[{ label: "Dashboard" }]} />
 
       <div className="flex-1 px-8 pb-8">
         <h2

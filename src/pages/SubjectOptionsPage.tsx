@@ -4,6 +4,7 @@ import { MessageSquare, BookOpen, ClipboardList } from "lucide-react";
 import SubjectBadge from "@/components/SubjectBadge";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 
 const SubjectOptionsPage = () => {
   const { classId, subjectId } = useParams();
@@ -41,6 +42,11 @@ const SubjectOptionsPage = () => {
   return (
     <PageShell>
       <DashboardHeader showBack subtitle={`${cls.name} — ${subject.name}`} />
+      <BreadcrumbNav crumbs={[
+        { label: "Dashboard", path: "/dashboard" },
+        { label: cls.name, path: `/class/${cls.id}` },
+        { label: subject.name },
+      ]} />
 
       <div className="flex-1 px-8 pb-8 flex flex-col items-center justify-center">
         <div
