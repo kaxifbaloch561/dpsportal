@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { classesData, getChapters } from "@/data/classesData";
-import { ChevronDown } from "lucide-react";
+import { BookMarked } from "lucide-react";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import {
@@ -23,15 +23,18 @@ const ChaptersPage = () => {
       <DashboardHeader showBack subtitle={`${cls.name} — ${subject.name} — Chapters`} />
 
       <div className="flex-1 px-8 pb-8 overflow-y-auto">
-        <h2
-          className="text-2xl font-bold text-foreground mb-6 mt-4"
+        <div
+          className="flex items-center gap-3 mb-6 mt-4"
           style={{
             animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
             opacity: 0,
           }}
         >
-          📖 Chapters
-        </h2>
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <BookMarked size={22} className="text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground">Chapters</h2>
+        </div>
 
         <div
           className="max-w-3xl"

@@ -42,7 +42,7 @@ const ChatbotPage = () => {
         {
           role: "assistant",
           content:
-            "🔌 The AI chatbot is not connected yet. Once the Longcat.chat API is integrated, I will answer only from your syllabus content.",
+            "The AI chatbot is not connected yet. Once the Longcat.chat API is integrated, I will answer only from your syllabus content.",
         },
       ]);
       setIsLoading(false);
