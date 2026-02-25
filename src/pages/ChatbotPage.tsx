@@ -53,21 +53,6 @@ const ChatbotPage = () => {
     setInput("");
     setIsLoading(true);
 
-    let assistantContent = "";
-
-    const upsertAssistant = (chunk: string) => {
-      assistantContent += chunk;
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (last?.role === "assistant" && prev.length > updatedMessages.length) {
-          return prev.map((m, i) =>
-            i === prev.length - 1 ? { ...m, content: assistantContent } : m
-          );
-        }
-        return [...prev, { role: "assistant", content: assistantContent }];
-      });
-    };
-
     try {
       const resp = await fetch(CHAT_URL, {
         method: "POST",
@@ -82,70 +67,14 @@ const ChatbotPage = () => {
         }),
       });
 
-      if (!resp.ok || !resp.body) {
-        throw new Error("Failed to start stream");
+      if (!resp.ok) {
+        throw new Error("Failed to get response");
       }
 
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let textBuffer = "";
-      let streamDone = false;
+      const data = await resp.json();
+      const answer = data.answer || "Sorry, something went wrong.";
 
-      while (!streamDone) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        textBuffer += decoder.decode(value, { stream: true });
-
-        let newlineIndex: number;
-        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
-          let line = textBuffer.slice(0, newlineIndex);
-          textBuffer = textBuffer.slice(newlineIndex + 1);
-
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
-          if (!line.startsWith("data:")) continue;
-
-          const jsonStr = line.startsWith("data: ") ? line.slice(6).trim() : line.slice(5).trim();
-          if (jsonStr === "[DONE]") {
-            streamDone = true;
-            break;
-          }
-
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (content) upsertAssistant(content);
-          } catch {
-            textBuffer = line + "\n" + textBuffer;
-            break;
-          }
-        }
-      }
-
-      // Final flush
-      if (textBuffer.trim()) {
-        for (let raw of textBuffer.split("\n")) {
-          if (!raw) continue;
-          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
-          if (raw.startsWith(":") || raw.trim() === "") continue;
-          if (!raw.startsWith("data:")) continue;
-          const jsonStr = raw.startsWith("data: ") ? raw.slice(6).trim() : raw.slice(5).trim();
-          if (jsonStr === "[DONE]") continue;
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (content) upsertAssistant(content);
-          } catch { /* ignore partial */ }
-        }
-      }
-
-      // If no content was streamed, add fallback
-      if (!assistantContent) {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: "Sorry, I could not generate a response." },
-        ]);
-      }
+      setMessages((prev) => [...prev, { role: "assistant", content: answer }]);
     } catch (err: unknown) {
       console.error("Chatbot error:", err);
       setMessages((prev) => [
@@ -194,10 +123,7 @@ const ChatbotPage = () => {
                 className="flex flex-col items-center justify-center text-center py-12 sm:py-20"
                 style={{ animation: "cardEntrance 0.3s ease-out forwards" }}
               >
-                {/* Premium Bot Avatar */}
-                <div
-                  style={{ animation: "float 3s ease-in-out infinite" }}
-                >
+                <div style={{ animation: "float 3s ease-in-out infinite" }}>
                   <div
                     className="absolute inset-0 rounded-[32px] blur-2xl opacity-30"
                     style={{ background: theme.bg, transform: "scale(1.5)" }}
@@ -212,14 +138,8 @@ const ChatbotPage = () => {
                       }}
                     />
                   </div>
-                  <div
-                    className="absolute -inset-4 rounded-[38px]"
-                    style={{ border: `2px solid ${theme.glow}22`, animation: "borderGlow 3s ease-in-out infinite" }}
-                  />
-                  <div
-                    className="absolute -inset-8 rounded-[44px]"
-                    style={{ border: `1px solid ${theme.glow}11`, animation: "borderGlow 3s ease-in-out infinite 1s" }}
-                  />
+                  <div className="absolute -inset-4 rounded-[38px]" style={{ border: `2px solid ${theme.glow}22`, animation: "borderGlow 3s ease-in-out infinite" }} />
+                  <div className="absolute -inset-8 rounded-[44px]" style={{ border: `1px solid ${theme.glow}11`, animation: "borderGlow 3s ease-in-out infinite 1s" }} />
                   <div className="absolute -top-3 -right-3" style={{ animation: "float 2s ease-in-out infinite 0.2s" }}>
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: theme.accent }}>
                       <Sparkles size={14} style={{ color: theme.glow }} />
@@ -236,10 +156,9 @@ const ChatbotPage = () => {
                   {subject.name} Assistant
                 </p>
                 <p className="text-sm text-muted-foreground max-w-sm mb-8">
-                  Your personal AI tutor for {subject.name}. Ask anything from your syllabus — I'll help you learn!
+                  Your personal assistant for {subject.name}. Ask anything from your syllabus!
                 </p>
 
-                {/* Suggestion Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-xl">
                   {suggestions.map((s, idx) => {
                     const Icon = s.icon;
@@ -254,10 +173,7 @@ const ChatbotPage = () => {
                           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                           style={{ background: `radial-gradient(circle at 50% 0%, ${theme.glow}12, transparent 70%)` }}
                         />
-                        <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center relative z-10"
-                          style={{ background: theme.accent }}
-                        >
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center relative z-10" style={{ background: theme.accent }}>
                           <Icon size={18} style={{ color: theme.glow }} />
                         </div>
                         <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors relative z-10 leading-snug">
@@ -274,25 +190,20 @@ const ChatbotPage = () => {
               <div
                 key={i}
                 className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                style={{
-                  animation: `${msg.role === "user" ? "slideUp" : "popIn"} 0.25s ease-out forwards`,
-                }}
+                style={{ animation: `${msg.role === "user" ? "slideUp" : "popIn"} 0.25s ease-out forwards` }}
               >
                 {msg.role === "assistant" && (
                   <div className="relative shrink-0 mt-1">
                     <div
                       className="w-10 h-10 rounded-[14px] flex items-center justify-center shadow-lg"
-                      style={{
-                        background: theme.bg,
-                        boxShadow: `0 4px 16px -4px ${theme.glow}44`,
-                      }}
+                      style={{ background: theme.bg, boxShadow: `0 4px 16px -4px ${theme.glow}44` }}
                     >
                       <Bot size={18} className="text-white" />
                     </div>
                   </div>
                 )}
                 <div
-                  className={`max-w-[78%] rounded-[20px] px-5 py-4 text-sm leading-relaxed ${
+                  className={`max-w-[78%] rounded-[20px] px-5 py-4 text-sm leading-relaxed whitespace-pre-wrap ${
                     msg.role === "user"
                       ? "rounded-br-lg text-white"
                       : "bg-card/90 backdrop-blur-sm text-foreground rounded-bl-lg border border-border/40"
@@ -304,10 +215,6 @@ const ChatbotPage = () => {
                   }
                 >
                   {msg.content}
-                  {/* Show blinking cursor while streaming */}
-                  {msg.role === "assistant" && isLoading && i === messages.length - 1 && (
-                    <span className="inline-block w-1.5 h-4 ml-0.5 align-middle rounded-sm animate-pulse" style={{ background: theme.glow }} />
-                  )}
                 </div>
                 {msg.role === "user" && (
                   <div className="shrink-0 mt-1">
@@ -322,12 +229,8 @@ const ChatbotPage = () => {
               </div>
             ))}
 
-            {/* Only show "Thinking..." before first token arrives */}
-            {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-              <div
-                className="flex gap-3 justify-start"
-                style={{ animation: "popIn 0.2s ease-out forwards" }}
-              >
+            {isLoading && (
+              <div className="flex gap-3 justify-start" style={{ animation: "popIn 0.2s ease-out forwards" }}>
                 <div
                   className="w-10 h-10 rounded-[14px] flex items-center justify-center shrink-0 shadow-lg mt-1"
                   style={{ background: theme.bg, boxShadow: `0 4px 16px -4px ${theme.glow}44` }}
@@ -348,7 +251,7 @@ const ChatbotPage = () => {
                         />
                       ))}
                     </div>
-                    <span className="text-xs text-muted-foreground ml-1 font-medium">Thinking...</span>
+                    <span className="text-xs text-muted-foreground ml-1 font-medium">Searching...</span>
                   </div>
                 </div>
               </div>

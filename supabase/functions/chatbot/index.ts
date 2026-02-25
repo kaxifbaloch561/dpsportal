@@ -1,5 +1,5 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,50 +13,86 @@ serve(async (req) => {
   }
 
   try {
-    const LONGCAT_API_KEY = Deno.env.get("LONGCAT_API_KEY");
-    if (!LONGCAT_API_KEY) {
-      throw new Error("LONGCAT_API_KEY is not configured");
-    }
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { messages, subject, className } = await req.json();
 
-    const systemPrompt = `You are DPS.AI, an intelligent academic assistant for ${className} - ${subject}. You answer ONLY from the official syllabus content for this subject. Your responses must be accurate, helpful, and educational. If a question is not part of the syllabus, respond with exactly: "This question is not part of your syllabus." Do not answer questions unrelated to the subject.`;
-
-    const response = await fetch("https://api.longcat.chat/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LONGCAT_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "LongCat-Flash-Chat",
-        temperature: 0.2,
-        stream: true,
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages,
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Longcat API error:", response.status, errorText);
-      return new Response(JSON.stringify({ error: `API error [${response.status}]` }), {
-        status: 500,
+    // Get the latest user message
+    const userQuestion = messages[messages.length - 1]?.content?.trim();
+    if (!userQuestion) {
+      return new Response(JSON.stringify({ answer: "Please type a question." }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Stream the response directly back to the client
-    return new Response(response.body, {
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-      },
-    });
+    // Extract class number from className (e.g., "Class 10" -> 10)
+    const classMatch = className?.match(/\d+/);
+    const classId = classMatch ? parseInt(classMatch[0]) : null;
+
+    // Extract subject_id from subject name
+    const subjectId = subject?.toLowerCase().replace(/\s+/g, "-") || "";
+
+    // Search using full-text search with keyword matching
+    const searchTerms = userQuestion
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")
+      .split(/\s+/)
+      .filter((w: string) => w.length > 2)
+      .join(" & ");
+
+    let results: any[] = [];
+
+    if (searchTerms && classId) {
+      // Try full-text search first
+      const { data: ftsResults } = await supabase
+        .from("chapter_qa")
+        .select("question, answer")
+        .eq("class_id", classId)
+        .eq("subject_id", subjectId)
+        .textSearch("search_vector", searchTerms, { type: "plain" })
+        .limit(3);
+
+      results = ftsResults || [];
+
+      // Fallback: ILIKE search if no FTS results
+      if (results.length === 0) {
+        const keywords = userQuestion
+          .toLowerCase()
+          .replace(/[^\w\s]/g, "")
+          .split(/\s+/)
+          .filter((w: string) => w.length > 2);
+
+        for (const keyword of keywords) {
+          const { data: ilikeResults } = await supabase
+            .from("chapter_qa")
+            .select("question, answer")
+            .eq("class_id", classId)
+            .eq("subject_id", subjectId)
+            .ilike("question", `%${keyword}%`)
+            .limit(3);
+
+          if (ilikeResults && ilikeResults.length > 0) {
+            results = ilikeResults;
+            break;
+          }
+        }
+      }
+    }
+
+    if (results.length > 0) {
+      // Return the best matching answer(s) exactly as stored
+      const answer = results.map((r: any) => r.answer).join("\n\n---\n\n");
+      return new Response(JSON.stringify({ answer }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response(
+      JSON.stringify({ answer: "Sorry, this question is not available in our database yet. Please try a different question from your syllabus." }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (error: unknown) {
     console.error("Chatbot error:", error);
     const msg = error instanceof Error ? error.message : "Unknown error";
