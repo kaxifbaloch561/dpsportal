@@ -31,6 +31,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "LongCat-Flash-Chat",
         temperature: 0.2,
+        stream: true,
         messages: [
           { role: "system", content: systemPrompt },
           ...messages,
@@ -40,14 +41,21 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Longcat API error [${response.status}]: ${errorText}`);
+      console.error("Longcat API error:", response.status, errorText);
+      return new Response(JSON.stringify({ error: `API error [${response.status}]` }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content ?? "Sorry, I could not generate a response.";
-
-    return new Response(JSON.stringify({ reply }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    // Stream the response directly back to the client
+    return new Response(response.body, {
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+      },
     });
   } catch (error: unknown) {
     console.error("Chatbot error:", error);

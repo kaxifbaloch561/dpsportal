@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { classesData } from "@/data/classesData";
-import { Send, Bot, User, Sparkles, MessageCircle, Zap, BookOpen, HelpCircle } from "lucide-react";
+import { Send, Bot, User, Sparkles, Zap, BookOpen, HelpCircle } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   role: "user" | "assistant";
@@ -22,6 +21,8 @@ const subjectGradients: Record<string, { bg: string; glow: string; accent: strin
   computer: { bg: "linear-gradient(135deg, hsl(270, 70%, 55%), hsl(310, 65%, 55%))", glow: "hsl(290, 68%, 55%)", accent: "hsl(285, 65%, 93%)" },
   default: { bg: "linear-gradient(135deg, hsl(235, 78%, 55%), hsl(14, 100%, 65%))", glow: "hsl(235, 78%, 60%)", accent: "hsl(235, 78%, 93%)" },
 };
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chatbot`;
 
 const ChatbotPage = () => {
   const { classId, subjectId } = useParams();
@@ -52,29 +53,104 @@ const ChatbotPage = () => {
     setInput("");
     setIsLoading(true);
 
+    let assistantContent = "";
+
+    const upsertAssistant = (chunk: string) => {
+      assistantContent += chunk;
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant" && prev.length > updatedMessages.length) {
+          return prev.map((m, i) =>
+            i === prev.length - 1 ? { ...m, content: assistantContent } : m
+          );
+        }
+        return [...prev, { role: "assistant", content: assistantContent }];
+      });
+    };
+
     try {
-      const { data, error } = await supabase.functions.invoke("chatbot", {
-        body: {
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
           messages: updatedMessages.map((m) => ({ role: m.role, content: m.content })),
           subject: subject.name,
           className: cls.name,
-        },
+        }),
       });
 
-      if (error) throw error;
+      if (!resp.ok || !resp.body) {
+        throw new Error("Failed to start stream");
+      }
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.reply },
-      ]);
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let streamDone = false;
+
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") {
+            streamDone = true;
+            break;
+          }
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) upsertAssistant(content);
+          } catch {
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
+      }
+
+      // Final flush
+      if (textBuffer.trim()) {
+        for (let raw of textBuffer.split("\n")) {
+          if (!raw) continue;
+          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+          if (raw.startsWith(":") || raw.trim() === "") continue;
+          if (!raw.startsWith("data: ")) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) upsertAssistant(content);
+          } catch { /* ignore partial */ }
+        }
+      }
+
+      // If no content was streamed, add fallback
+      if (!assistantContent) {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "Sorry, I could not generate a response." },
+        ]);
+      }
     } catch (err: unknown) {
       console.error("Chatbot error:", err);
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: "Sorry, something went wrong. Please try again.",
-        },
+        { role: "assistant", content: "Sorry, something went wrong. Please try again." },
       ]);
     } finally {
       setIsLoading(false);
@@ -89,10 +165,7 @@ const ChatbotPage = () => {
 
   return (
     <PageShell>
-      <DashboardHeader
-        showBack
-        subtitle={`${cls.name} — ${subject.name} — Chatbot`}
-      />
+      <DashboardHeader showBack subtitle={`${cls.name} — ${subject.name} — Chatbot`} />
       <BreadcrumbNav crumbs={[
         { label: "Dashboard", path: "/dashboard" },
         { label: cls.name, path: `/class/${cls.id}` },
@@ -121,21 +194,16 @@ const ChatbotPage = () => {
                 className="flex flex-col items-center justify-center text-center py-12 sm:py-20"
                 style={{ animation: "cardEntrance 0.3s ease-out forwards" }}
               >
-                {/* Premium Bot Avatar with Orbital Rings */}
+                {/* Premium Bot Avatar */}
                 <div
                   style={{ animation: "float 3s ease-in-out infinite" }}
                 >
-                  {/* Outer glow */}
                   <div
                     className="absolute inset-0 rounded-[32px] blur-2xl opacity-30"
                     style={{ background: theme.bg, transform: "scale(1.5)" }}
                   />
-                  {/* Main icon container */}
-                  <div
-                    className="relative w-72 h-72 rounded-[32px] flex items-center justify-center overflow-hidden"
-                  >
+                  <div className="relative w-72 h-72 rounded-[32px] flex items-center justify-center overflow-hidden">
                     <img src={schoolLogo} alt="School Logo" loading="eager" decoding="async" className="w-64 h-64 object-contain relative z-10" />
-                    {/* Inner shimmer */}
                     <div
                       className="absolute inset-0 opacity-40"
                       style={{
@@ -144,25 +212,14 @@ const ChatbotPage = () => {
                       }}
                     />
                   </div>
-
-                  {/* Orbital ring 1 */}
                   <div
                     className="absolute -inset-4 rounded-[38px]"
-                    style={{
-                      border: `2px solid ${theme.glow}22`,
-                      animation: "borderGlow 3s ease-in-out infinite",
-                    }}
+                    style={{ border: `2px solid ${theme.glow}22`, animation: "borderGlow 3s ease-in-out infinite" }}
                   />
-                  {/* Orbital ring 2 */}
                   <div
                     className="absolute -inset-8 rounded-[44px]"
-                    style={{
-                      border: `1px solid ${theme.glow}11`,
-                      animation: "borderGlow 3s ease-in-out infinite 1s",
-                    }}
+                    style={{ border: `1px solid ${theme.glow}11`, animation: "borderGlow 3s ease-in-out infinite 1s" }}
                   />
-
-                  {/* Floating sparkles */}
                   <div className="absolute -top-3 -right-3" style={{ animation: "float 2s ease-in-out infinite 0.2s" }}>
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: theme.accent }}>
                       <Sparkles size={14} style={{ color: theme.glow }} />
@@ -175,7 +232,6 @@ const ChatbotPage = () => {
                   </div>
                 </div>
 
-                {/* Title with gradient text */}
                 <p className="text-base font-semibold text-foreground mb-1">
                   {subject.name} Assistant
                 </p>
@@ -183,7 +239,7 @@ const ChatbotPage = () => {
                   Your personal AI tutor for {subject.name}. Ask anything from your syllabus — I'll help you learn!
                 </p>
 
-                {/* Suggestion Cards — modern grid */}
+                {/* Suggestion Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-xl">
                   {suggestions.map((s, idx) => {
                     const Icon = s.icon;
@@ -194,7 +250,6 @@ const ChatbotPage = () => {
                         className="group relative flex flex-col items-center gap-2.5 p-4 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm text-center hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden"
                         style={{ animation: `cardEntrance 0.25s ease-out ${0.1 + idx * 0.06}s both` }}
                       >
-                        {/* Hover glow */}
                         <div
                           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                           style={{ background: `radial-gradient(circle at 50% 0%, ${theme.glow}12, transparent 70%)` }}
@@ -244,25 +299,21 @@ const ChatbotPage = () => {
                   }`}
                   style={
                     msg.role === "user"
-                      ? {
-                          background: theme.bg,
-                          boxShadow: `0 6px 24px -6px ${theme.glow}40`,
-                        }
-                      : {
-                          boxShadow: `0 2px 12px -4px hsl(0 0% 0% / 0.06)`,
-                        }
+                      ? { background: theme.bg, boxShadow: `0 6px 24px -6px ${theme.glow}40` }
+                      : { boxShadow: `0 2px 12px -4px hsl(0 0% 0% / 0.06)` }
                   }
                 >
                   {msg.content}
+                  {/* Show blinking cursor while streaming */}
+                  {msg.role === "assistant" && isLoading && i === messages.length - 1 && (
+                    <span className="inline-block w-1.5 h-4 ml-0.5 align-middle rounded-sm animate-pulse" style={{ background: theme.glow }} />
+                  )}
                 </div>
                 {msg.role === "user" && (
                   <div className="shrink-0 mt-1">
                     <div
                       className="w-10 h-10 rounded-[14px] flex items-center justify-center border-2"
-                      style={{
-                        background: theme.accent,
-                        borderColor: `${theme.glow}30`,
-                      }}
+                      style={{ background: theme.accent, borderColor: `${theme.glow}30` }}
                     >
                       <User size={18} style={{ color: theme.glow }} />
                     </div>
@@ -271,17 +322,15 @@ const ChatbotPage = () => {
               </div>
             ))}
 
-            {isLoading && (
+            {/* Only show "Thinking..." before first token arrives */}
+            {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
               <div
                 className="flex gap-3 justify-start"
-                style={{ animation: "popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards" }}
+                style={{ animation: "popIn 0.2s ease-out forwards" }}
               >
                 <div
                   className="w-10 h-10 rounded-[14px] flex items-center justify-center shrink-0 shadow-lg mt-1"
-                  style={{
-                    background: theme.bg,
-                    boxShadow: `0 4px 16px -4px ${theme.glow}44`,
-                  }}
+                  style={{ background: theme.bg, boxShadow: `0 4px 16px -4px ${theme.glow}44` }}
                 >
                   <Bot size={18} className="text-white" />
                 </div>
@@ -295,10 +344,7 @@ const ChatbotPage = () => {
                         <span
                           key={d}
                           className="w-2.5 h-2.5 rounded-full"
-                          style={{
-                            background: theme.bg,
-                            animation: `float 1s ease-in-out infinite ${d * 0.15}s`,
-                          }}
+                          style={{ background: theme.bg, animation: `float 1s ease-in-out infinite ${d * 0.15}s` }}
                         />
                       ))}
                     </div>
@@ -311,14 +357,11 @@ const ChatbotPage = () => {
           </div>
         </div>
 
-        {/* Input Bar — floating glassmorphic */}
+        {/* Input Bar */}
         <div className="relative z-10 px-4 sm:px-8 pb-5 pt-2">
           <div className="max-w-3xl mx-auto">
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
-              }}
+              onSubmit={(e) => { e.preventDefault(); handleSend(); }}
               className="relative flex items-center gap-3 p-2 rounded-[22px] border bg-card/80 backdrop-blur-xl transition-all duration-400"
               style={{
                 borderColor: isFocused ? `${theme.glow}40` : "hsl(var(--border) / 0.6)",
@@ -327,15 +370,10 @@ const ChatbotPage = () => {
                   : "0 4px 20px -8px hsl(0 0% 0% / 0.06)",
               }}
             >
-              {/* Gradient accent line at top */}
               <div
                 className="absolute top-0 left-6 right-6 h-[2px] rounded-full transition-opacity duration-400"
-                style={{
-                  background: theme.bg,
-                  opacity: isFocused ? 1 : 0,
-                }}
+                style={{ background: theme.bg, opacity: isFocused ? 1 : 0 }}
               />
-
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -344,7 +382,6 @@ const ChatbotPage = () => {
                 placeholder={`Ask about ${subject.name}...`}
                 className="flex-1 px-4 py-3 bg-transparent outline-none text-foreground placeholder:text-muted-foreground text-sm font-medium"
               />
-
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
@@ -357,7 +394,6 @@ const ChatbotPage = () => {
                 <Send size={18} className={isLoading ? "opacity-50" : ""} />
               </button>
             </form>
-
             <p className="text-center text-[10px] text-muted-foreground/50 mt-2 font-medium">
               DPS.AI answers only from your {subject.name} syllabus
             </p>
