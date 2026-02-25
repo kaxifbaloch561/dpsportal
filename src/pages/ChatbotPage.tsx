@@ -119,12 +119,11 @@ const ChatbotPage = () => {
             {messages.length === 0 && (
               <div
                 className="flex flex-col items-center justify-center text-center py-12 sm:py-20"
-                style={{ animation: "cardEntrance 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards" }}
+                style={{ animation: "cardEntrance 0.3s ease-out forwards" }}
               >
                 {/* Premium Bot Avatar with Orbital Rings */}
                 <div
-                  className="relative mb-8"
-                  style={{ animation: "float 4s ease-in-out infinite" }}
+                  style={{ animation: "float 3s ease-in-out infinite" }}
                 >
                   {/* Outer glow */}
                   <div
@@ -135,7 +134,7 @@ const ChatbotPage = () => {
                   <div
                     className="relative w-72 h-72 rounded-[32px] flex items-center justify-center overflow-hidden"
                   >
-                    <img src={schoolLogo} alt="School Logo" className="w-64 h-64 object-contain relative z-10" />
+                    <img src={schoolLogo} alt="School Logo" loading="eager" decoding="async" className="w-64 h-64 object-contain relative z-10" />
                     {/* Inner shimmer */}
                     <div
                       className="absolute inset-0 opacity-40"
@@ -193,7 +192,7 @@ const ChatbotPage = () => {
                         key={idx}
                         onClick={() => setInput(s.text)}
                         className="group relative flex flex-col items-center gap-2.5 p-4 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm text-center hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden"
-                        style={{ animation: `cardEntrance 0.6s cubic-bezier(0.34,1.56,0.64,1) ${0.4 + idx * 0.12}s both` }}
+                        style={{ animation: `cardEntrance 0.25s ease-out ${0.1 + idx * 0.06}s both` }}
                       >
                         {/* Hover glow */}
                         <div
@@ -221,7 +220,7 @@ const ChatbotPage = () => {
                 key={i}
                 className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 style={{
-                  animation: `${msg.role === "user" ? "slideUp" : "popIn"} 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards`,
+                  animation: `${msg.role === "user" ? "slideUp" : "popIn"} 0.25s ease-out forwards`,
                 }}
               >
                 {msg.role === "assistant" && (

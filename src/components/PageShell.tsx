@@ -42,7 +42,7 @@ const PageShell = ({ children }: PageShellProps) => {
           boxShadow:
             "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
           animation:
-            "containerSpring 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
+            "containerSpring 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards",
         }}
       >
         {children}
