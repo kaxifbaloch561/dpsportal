@@ -17,6 +17,19 @@ const classGradients = [
   "from-[hsl(210,70%,50%)] to-[hsl(235,78%,65%)]",
 ];
 
+const classPatterns = [
+  "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 50%)",
+  "radial-gradient(circle at 20% 80%, rgba(255,255,255,0.15) 0%, transparent 50%)",
+  "radial-gradient(circle at 90% 90%, rgba(255,255,255,0.12) 0%, transparent 50%)",
+  "radial-gradient(circle at 10% 10%, rgba(255,255,255,0.15) 0%, transparent 50%)",
+  "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.12) 0%, transparent 50%)",
+  "radial-gradient(circle at 80% 80%, rgba(255,255,255,0.15) 0%, transparent 50%)",
+  "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.12) 0%, transparent 50%)",
+  "radial-gradient(circle at 90% 10%, rgba(255,255,255,0.15) 0%, transparent 50%)",
+  "radial-gradient(circle at 10% 90%, rgba(255,255,255,0.12) 0%, transparent 50%)",
+  "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15) 0%, transparent 50%)",
+];
+
 const Dashboard = () => {
   const navigate = useNavigate();
 
@@ -47,20 +60,42 @@ const Dashboard = () => {
             <button
               key={cls.id}
               onClick={() => navigate(`/class/${cls.id}`)}
-              className="group bg-card border border-border rounded-3xl p-6 flex flex-col items-center gap-3 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden"
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border-0 p-0 shadow-lg hover:shadow-2xl hover:-translate-y-3 transition-all duration-500"
+              style={{
+                animationDelay: `${0.6 + i * 0.05}s`,
+              }}
             >
-              {/* Decorative gradient ring */}
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${classGradients[i]} flex items-center justify-center text-2xl font-extrabold text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                {cls.id}
+              {/* Full gradient background */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${classGradients[i]} transition-all duration-500`} />
+              
+              {/* Decorative light pattern */}
+              <div
+                className="absolute inset-0 opacity-100"
+                style={{ background: classPatterns[i] }}
+              />
+
+              {/* Shine effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/0 to-white/0 group-hover:from-white/0 group-hover:via-white/20 group-hover:to-white/0 transition-all duration-700" />
+
+              {/* Content */}
+              <div className="relative z-10 flex flex-col items-center gap-3 p-7">
+                {/* Class number */}
+                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center text-3xl font-black text-white group-hover:scale-110 group-hover:bg-white/30 transition-all duration-500 shadow-lg">
+                  {cls.id}
+                </div>
+
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-sm font-bold text-white tracking-wide">
+                    {cls.name}
+                  </span>
+                  <span className="text-[11px] text-white/70 font-medium">
+                    {cls.subjects.length} Subjects
+                  </span>
+                </div>
+
+                {/* Bottom accent line */}
+                <div className="w-8 h-1 rounded-full bg-white/30 group-hover:w-12 group-hover:bg-white/50 transition-all duration-500" />
               </div>
-              <span className="text-sm font-semibold text-foreground">
-                {cls.name}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {cls.subjects.length} Subjects
-              </span>
-              {/* Hover glow */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${classGradients[i]} opacity-0 group-hover:opacity-[0.06] transition-opacity duration-300 rounded-3xl`} />
             </button>
           ))}
         </div>
