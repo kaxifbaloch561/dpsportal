@@ -128,8 +128,8 @@ const ChatbotPage = () => {
                     className="absolute inset-0 rounded-[32px] blur-2xl opacity-30"
                     style={{ background: theme.bg, transform: "scale(1.5)" }}
                   />
-                  <div className="relative w-72 h-72 rounded-[32px] flex items-center justify-center overflow-hidden">
-                    <img src={schoolLogo} alt="School Logo" loading="eager" decoding="async" className="w-64 h-64 object-contain relative z-10" />
+                  <div className="relative w-96 h-96 rounded-[32px] flex items-center justify-center overflow-hidden">
+                    <img src={schoolLogo} alt="School Logo" loading="eager" decoding="async" className="w-80 h-80 object-contain relative z-10" />
                     <div
                       className="absolute inset-0 opacity-40"
                       style={{
