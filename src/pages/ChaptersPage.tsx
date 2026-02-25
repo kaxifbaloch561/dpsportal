@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { classesData, getChapters } from "@/data/classesData";
-import { BookMarked } from "lucide-react";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import {
@@ -23,18 +22,15 @@ const ChaptersPage = () => {
       <DashboardHeader showBack subtitle={`${cls.name} — ${subject.name} — Chapters`} />
 
       <div className="flex-1 px-8 pb-8 overflow-y-auto">
-        <div
-          className="flex items-center gap-3 mb-6 mt-4"
+        <h2
+          className="text-2xl font-bold text-foreground mb-6 mt-4"
           style={{
             animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
             opacity: 0,
           }}
         >
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <BookMarked size={22} className="text-primary" />
-          </div>
-          <h2 className="text-2xl font-bold text-foreground">Chapters</h2>
-        </div>
+          Chapters
+        </h2>
 
         <div
           className="max-w-3xl"
@@ -51,13 +47,15 @@ const ChaptersPage = () => {
                 className="bg-card border border-border rounded-2xl px-6 overflow-hidden"
               >
                 <AccordionTrigger className="text-base font-semibold hover:no-underline">
-                  <span>
-                    <span className="text-primary mr-2">Ch {ch.number}.</span>
+                  <span className="flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[hsl(235,78%,65%)] to-[hsl(260,70%,60%)] text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                      {ch.number}
+                    </span>
                     {ch.title}
                   </span>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="prose prose-sm text-muted-foreground leading-relaxed py-2">
+                  <div className="prose prose-sm text-muted-foreground leading-relaxed py-2 pl-11">
                     {ch.content}
                   </div>
                 </AccordionContent>
