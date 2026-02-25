@@ -133,13 +133,9 @@ const ChatbotPage = () => {
                   />
                   {/* Main icon container */}
                   <div
-                    className="relative w-28 h-28 rounded-[32px] flex items-center justify-center overflow-hidden"
-                    style={{
-                      background: theme.bg,
-                      boxShadow: `0 20px 60px -12px ${theme.glow}66`,
-                    }}
+                    className="relative w-36 h-36 rounded-[32px] flex items-center justify-center overflow-hidden"
                   >
-                    <img src={schoolLogo} alt="School Logo" className="w-16 h-16 object-contain relative z-10" />
+                    <img src={schoolLogo} alt="School Logo" className="w-32 h-32 object-contain relative z-10" />
                     {/* Inner shimmer */}
                     <div
                       className="absolute inset-0 opacity-40"
