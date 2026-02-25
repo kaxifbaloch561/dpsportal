@@ -166,7 +166,7 @@
 }
 
 @keyframes containerSpring {
-  0% { opacity: 0; transform: scale(0.9) translateY(40px); }
+  0% { opacity: 0; transform: scale(0.95) translateY(15px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
@@ -186,9 +186,8 @@
 }
 
 @keyframes cardEntrance {
-  0% { opacity: 0; transform: scale(0.7) translateY(30px) rotate(-3deg); }
-  60% { opacity: 1; transform: scale(1.03) translateY(-5px) rotate(0.5deg); }
-  100% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); }
+  0% { opacity: 0; transform: scale(0.9) translateY(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 @keyframes shimmer {
