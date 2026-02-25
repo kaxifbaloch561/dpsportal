@@ -133,9 +133,9 @@ const ChatbotPage = () => {
                   />
                   {/* Main icon container */}
                   <div
-                    className="relative w-44 h-44 rounded-[32px] flex items-center justify-center overflow-hidden"
+                    className="relative w-56 h-56 rounded-[32px] flex items-center justify-center overflow-hidden"
                   >
-                    <img src={schoolLogo} alt="School Logo" className="w-40 h-40 object-contain relative z-10" />
+                    <img src={schoolLogo} alt="School Logo" className="w-52 h-52 object-contain relative z-10" />
                     {/* Inner shimmer */}
                     <div
                       className="absolute inset-0 opacity-40"
@@ -177,12 +177,6 @@ const ChatbotPage = () => {
                 </div>
 
                 {/* Title with gradient text */}
-                <h3
-                  className="text-2xl sm:text-3xl font-extrabold mb-2 bg-clip-text text-transparent"
-                  style={{ backgroundImage: theme.bg }}
-                >
-                  DPS.AI
-                </h3>
                 <p className="text-base font-semibold text-foreground mb-1">
                   {subject.name} Assistant
                 </p>
