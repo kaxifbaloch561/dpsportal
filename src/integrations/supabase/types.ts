@@ -50,6 +50,36 @@ export type Database = {
         }
         Relationships: []
       }
+      chapters: {
+        Row: {
+          chapter_number: number
+          chapter_title: string
+          class_id: number
+          content: string
+          created_at: string
+          id: string
+          subject_id: string
+        }
+        Insert: {
+          chapter_number: number
+          chapter_title: string
+          class_id: number
+          content: string
+          created_at?: string
+          id?: string
+          subject_id: string
+        }
+        Update: {
+          chapter_number?: number
+          chapter_title?: string
+          class_id?: number
+          content?: string
+          created_at?: string
+          id?: string
+          subject_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
