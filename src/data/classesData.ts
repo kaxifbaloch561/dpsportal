@@ -21,7 +21,7 @@ const scienceSubjects: Subject[] = [
   ...commonSubjects,
   { id: "science", name: "Science", icon: "FlaskConical" },
   { id: "computer", name: "Computer", icon: "Monitor" },
-  { id: "social-studies", name: "Social Studies", icon: "Globe" },
+  { id: "social-studies", name: "Pakistan Studies", icon: "Globe" },
 ];
 
 export const classesData: ClassData[] = Array.from({ length: 10 }, (_, i) => ({
