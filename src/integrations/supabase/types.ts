@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      chapter_exercises: {
+        Row: {
+          answer: string | null
+          chapter_number: number
+          class_id: number
+          correct_option: string | null
+          created_at: string
+          exercise_type: string
+          id: string
+          options: Json | null
+          question: string
+          sort_order: number
+          subject_id: string
+        }
+        Insert: {
+          answer?: string | null
+          chapter_number: number
+          class_id: number
+          correct_option?: string | null
+          created_at?: string
+          exercise_type: string
+          id?: string
+          options?: Json | null
+          question: string
+          sort_order?: number
+          subject_id: string
+        }
+        Update: {
+          answer?: string | null
+          chapter_number?: number
+          class_id?: number
+          correct_option?: string | null
+          created_at?: string
+          exercise_type?: string
+          id?: string
+          options?: Json | null
+          question?: string
+          sort_order?: number
+          subject_id?: string
+        }
+        Relationships: []
+      }
       chapter_qa: {
         Row: {
           answer: string
