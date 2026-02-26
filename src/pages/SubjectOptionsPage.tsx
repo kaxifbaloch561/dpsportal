@@ -18,7 +18,7 @@ const SubjectOptionsPage = () => {
     {
       label: "Chat Bot",
       icon: <MessageSquare size={28} />,
-      description: "Ask questions from your syllabus",
+      description: "Get chapter-wise Q&A from curriculum",
       path: `/class/${cls.id}/subject/${subject.id}/chat`,
       gradient: "from-[hsl(235,78%,65%)] to-[hsl(260,70%,60%)]",
     },

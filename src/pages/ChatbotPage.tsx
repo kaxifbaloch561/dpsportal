@@ -153,10 +153,10 @@ const ChatbotPage = () => {
                 </div>
 
                 <p className="text-base font-semibold text-foreground mb-1">
-                  {subject.name} Assistant
+                  {subject.name} — Teacher Assistant
                 </p>
                 <p className="text-sm text-muted-foreground max-w-sm mb-8">
-                  Your personal assistant for {subject.name}. Ask anything from your syllabus!
+                  Your teaching companion for {subject.name}. Get chapter-wise Q&A from the curriculum!
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-xl">
@@ -298,7 +298,7 @@ const ChatbotPage = () => {
               </button>
             </form>
             <p className="text-center text-[10px] text-muted-foreground/50 mt-2 font-medium">
-              DPS PORTAL answers only from your {subject.name} syllabus — Developed by Kaxif Gull
+              DPS PORTAL — Teacher's {subject.name} Reference — Developed by Kaxif Gull
             </p>
           </div>
         </div>

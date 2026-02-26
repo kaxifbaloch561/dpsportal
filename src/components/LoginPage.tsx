@@ -52,7 +52,7 @@ const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email or student ID"
+              placeholder="Enter your email"
               className="w-full px-4 py-3 rounded-2xl bg-muted border-none outline-none text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary transition-all"
             />
           </div>
