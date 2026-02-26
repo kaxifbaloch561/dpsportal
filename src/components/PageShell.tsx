@@ -46,6 +46,9 @@ const PageShell = ({ children }: PageShellProps) => {
         }}
       >
         {children}
+        <footer className="text-center text-[11px] text-muted-foreground/60 font-medium py-3 mt-auto">
+          DPS PORTAL — Developed by Kaxif Gull ❤️
+        </footer>
       </div>
     </div>
   );
