@@ -13,8 +13,8 @@ export interface ClassData {
 const commonSubjects: Subject[] = [
   { id: "english", name: "English", icon: "BookText" },
   { id: "mathematics", name: "Mathematics", icon: "Calculator" },
-  { id: "urdu", name: "Urdu", icon: "PenLine" },
-  { id: "islamiat", name: "Islamiat", icon: "Moon" },
+  { id: "urdu", name: "اردو", icon: "PenLine" },
+  { id: "islamiat", name: "اسلامیات", icon: "Moon" },
 ];
 
 const scienceSubjects: Subject[] = [
