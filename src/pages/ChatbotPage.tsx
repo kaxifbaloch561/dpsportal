@@ -298,7 +298,7 @@ const ChatbotPage = () => {
               </button>
             </form>
             <p className="text-center text-[10px] text-muted-foreground/50 mt-2 font-medium">
-              DPS PORTAL — Teacher's {subject.name} Reference — Developed by Kaxif Gull
+              Teacher's {subject.name} Reference
             </p>
           </div>
         </div>
