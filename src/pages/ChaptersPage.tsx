@@ -1,5 +1,7 @@
 import { useParams } from "react-router-dom";
-import { classesData, getChapters } from "@/data/classesData";
+import { useQuery } from "@tanstack/react-query";
+import { classesData } from "@/data/classesData";
+import { supabase } from "@/integrations/supabase/client";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -9,12 +11,28 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Loader2 } from "lucide-react";
 
 const ChaptersPage = () => {
   const { classId, subjectId } = useParams();
   const cls = classesData.find((c) => c.id === Number(classId));
   const subject = cls?.subjects.find((s) => s.id === subjectId);
-  const chapters = getChapters(Number(classId), subjectId || "");
+
+  const { data: chapters, isLoading } = useQuery({
+    queryKey: ["chapters", classId, subjectId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("chapters")
+        .select("*")
+        .eq("class_id", Number(classId))
+        .eq("subject_id", subjectId || "")
+        .order("chapter_number", { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!classId && !!subjectId,
+  });
 
   if (!cls || !subject) return <div className="p-10 text-center">Not found</div>;
 
@@ -39,37 +57,55 @@ const ChaptersPage = () => {
           Chapters
         </h2>
 
-        <div
-          className="max-w-3xl"
-          style={{
-            animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s",
-            opacity: 0,
-          }}
-        >
-          <Accordion type="single" collapsible className="space-y-3">
-            {chapters.map((ch) => (
-              <AccordionItem
-                key={ch.id}
-                value={ch.id}
-                className="bg-card border border-border rounded-2xl px-6 overflow-hidden"
-              >
-                <AccordionTrigger className="text-base font-semibold hover:no-underline">
-                  <span className="flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[hsl(235,78%,65%)] to-[hsl(260,70%,60%)] text-white text-xs font-bold flex items-center justify-center shadow-sm">
-                      {ch.number}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : !chapters || chapters.length === 0 ? (
+          <div className="text-center text-muted-foreground py-20">
+            No chapters available yet for this subject.
+          </div>
+        ) : (
+          <div
+            className="max-w-3xl"
+            style={{
+              animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s",
+              opacity: 0,
+            }}
+          >
+            <Accordion type="single" collapsible className="space-y-3">
+              {chapters.map((ch) => (
+                <AccordionItem
+                  key={ch.id}
+                  value={ch.id}
+                  className="bg-card border border-border rounded-2xl px-6 overflow-hidden"
+                >
+                  <AccordionTrigger className="text-base font-semibold hover:no-underline">
+                    <span className="flex items-center gap-3">
+                      <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[hsl(235,78%,65%)] to-[hsl(260,70%,60%)] text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                        {ch.chapter_number}
+                      </span>
+                      {ch.chapter_title}
                     </span>
-                    {ch.title}
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="prose prose-sm text-muted-foreground leading-relaxed py-2 pl-11">
-                    {ch.content}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="prose prose-sm text-muted-foreground leading-relaxed py-2 pl-11 max-h-[70vh] overflow-y-auto whitespace-pre-line">
+                      {ch.content.split(/\*\*(.*?)\*\*/g).map((part, i) =>
+                        i % 2 === 1 ? (
+                          <strong key={i} className="text-foreground block mt-4 mb-1">
+                            {part}
+                          </strong>
+                        ) : (
+                          <span key={i}>{part}</span>
+                        )
+                      )}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        )}
       </div>
     </PageShell>
   );
