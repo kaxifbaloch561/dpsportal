@@ -125,7 +125,7 @@ const LandingPage = () => {
               <div className="absolute w-[110%] h-[110%] border-2 border-dashed border-primary-glow pointer-events-none z-[1]" style={{ animation: "spinMorph 15s linear infinite", borderRadius: "55% 45% 40% 60% / 50% 60% 40% 50%" }} />
               <img
                 src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800"
-                alt="Student studying online"
+                alt="Teacher using digital portal"
                 className="w-full h-full object-cover"
                 style={{ animation: "morph 8s ease-in-out infinite", borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%", boxShadow: "inset 0 0 20px rgba(0,0,0,0.1)" }}
               />
