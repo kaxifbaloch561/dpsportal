@@ -298,7 +298,7 @@ const ChatbotPage = () => {
               </button>
             </form>
             <p className="text-center text-[10px] text-muted-foreground/50 mt-2 font-medium">
-              DPS.AI answers only from your {subject.name} syllabus
+              DPS PORTAL answers only from your {subject.name} syllabus — Developed by Kaxif Gull
             </p>
           </div>
         </div>
