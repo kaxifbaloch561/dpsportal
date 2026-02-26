@@ -52,7 +52,7 @@ const SubjectsPage = () => {
               <button
                 key={subject.id}
                 onClick={() => navigate(`/class/${cls.id}/subject/${subject.id}`)}
-                className="group relative cursor-pointer overflow-hidden rounded-[28px] border-0 p-0 aspect-square transition-all duration-500 hover:-translate-y-4"
+                className="group relative cursor-pointer overflow-hidden rounded-[28px] border-0 p-0 transition-all duration-500 hover:-translate-y-4"
                 style={{
                   animation: `cardEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.4 + i * 0.07}s`,
                   opacity: 0,
@@ -84,7 +84,7 @@ const SubjectsPage = () => {
                   className="relative z-10 flex items-center justify-center py-12 px-5"
                   style={{ animation: "float 4s ease-in-out infinite", animationDelay: `${i * 0.3}s` }}
                 >
-                  <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] text-center leading-tight">
+                  <span className="text-3xl sm:text-4xl font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] text-center leading-tight">
                     {subject.name}
                   </span>
                 </div>
