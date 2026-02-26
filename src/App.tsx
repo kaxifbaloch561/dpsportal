@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import SubjectsPage from "./pages/SubjectsPage";
 import SubjectOptionsPage from "./pages/SubjectOptionsPage";
 import ChaptersPage from "./pages/ChaptersPage";
+import ExercisePage from "./pages/ExercisePage";
 import ChatbotPage from "./pages/ChatbotPage";
 import NotFound from "./pages/NotFound";
 
