@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { classesData } from "@/data/classesData";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,10 +11,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Loader2 } from "lucide-react";
+import { Loader2, ClipboardList } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ChaptersPage = () => {
   const { classId, subjectId } = useParams();
+  const navigate = useNavigate();
   const cls = classesData.find((c) => c.id === Number(classId));
   const subject = cls?.subjects.find((s) => s.id === subjectId);
 
@@ -99,6 +101,20 @@ const ChaptersPage = () => {
                           <span key={i}>{part}</span>
                         )
                       )}
+                    </div>
+
+                    <div className="pl-11 pt-4 pb-2">
+                      <Button
+                        onClick={() =>
+                          navigate(
+                            `/class/${classId}/subject/${subjectId}/chapter/${ch.chapter_number}/exercise`
+                          )
+                        }
+                        className="gap-2 rounded-xl bg-gradient-to-r from-[hsl(235,78%,65%)] to-[hsl(260,70%,60%)] hover:opacity-90 text-white shadow-md"
+                      >
+                        <ClipboardList className="w-4 h-4" />
+                        Exercise
+                      </Button>
                     </div>
                   </AccordionContent>
                 </AccordionItem>
