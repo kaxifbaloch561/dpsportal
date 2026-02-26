@@ -80,35 +80,13 @@ const SubjectsPage = () => {
                   />
                 </div>
 
-                {/* Floating content */}
                 <div
-                  className="relative z-10 flex flex-col items-center gap-4 py-8 px-5"
+                  className="relative z-10 flex items-center justify-center py-12 px-5"
                   style={{ animation: "float 4s ease-in-out infinite", animationDelay: `${i * 0.3}s` }}
                 >
-                  {/* Glass monogram badge */}
-                  <div className="w-[72px] h-[72px] rounded-[20px] bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_8px_20px_-6px_rgba(0,0,0,0.15)] group-hover:scale-110 group-hover:rotate-3 group-hover:bg-white/30 transition-all duration-500">
-                    <span className="text-[28px] font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]">
-                      {style.letter}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col items-center gap-1.5">
-                    <span className="text-[15px] font-bold text-white tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
-                      {subject.name}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-1 h-1 rounded-full bg-white/60" />
-                      <span className="text-[11px] text-white/75 font-semibold uppercase tracking-widest">
-                        Explore
-                      </span>
-                      <div className="w-1 h-1 rounded-full bg-white/60" />
-                    </div>
-                  </div>
-
-                  {/* Animated accent bar */}
-                  <div className="relative h-1 w-10 rounded-full overflow-hidden bg-white/20 group-hover:w-14 transition-all duration-600">
-                    <div className="absolute inset-0 bg-white/60 rounded-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
-                  </div>
+                  <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] text-center leading-tight">
+                    {subject.name}
+                  </span>
                 </div>
               </button>
             );
