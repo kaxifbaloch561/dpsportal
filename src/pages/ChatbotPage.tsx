@@ -47,6 +47,9 @@ const ChatbotPage = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const theme = subjectGradients[subject?.id || "default"] || subjectGradients.default;
+  const classNum = Number(classId);
+
   // Close suggestions on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -57,11 +60,6 @@ const ChatbotPage = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
-
-  if (!cls || !subject) return <div className="p-10 text-center">Not found</div>;
-
-  const theme = subjectGradients[subject.id] || subjectGradients.default;
-  const classNum = Number(classId);
 
   // Real-time search as user types
   const searchQuestions = useCallback(async (query: string) => {
