@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { classesData } from "@/data/classesData";
-import { MessageSquare, BookOpen, ClipboardList } from "lucide-react";
+import { MessageSquare, BookOpen, FileText } from "lucide-react";
 import SubjectBadge from "@/components/SubjectBadge";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
+import MakeAPaper from "@/components/MakeAPaper";
 
 const SubjectOptionsPage = () => {
   const { classId, subjectId } = useParams();
   const navigate = useNavigate();
+  const [paperOpen, setPaperOpen] = useState(false);
   const cls = classesData.find((c) => c.id === Number(classId));
   const subject = cls?.subjects.find((s) => s.id === subjectId);
 
