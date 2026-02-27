@@ -349,10 +349,14 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
               </div>
             )}
             <Button
-              onClick={() => setStep("config")}
-              disabled={selectedChapters.length === 0}
+              onClick={async () => {
+                await fetchAvailableTypes();
+                setStep("config");
+              }}
+              disabled={selectedChapters.length === 0 || loadingTypes}
               className="w-full rounded-xl"
             >
+              {loadingTypes ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               Next — Configure Questions
             </Button>
           </>
