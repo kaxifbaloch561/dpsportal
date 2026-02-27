@@ -375,7 +375,7 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
             </DialogHeader>
             <p className="text-sm text-muted-foreground mb-4">Set how many questions of each type you want.</p>
             <div className="space-y-3 mb-6">
-              {QUESTION_TYPES.map((type) => (
+              {QUESTION_TYPES.filter((type) => availableTypes.includes(type.key)).map((type) => (
                 <div key={type.key} className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
                   <span className="text-sm font-medium text-foreground">{type.label}</span>
                   <div className="flex items-center gap-2">
