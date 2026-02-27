@@ -70,12 +70,13 @@ const ChatbotPage = () => {
     }
 
     try {
+      const searchTerm = query.trim();
       const { data } = await supabase
         .from("chapter_qa")
         .select("question, answer")
         .eq("class_id", classNum)
         .eq("subject_id", subjectId!)
-        .ilike("question", `%${query.trim()}%`)
+        .or(`question.ilike.%${searchTerm}%,answer.ilike.%${searchTerm}%,keywords.cs.{${searchTerm.toLowerCase()}}`)
         .limit(8);
 
       if (data && data.length > 0) {
