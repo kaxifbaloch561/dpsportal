@@ -83,19 +83,28 @@ const ExercisePage = () => {
           >
             {availableTypes
               .sort((a, b) => Object.keys(EXERCISE_TYPE_LABELS).indexOf(a) - Object.keys(EXERCISE_TYPE_LABELS).indexOf(b))
-              .map((type) => (
-                <Button
+              .map((type, index) => (
+                <button
                   key={type}
-                  variant="outline"
-                  className="justify-start text-left h-auto py-4 px-6 rounded-2xl border-border bg-card hover:bg-primary/5 hover:border-primary/40 text-base font-medium transition-all"
                   onClick={() =>
                     navigate(
                       `/class/${classId}/subject/${subjectId}/chapter/${chapterNumber}/exercise/${type}`
                     )
                   }
+                  className="group relative flex items-center gap-4 h-auto py-5 px-6 rounded-2xl border border-border bg-card text-left text-base font-semibold text-foreground transition-all duration-300 ease-out hover:border-primary/50 hover:shadow-[0_8px_30px_-8px_hsl(var(--primary)/0.25)] hover:-translate-y-0.5 hover:bg-gradient-to-r hover:from-primary/[0.04] hover:to-transparent"
+                  style={{
+                    animation: `slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.1 * index}s`,
+                    opacity: 0,
+                  }}
                 >
-                  {EXERCISE_TYPE_LABELS[type] || type}
-                </Button>
+                  <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-md group-hover:scale-110">
+                    <ClipboardList className="w-5 h-5" />
+                  </span>
+                  <span className="flex-1">{EXERCISE_TYPE_LABELS[type] || type}</span>
+                  <span className="text-muted-foreground/40 transition-all duration-300 group-hover:text-primary group-hover:translate-x-1">
+                    →
+                  </span>
+                </button>
               ))}
           </div>
         )}
