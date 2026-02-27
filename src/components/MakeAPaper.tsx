@@ -78,6 +78,8 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     setAvailableTypes([]);
   };
 
+  const [typeCounts, setTypeCounts] = useState<Record<string, number>>({});
+
   const fetchAvailableTypes = async () => {
     setLoadingTypes(true);
     try {
@@ -88,9 +90,13 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
         .eq("subject_id", subjectId)
         .in("chapter_number", selectedChapters);
       if (error) throw error;
-      const types = [...new Set((data || []).map((d: any) => d.exercise_type))];
+      const counts: Record<string, number> = {};
+      (data || []).forEach((d: any) => {
+        counts[d.exercise_type] = (counts[d.exercise_type] || 0) + 1;
+      });
+      setTypeCounts(counts);
+      const types = Object.keys(counts);
       setAvailableTypes(types);
-      // Set default counts only for available types
       const defaults: Record<string, number> = {};
       types.forEach((t) => {
         defaults[t] = t === "long_question_answers" ? 3 : 5;
@@ -377,7 +383,10 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
             <div className="space-y-3 mb-6">
               {QUESTION_TYPES.filter((type) => availableTypes.includes(type.key)).map((type) => (
                 <div key={type.key} className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
-                  <span className="text-sm font-medium text-foreground">{type.label}</span>
+                  <div>
+                    <span className="text-sm font-medium text-foreground">{type.label}</span>
+                    <span className="text-xs text-muted-foreground ml-2">({typeCounts[type.key] || 0} available)</span>
+                  </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setConfig((c) => ({ ...c, [type.key]: Math.max(0, (c[type.key] || 0) - 1) }))}
@@ -387,7 +396,7 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
                     </button>
                     <span className="w-8 text-center font-bold text-foreground">{config[type.key] || 0}</span>
                     <button
-                      onClick={() => setConfig((c) => ({ ...c, [type.key]: (c[type.key] || 0) + 1 }))}
+                      onClick={() => setConfig((c) => ({ ...c, [type.key]: Math.min((c[type.key] || 0) + 1, typeCounts[type.key] || 0) }))}
                       className="w-8 h-8 rounded-lg bg-muted text-foreground font-bold flex items-center justify-center hover:bg-muted/80 transition-colors"
                     >
                       +
