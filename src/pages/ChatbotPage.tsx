@@ -120,42 +120,29 @@ const ChatbotPage = () => {
     setIsLoading(true);
 
     try {
-      // Try ILIKE search
-      const keywords = text
-        .toLowerCase()
-        .replace(/[^\w\s]/g, "")
-        .split(/\s+/)
-        .filter((w) => w.length > 2);
+      // Use symbol-ignoring RPC search
+      const { data: rpcResults } = await supabase.rpc("search_chapter_qa", {
+        p_class_id: classNum,
+        p_subject_id: subjectId!,
+        p_query: text,
+        p_limit: 5,
+      });
 
-      let results: QASuggestion[] = [];
+      let results: QASuggestion[] = rpcResults || [];
 
-      // Try full text search first
-      const searchTerms = keywords.join(" & ");
-      if (searchTerms) {
-        const { data: ftsData } = await supabase
-          .from("chapter_qa")
-          .select("question, answer")
-          .eq("class_id", classNum)
-          .eq("subject_id", subjectId!)
-          .textSearch("search_vector", searchTerms, { type: "plain" })
-          .limit(3);
-        results = ftsData || [];
-      }
-
-      // Fallback: ILIKE keyword search
+      // Fallback: full text search
       if (results.length === 0) {
-        for (const keyword of keywords) {
-          const { data: ilikeData } = await supabase
+        const keywords = text.toLowerCase().replace(/[^\w\s]/g, "").split(/\s+/).filter((w) => w.length > 2);
+        const searchTerms = keywords.join(" & ");
+        if (searchTerms) {
+          const { data: ftsData } = await supabase
             .from("chapter_qa")
             .select("question, answer")
             .eq("class_id", classNum)
             .eq("subject_id", subjectId!)
-            .ilike("question", `%${keyword}%`)
+            .textSearch("search_vector", searchTerms, { type: "plain" })
             .limit(3);
-          if (ilikeData && ilikeData.length > 0) {
-            results = ilikeData;
-            break;
-          }
+          results = ftsData || [];
         }
       }
 
