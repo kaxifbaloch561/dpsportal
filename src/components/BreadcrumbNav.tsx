@@ -22,8 +22,8 @@ const BreadcrumbNav = ({ crumbs }: BreadcrumbNavProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="px-8 pt-3 pb-1">
-      <div className="flex items-center gap-0 bg-muted/50 backdrop-blur-sm rounded-2xl p-1.5 border border-border/50 w-fit">
+    <div className="flex justify-center px-4 pt-3 pb-1">
+      <div className="flex items-center gap-0 bg-card/80 backdrop-blur-xl rounded-2xl p-1.5 border border-border/40 shadow-lg shadow-primary/5 w-fit">
         {crumbs.map((crumb, i) => {
           const isLast = i === crumbs.length - 1;
           const gradient = stepColors[i % stepColors.length];
@@ -31,9 +31,9 @@ const BreadcrumbNav = ({ crumbs }: BreadcrumbNavProps) => {
           return (
             <span key={i} className="flex items-center">
               {i > 0 && (
-                <div className="flex items-center px-1">
-                  <div className="w-5 h-[2px] bg-gradient-to-r from-muted-foreground/20 to-muted-foreground/10 rounded-full" />
-                  <ChevronRight size={12} className="text-muted-foreground/40 -ml-0.5" />
+                <div className="flex items-center px-0.5">
+                  <div className="w-4 h-[2px] bg-gradient-to-r from-border to-border/50 rounded-full" />
+                  <ChevronRight size={11} className="text-muted-foreground/30 -ml-0.5" />
                 </div>
               )}
 
@@ -50,14 +50,14 @@ const BreadcrumbNav = ({ crumbs }: BreadcrumbNavProps) => {
               ) : crumb.path ? (
                 <button
                   onClick={() => navigate(crumb.path!)}
-                  className="group relative px-3.5 py-1.5 rounded-xl text-muted-foreground hover:text-foreground font-medium text-xs transition-all duration-300 flex items-center gap-1.5 hover:bg-background/80 hover:shadow-sm"
+                  className="group relative px-3 py-1.5 rounded-xl text-muted-foreground hover:text-foreground font-medium text-xs transition-all duration-300 flex items-center gap-1.5 hover:bg-muted/60"
                 >
-                  {i === 0 && <Home size={12} className="group-hover:scale-110 transition-transform duration-200" />}
+                  {i === 0 && <Home size={11} className="group-hover:scale-110 transition-transform duration-200" />}
                   {crumb.label}
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-primary/0 via-primary to-primary/0 group-hover:w-3/4 transition-all duration-300 rounded-full" />
+                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-primary/0 via-primary to-primary/0 group-hover:w-2/3 transition-all duration-300 rounded-full" />
                 </button>
               ) : (
-                <span className="px-3.5 py-1.5 text-muted-foreground font-medium text-xs">
+                <span className="px-3 py-1.5 text-muted-foreground font-medium text-xs">
                   {crumb.label}
                 </span>
               )}
