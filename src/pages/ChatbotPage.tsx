@@ -61,6 +61,8 @@ const ChatbotPage = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  if (!cls || !subject) return <div className="p-10 text-center">Not found</div>;
+
   // Real-time search as user types
   const searchQuestions = useCallback(async (query: string) => {
     if (query.trim().length < 2) {
