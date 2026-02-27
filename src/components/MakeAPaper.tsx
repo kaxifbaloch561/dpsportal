@@ -45,14 +45,9 @@ function shuffleArray<T>(arr: T[]): T[] {
 const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName, subjectName }: MakeAPaperProps) => {
   const [step, setStep] = useState<Step>("mode");
   const [selectedChapters, setSelectedChapters] = useState<number[]>([]);
-  const [config, setConfig] = useState<Record<string, number>>({
-    long_question_answers: 3,
-    short_question_answers: 5,
-    fill_in_the_blanks: 5,
-    match_columns: 0,
-    true_false: 0,
-    choose_correct_answer: 5,
-  });
+  const [config, setConfig] = useState<Record<string, number>>({});
+  const [availableTypes, setAvailableTypes] = useState<string[]>([]);
+  const [loadingTypes, setLoadingTypes] = useState(false);
   const [paper, setPaper] = useState<{ type: string; question: string; options?: string[]; correct_option?: string }[]>([]);
   const [allExercises, setAllExercises] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
