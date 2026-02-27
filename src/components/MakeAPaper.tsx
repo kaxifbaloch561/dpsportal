@@ -78,6 +78,8 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     setAvailableTypes([]);
   };
 
+  const [typeCounts, setTypeCounts] = useState<Record<string, number>>({});
+
   const fetchAvailableTypes = async () => {
     setLoadingTypes(true);
     try {
@@ -88,9 +90,13 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
         .eq("subject_id", subjectId)
         .in("chapter_number", selectedChapters);
       if (error) throw error;
-      const types = [...new Set((data || []).map((d: any) => d.exercise_type))];
+      const counts: Record<string, number> = {};
+      (data || []).forEach((d: any) => {
+        counts[d.exercise_type] = (counts[d.exercise_type] || 0) + 1;
+      });
+      setTypeCounts(counts);
+      const types = Object.keys(counts);
       setAvailableTypes(types);
-      // Set default counts only for available types
       const defaults: Record<string, number> = {};
       types.forEach((t) => {
         defaults[t] = t === "long_question_answers" ? 3 : 5;
