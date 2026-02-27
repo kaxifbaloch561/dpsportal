@@ -25,12 +25,12 @@ interface MakeAPaperProps {
 type Step = "mode" | "chapters" | "config" | "paper";
 
 const QUESTION_TYPES = [
-  { key: "long_question_answers", label: "Long Questions" },
-  { key: "short_question_answers", label: "Short Questions" },
+  { key: "long_question_answers", label: "Long Question Answers" },
+  { key: "short_question_answers", label: "Short Question Answers" },
   { key: "fill_in_the_blanks", label: "Fill in the Blanks" },
   { key: "match_columns", label: "Match the Columns" },
   { key: "true_false", label: "True / False" },
-  { key: "choose_correct_answer", label: "MCQs" },
+  { key: "choose_correct_answer", label: "Choose the Correct Answer" },
 ] as const;
 
 function shuffleArray<T>(arr: T[]): T[] {
