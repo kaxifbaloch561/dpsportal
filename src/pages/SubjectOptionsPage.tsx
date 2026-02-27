@@ -76,13 +76,8 @@ const SubjectOptionsPage = () => {
           {options.map((opt) => (
             <button
               key={opt.label}
-              onClick={() => opt.path && navigate(opt.path)}
-              disabled={opt.disabled}
-              className={`group bg-card border border-border rounded-3xl p-8 flex flex-col items-center gap-4 shadow-sm transition-all duration-300 relative overflow-hidden ${
-                opt.disabled
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
-              }`}
+              onClick={() => opt.onClick ? opt.onClick() : opt.path && navigate(opt.path)}
+              className="group bg-card border border-border rounded-3xl p-8 flex flex-col items-center gap-4 shadow-sm transition-all duration-300 relative overflow-hidden hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
             >
               <div
                 className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${opt.gradient} text-white flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-lg`}
@@ -93,13 +88,20 @@ const SubjectOptionsPage = () => {
               <span className="text-xs text-muted-foreground text-center">
                 {opt.description}
               </span>
-              {!opt.disabled && (
-                <div className={`absolute inset-0 bg-gradient-to-br ${opt.gradient} opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300 rounded-3xl`} />
-              )}
+              <div className={`absolute inset-0 bg-gradient-to-br ${opt.gradient} opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300 rounded-3xl`} />
             </button>
           ))}
         </div>
       </div>
+
+      <MakeAPaper
+        open={paperOpen}
+        onOpenChange={setPaperOpen}
+        classId={cls.id}
+        subjectId={subject.id}
+        className={cls.name}
+        subjectName={subject.name}
+      />
     </PageShell>
   );
 };
