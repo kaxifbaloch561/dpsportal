@@ -396,7 +396,7 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
                     </button>
                     <span className="w-8 text-center font-bold text-foreground">{config[type.key] || 0}</span>
                     <button
-                      onClick={() => setConfig((c) => ({ ...c, [type.key]: (c[type.key] || 0) + 1 }))}
+                      onClick={() => setConfig((c) => ({ ...c, [type.key]: Math.min((c[type.key] || 0) + 1, typeCounts[type.key] || 0) }))}
                       className="w-8 h-8 rounded-lg bg-muted text-foreground font-bold flex items-center justify-center hover:bg-muted/80 transition-colors"
                     >
                       +
