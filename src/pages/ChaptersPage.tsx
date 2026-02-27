@@ -82,29 +82,30 @@ const ChaptersPage = () => {
                   value={ch.id}
                   className="bg-card border border-border rounded-2xl px-6 overflow-hidden"
                 >
-                  <AccordionTrigger className="text-base font-semibold hover:no-underline">
-                    <span className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[hsl(235,78%,65%)] to-[hsl(260,70%,60%)] text-white text-xs font-bold flex items-center justify-center shadow-sm">
-                        {ch.chapter_number}
+                  <div className="flex items-center gap-2">
+                    <AccordionTrigger className="text-base font-semibold hover:no-underline flex-1">
+                      <span className="flex items-center gap-3">
+                        <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent text-primary-foreground text-xs font-bold flex items-center justify-center shadow-sm">
+                          {ch.chapter_number}
+                        </span>
+                        {ch.chapter_title}
                       </span>
-                      {ch.chapter_title}
-                    </span>
-                  </AccordionTrigger>
+                    </AccordionTrigger>
+                    <Button
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(
+                          `/class/${classId}/subject/${subjectId}/chapter/${ch.chapter_number}/exercise`
+                        );
+                      }}
+                      className="gap-1.5 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-md shrink-0 text-xs"
+                    >
+                      <ClipboardList className="w-3.5 h-3.5" />
+                      Exercise
+                    </Button>
+                  </div>
                   <AccordionContent>
-                    <div className="pl-11 pb-3">
-                      <Button
-                        onClick={() =>
-                          navigate(
-                            `/class/${classId}/subject/${subjectId}/chapter/${ch.chapter_number}/exercise`
-                          )
-                        }
-                        className="gap-2 rounded-xl bg-gradient-to-r from-[hsl(235,78%,65%)] to-[hsl(260,70%,60%)] hover:opacity-90 text-white shadow-md"
-                      >
-                        <ClipboardList className="w-4 h-4" />
-                        Exercise
-                      </Button>
-                    </div>
-
                     <div className="prose prose-sm text-muted-foreground leading-relaxed py-2 pl-11 max-h-[70vh] overflow-y-auto whitespace-pre-line">
                       {ch.content.split(/\*\*(.*?)\*\*/g).map((part, i) =>
                         i % 2 === 1 ? (
@@ -115,20 +116,6 @@ const ChaptersPage = () => {
                           <span key={i}>{part}</span>
                         )
                       )}
-                    </div>
-
-                    <div className="pl-11 pt-4 pb-2">
-                      <Button
-                        onClick={() =>
-                          navigate(
-                            `/class/${classId}/subject/${subjectId}/chapter/${ch.chapter_number}/exercise`
-                          )
-                        }
-                        className="gap-2 rounded-xl bg-gradient-to-r from-[hsl(235,78%,65%)] to-[hsl(260,70%,60%)] hover:opacity-90 text-white shadow-md"
-                      >
-                        <ClipboardList className="w-4 h-4" />
-                        Exercise
-                      </Button>
                     </div>
                   </AccordionContent>
                 </AccordionItem>
