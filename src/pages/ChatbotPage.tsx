@@ -96,6 +96,8 @@ const ChatbotPage = () => {
     debounceRef.current = setTimeout(() => searchQuestions(value), 150);
   };
 
+  if (!cls || !subject) return <div className="p-10 text-center">Not found</div>;
+
   // Select a suggestion
   const handleSelectSuggestion = (qa: QASuggestion) => {
     setShowSuggestions(false);
