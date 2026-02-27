@@ -74,6 +74,33 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     setSelectedChapters([]);
     setPaper([]);
     setAllExercises([]);
+    setConfig({});
+    setAvailableTypes([]);
+  };
+
+  const fetchAvailableTypes = async () => {
+    setLoadingTypes(true);
+    try {
+      const { data, error } = await supabase
+        .from("chapter_exercises")
+        .select("exercise_type")
+        .eq("class_id", classId)
+        .eq("subject_id", subjectId)
+        .in("chapter_number", selectedChapters);
+      if (error) throw error;
+      const types = [...new Set((data || []).map((d: any) => d.exercise_type))];
+      setAvailableTypes(types);
+      // Set default counts only for available types
+      const defaults: Record<string, number> = {};
+      types.forEach((t) => {
+        defaults[t] = t === "long_question_answers" ? 3 : 5;
+      });
+      setConfig(defaults);
+    } catch {
+      toast.error("Failed to load exercise types");
+    } finally {
+      setLoadingTypes(false);
+    }
   };
 
   const handleClose = (val: boolean) => {
