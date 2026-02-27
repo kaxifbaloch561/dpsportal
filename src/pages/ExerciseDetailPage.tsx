@@ -59,15 +59,30 @@ const ExerciseDetailPage = () => {
       ]} />
 
       <div className="flex-1 px-4 sm:px-8 pb-8 overflow-y-auto">
-        <h2
-          className="text-2xl font-bold text-foreground mb-6 mt-4"
-          style={{
-            animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
-            opacity: 0,
-          }}
-        >
-          {typeLabel}
-        </h2>
+        <div className="flex items-center justify-between mb-6 mt-4">
+          <h2
+            className="text-2xl font-bold text-foreground"
+            style={{
+              animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
+              opacity: 0,
+            }}
+          >
+            {typeLabel}
+          </h2>
+          {exercises && exercises.length > 0 && (
+            <button
+              onClick={() => handleDownloadPdf(exercises, typeLabel, cls?.name || "", subject?.name || "", chapNum)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md"
+              style={{
+                animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.4s",
+                opacity: 0,
+              }}
+            >
+              <Download className="w-4 h-4" />
+              Download PDF
+            </button>
+          )}
+        </div>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
