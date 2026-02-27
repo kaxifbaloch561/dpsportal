@@ -1,15 +1,21 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { classesData } from "@/data/classesData";
-import { Send, Bot, User, Sparkles, Zap, BookOpen, HelpCircle } from "lucide-react";
+import { Send, Bot, User, Sparkles, Zap, BookOpen, HelpCircle, Search } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+}
+
+interface QASuggestion {
+  question: string;
+  answer: string;
 }
 
 const subjectGradients: Record<string, { bg: string; glow: string; accent: string }> = {
@@ -22,8 +28,6 @@ const subjectGradients: Record<string, { bg: string; glow: string; accent: strin
   default: { bg: "linear-gradient(135deg, hsl(235, 78%, 55%), hsl(14, 100%, 65%))", glow: "hsl(235, 78%, 60%)", accent: "hsl(235, 78%, 93%)" },
 };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chatbot`;
-
 const ChatbotPage = () => {
   const { classId, subjectId } = useParams();
   const cls = classesData.find((c) => c.id === Number(classId));
@@ -33,49 +37,139 @@ const ChatbotPage = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [suggestions, setSuggestions] = useState<QASuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const theme = subjectGradients[subject?.id || "default"] || subjectGradients.default;
+  const classNum = Number(classId);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Real-time search as user types
+  const searchQuestions = useCallback(async (query: string) => {
+    if (query.trim().length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      const { data } = await supabase
+        .from("chapter_qa")
+        .select("question, answer")
+        .eq("class_id", classNum)
+        .eq("subject_id", subjectId!)
+        .ilike("question", `%${query.trim()}%`)
+        .limit(8);
+
+      if (data && data.length > 0) {
+        setSuggestions(data);
+        setShowSuggestions(true);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    } catch (err) {
+      console.error("Search error:", err);
+    }
+  }, [classNum, subjectId]);
+
+  const handleInputChange = (value: string) => {
+    setInput(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => searchQuestions(value), 150);
+  };
+
   if (!cls || !subject) return <div className="p-10 text-center">Not found</div>;
 
-  const theme = subjectGradients[subject.id] || subjectGradients.default;
+  // Select a suggestion
+  const handleSelectSuggestion = (qa: QASuggestion) => {
+    setShowSuggestions(false);
+    setInput("");
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: qa.question },
+      { role: "assistant", content: qa.answer },
+    ]);
+  };
 
+  // Send question - search database directly
   const handleSend = async () => {
     const text = input.trim();
     if (!text || isLoading) return;
 
+    setShowSuggestions(false);
     const userMsg: Message = { role: "user", content: text };
-    const updatedMessages = [...messages, userMsg];
-    setMessages(updatedMessages);
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsLoading(true);
 
     try {
-      const resp = await fetch(CHAT_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({
-          messages: updatedMessages.map((m) => ({ role: m.role, content: m.content })),
-          subject: subject.name,
-          className: cls.name,
-        }),
-      });
+      // Try ILIKE search
+      const keywords = text
+        .toLowerCase()
+        .replace(/[^\w\s]/g, "")
+        .split(/\s+/)
+        .filter((w) => w.length > 2);
 
-      if (!resp.ok) {
-        throw new Error("Failed to get response");
+      let results: QASuggestion[] = [];
+
+      // Try full text search first
+      const searchTerms = keywords.join(" & ");
+      if (searchTerms) {
+        const { data: ftsData } = await supabase
+          .from("chapter_qa")
+          .select("question, answer")
+          .eq("class_id", classNum)
+          .eq("subject_id", subjectId!)
+          .textSearch("search_vector", searchTerms, { type: "plain" })
+          .limit(3);
+        results = ftsData || [];
       }
 
-      const data = await resp.json();
-      const answer = data.answer || "Sorry, something went wrong.";
+      // Fallback: ILIKE keyword search
+      if (results.length === 0) {
+        for (const keyword of keywords) {
+          const { data: ilikeData } = await supabase
+            .from("chapter_qa")
+            .select("question, answer")
+            .eq("class_id", classNum)
+            .eq("subject_id", subjectId!)
+            .ilike("question", `%${keyword}%`)
+            .limit(3);
+          if (ilikeData && ilikeData.length > 0) {
+            results = ilikeData;
+            break;
+          }
+        }
+      }
 
-      setMessages((prev) => [...prev, { role: "assistant", content: answer }]);
-    } catch (err: unknown) {
+      if (results.length > 0) {
+        const answer = results.map((r) => r.answer).join("\n\n---\n\n");
+        setMessages((prev) => [...prev, { role: "assistant", content: answer }]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "Sorry, this question is not available in our database yet. Please try a different question from your syllabus." },
+        ]);
+      }
+    } catch (err) {
       console.error("Chatbot error:", err);
       setMessages((prev) => [
         ...prev,
@@ -86,7 +180,7 @@ const ChatbotPage = () => {
     }
   };
 
-  const suggestions = [
+  const quickSuggestions = [
     { icon: BookOpen, text: `Explain a key concept in ${subject.name}` },
     { icon: HelpCircle, text: "Summarize the latest chapter" },
     { icon: Zap, text: "Help me with practice questions" },
@@ -160,12 +254,12 @@ const ChatbotPage = () => {
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-xl">
-                  {suggestions.map((s, idx) => {
+                  {quickSuggestions.map((s, idx) => {
                     const Icon = s.icon;
                     return (
                       <button
                         key={idx}
-                        onClick={() => setInput(s.text)}
+                        onClick={() => handleInputChange(s.text)}
                         className="group relative flex flex-col items-center gap-2.5 p-4 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm text-center hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden"
                         style={{ animation: `cardEntrance 0.25s ease-out ${0.1 + idx * 0.06}s both` }}
                       >
@@ -262,7 +356,38 @@ const ChatbotPage = () => {
 
         {/* Input Bar */}
         <div className="relative z-10 px-4 sm:px-8 pb-5 pt-2">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto relative" ref={suggestionsRef}>
+            {/* Autocomplete suggestions dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div
+                className="absolute bottom-full mb-2 left-0 right-0 bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-2xl overflow-hidden z-50"
+                style={{ animation: "cardEntrance 0.15s ease-out forwards", boxShadow: `0 -8px 40px -12px ${theme.glow}15` }}
+              >
+                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40">
+                  <Search size={14} style={{ color: theme.glow }} />
+                  <span className="text-xs font-semibold text-muted-foreground">
+                    {suggestions.length} matching question{suggestions.length > 1 ? "s" : ""} found
+                  </span>
+                </div>
+                <div className="max-h-64 overflow-y-auto">
+                  {suggestions.map((qa, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleSelectSuggestion(qa)}
+                      className="w-full text-left px-4 py-3 hover:bg-accent/50 transition-colors duration-150 border-b border-border/20 last:border-b-0 group"
+                    >
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                        {qa.question}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                        {qa.answer.substring(0, 100)}...
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <form
               onSubmit={(e) => { e.preventDefault(); handleSend(); }}
               className="relative flex items-center gap-3 p-2 rounded-[22px] border bg-card/80 backdrop-blur-xl transition-all duration-400"
@@ -279,7 +404,7 @@ const ChatbotPage = () => {
               />
               <input
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => handleInputChange(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 placeholder={`Ask about ${subject.name}...`}
