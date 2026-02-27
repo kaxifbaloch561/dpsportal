@@ -19,6 +19,88 @@ const EXERCISE_TYPE_LABELS: Record<string, string> = {
   short_question_answers: "Short Question Answers",
 };
 
+/** Generate and download a PDF of exercises */
+const handleDownloadPdf = (
+  exercises: any[],
+  typeLabel: string,
+  className: string,
+  subjectName: string,
+  chapNum: number
+) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 18;
+  const maxWidth = pageWidth - margin * 2;
+  let y = 20;
+
+  const checkPage = (needed: number) => {
+    if (y + needed > doc.internal.pageSize.getHeight() - 15) {
+      doc.addPage();
+      y = 20;
+    }
+  };
+
+  // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(`${className} — ${subjectName}`, margin, y);
+  y += 8;
+  doc.setFontSize(13);
+  doc.text(`Chapter ${chapNum} — ${typeLabel}`, margin, y);
+  y += 12;
+
+  // Separator line
+  doc.setDrawColor(200, 200, 200);
+  doc.line(margin, y, pageWidth - margin, y);
+  y += 8;
+
+  exercises.forEach((item, idx) => {
+    checkPage(30);
+
+    // Question
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    const qLines = doc.splitTextToSize(`Q.${idx + 1}  ${item.question}`, maxWidth);
+    doc.text(qLines, margin, y);
+    y += qLines.length * 5.5 + 3;
+
+    // Answer
+    const ansText = item.answer || item.correct_option || "";
+    if (ansText) {
+      checkPage(15);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(80, 80, 80);
+      doc.text("Ans:", margin + 2, y);
+      y += 5;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(50, 50, 50);
+      const aLines = doc.splitTextToSize(ansText, maxWidth - 4);
+      aLines.forEach((line: string) => {
+        checkPage(6);
+        doc.text(line, margin + 2, y);
+        y += 5;
+      });
+      y += 2;
+    }
+
+    // Separator between questions
+    doc.setTextColor(0, 0, 0);
+    y += 4;
+    if (idx < exercises.length - 1) {
+      doc.setDrawColor(230, 230, 230);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 6;
+    }
+  });
+
+  const fileName = `Ch${chapNum}_${typeLabel.replace(/\s+/g, "_")}.pdf`;
+  doc.save(fileName);
+  toast.success("PDF downloaded!");
+};
+
 const ExerciseDetailPage = () => {
   const { classId, subjectId, chapterNumber, exerciseType } = useParams();
   const cls = classesData.find((c) => c.id === Number(classId));
