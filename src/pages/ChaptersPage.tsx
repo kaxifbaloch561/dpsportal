@@ -282,16 +282,8 @@ const ChaptersPage = () => {
                     </Button>
                   </div>
                   <AccordionContent>
-                    <div className="prose prose-sm text-muted-foreground leading-relaxed py-2 pl-11 max-h-[70vh] overflow-y-auto whitespace-pre-line">
-                      {ch.content.split(/\*\*(.*?)\*\*/g).map((part, i) =>
-                        i % 2 === 1 ? (
-                          <strong key={i} className="text-foreground block mt-4 mb-1">
-                            {part}
-                          </strong>
-                        ) : (
-                          <span key={i}>{part}</span>
-                        )
-                      )}
+                    <div className="max-h-[70vh] overflow-y-auto pl-8 scrollbar-thin">
+                      <FormattedChapterContent content={ch.content} />
                     </div>
                   </AccordionContent>
                 </AccordionItem>
