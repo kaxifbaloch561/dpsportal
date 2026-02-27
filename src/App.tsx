@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import SubjectsPage from "./pages/SubjectsPage";
 import SubjectOptionsPage from "./pages/SubjectOptionsPage";
 import ChaptersPage from "./pages/ChaptersPage";
+import ChapterViewPage from "./pages/ChapterViewPage";
 import ExercisePage from "./pages/ExercisePage";
 import ExerciseDetailPage from "./pages/ExerciseDetailPage";
 import ChatbotPage from "./pages/ChatbotPage";
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/class/:classId" element={<SubjectsPage />} />
           <Route path="/class/:classId/subject/:subjectId" element={<SubjectOptionsPage />} />
           <Route path="/class/:classId/subject/:subjectId/chapters" element={<ChaptersPage />} />
+          <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber" element={<ChapterViewPage />} />
           <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber/exercise" element={<ExercisePage />} />
           <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber/exercise/:exerciseType" element={<ExerciseDetailPage />} />
           <Route path="/class/:classId/subject/:subjectId/chat" element={<ChatbotPage />} />

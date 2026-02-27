@@ -11,17 +11,17 @@ const DashboardHeader = ({ showBack = false, subtitle }: DashboardHeaderProps) =
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center gap-4 px-8 pt-8 pb-4">
+    <div className="flex flex-col items-center gap-2 px-8 pt-8 pb-4 relative">
       {showBack && (
         <button
           onClick={() => navigate(-1)}
-          className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+          className="absolute left-8 top-8 w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300"
         >
           <ArrowLeft size={20} />
         </button>
       )}
       <img src={schoolLogo} alt="DPS SIBI" className="w-14 h-14" />
-      <div>
+      <div className="text-center">
         <h1 className="text-sm font-semibold text-foreground tracking-widest uppercase font-sans">
           DPS Portal
         </h1>
