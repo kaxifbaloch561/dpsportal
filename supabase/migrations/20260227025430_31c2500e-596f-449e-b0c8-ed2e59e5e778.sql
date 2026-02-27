@@ -1,0 +1,1 @@
+ALTER TABLE public.chapter_exercises DROP CONSTRAINT IF EXISTS chapter_exercises_exercise_type_check;
