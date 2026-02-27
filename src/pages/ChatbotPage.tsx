@@ -1,13 +1,164 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { classesData } from "@/data/classesData";
-import { Send, Bot, User, Sparkles, Zap, BookOpen, HelpCircle, Search } from "lucide-react";
+import { Send, Bot, User, Sparkles, Zap, BookOpen, HelpCircle, Search, Copy, Check } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import { supabase } from "@/integrations/supabase/client";
 
+/* ── Formatted answer renderer ── */
+const FormattedMessage = ({ content, glow }: { content: string; glow: string }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  // Split by --- separator for multi-answer results
+  const sections = content.split(/\n\n---\n\n/);
+
+  const renderSection = (text: string) => {
+    // Split into lines
+    const lines = text.split("\n").filter((l) => l.trim());
+    const elements: JSX.Element[] = [];
+
+    lines.forEach((line, idx) => {
+      const trimmed = line.trim();
+
+      // Bold heading pattern: **text** or (a) Title: or Roman numeral headings
+      if (/^\*\*(.+)\*\*$/.test(trimmed)) {
+        const match = trimmed.match(/^\*\*(.+)\*\*$/);
+        elements.push(
+          <h4 key={idx} className="font-bold text-foreground mt-3 mb-1 text-[0.94rem]">
+            {match![1]}
+          </h4>
+        );
+        return;
+      }
+
+      // Heading-like: starts with (a), (b), (c) etc.
+      if (/^\([a-z]\)\s+/i.test(trimmed)) {
+        const headingMatch = trimmed.match(/^(\([a-z]\))\s+(.+)/i);
+        if (headingMatch) {
+          // Check if it has a colon to split title from content
+          const colonIdx = headingMatch[2].indexOf(":");
+          if (colonIdx > 0 && colonIdx < 60) {
+            const title = headingMatch[2].substring(0, colonIdx);
+            const rest = headingMatch[2].substring(colonIdx + 1).trim();
+            elements.push(
+              <div key={idx} className="mt-3 mb-1">
+                <span className="font-bold text-foreground" style={{ color: glow }}>
+                  {headingMatch[1]}
+                </span>{" "}
+                <span className="font-bold text-foreground">{title}:</span>
+                {rest && <span className="text-muted-foreground"> {rest}</span>}
+              </div>
+            );
+          } else {
+            elements.push(
+              <div key={idx} className="mt-3 mb-1">
+                <span className="font-bold" style={{ color: glow }}>{headingMatch[1]}</span>{" "}
+                <span className="font-semibold text-foreground">{headingMatch[2]}</span>
+              </div>
+            );
+          }
+          return;
+        }
+      }
+
+      // Numbered points: 1- or 1. or i. or ii. or iv. etc.
+      if (/^(\d+[-.)]\s|[ivx]+[.)]\s)/i.test(trimmed)) {
+        const numMatch = trimmed.match(/^(\d+[-.)]\s*|[ivx]+[.)]\s*)(.*)/i);
+        if (numMatch) {
+          const label = numMatch[1].trim();
+          const body = numMatch[2];
+          // Check for bold part before colon
+          const colonIdx = body.indexOf(":");
+          if (colonIdx > 0 && colonIdx < 80) {
+            const boldPart = body.substring(0, colonIdx);
+            const restPart = body.substring(colonIdx + 1).trim();
+            elements.push(
+              <div key={idx} className="flex gap-2.5 pl-2 py-0.5">
+                <span className="font-bold shrink-0 min-w-[1.5rem] text-right" style={{ color: glow }}>
+                  {label}
+                </span>
+                <span className="text-foreground leading-[1.8]">
+                  <strong>{boldPart}:</strong> {restPart}
+                </span>
+              </div>
+            );
+          } else {
+            elements.push(
+              <div key={idx} className="flex gap-2.5 pl-2 py-0.5">
+                <span className="font-bold shrink-0 min-w-[1.5rem] text-right" style={{ color: glow }}>
+                  {label}
+                </span>
+                <span className="text-foreground leading-[1.8]">{body}</span>
+              </div>
+            );
+          }
+          return;
+        }
+      }
+
+      // Dash list: - item
+      if (/^[-–•]\s/.test(trimmed)) {
+        elements.push(
+          <div key={idx} className="flex gap-2 pl-3 py-0.5">
+            <span className="shrink-0 mt-[0.6em]" style={{ color: glow }}>•</span>
+            <span className="text-foreground leading-[1.8]">{trimmed.replace(/^[-–•]\s*/, "")}</span>
+          </div>
+        );
+        return;
+      }
+
+      // Heading with colon at beginning (bold key term)
+      if (/^[A-Z][^:]{2,50}:\s/.test(trimmed)) {
+        const colonIdx = trimmed.indexOf(":");
+        const title = trimmed.substring(0, colonIdx);
+        const rest = trimmed.substring(colonIdx + 1).trim();
+        elements.push(
+          <p key={idx} className="leading-[1.8] py-0.5">
+            <strong className="text-foreground">{title}:</strong>{" "}
+            <span className="text-foreground">{rest}</span>
+          </p>
+        );
+        return;
+      }
+
+      // Regular paragraph
+      elements.push(
+        <p key={idx} className="leading-[1.8] text-foreground py-0.5">{trimmed}</p>
+      );
+    });
+
+    return elements;
+  };
+
+  return (
+    <div className="relative group">
+      <button
+        onClick={handleCopy}
+        className="absolute top-0 right-0 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-accent/50"
+        title="Copy answer"
+      >
+        {copied ? <Check size={13} className="text-green-500" /> : <Copy size={13} className="text-muted-foreground" />}
+      </button>
+      <div className="space-y-0.5 text-[0.925rem]">
+        {sections.map((section, sIdx) => (
+          <div key={sIdx}>
+            {sIdx > 0 && <hr className="my-3 border-border/40" />}
+            {renderSection(section)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -283,9 +434,9 @@ const ChatbotPage = () => {
                   </div>
                 )}
                 <div
-                  className={`max-w-[78%] rounded-[20px] px-5 py-4 text-sm leading-relaxed whitespace-pre-wrap ${
+                  className={`max-w-[82%] rounded-[20px] px-5 py-4 text-sm ${
                     msg.role === "user"
-                      ? "rounded-br-lg text-white"
+                      ? "rounded-br-lg text-white whitespace-pre-wrap leading-relaxed"
                       : "bg-card/90 backdrop-blur-sm text-foreground rounded-bl-lg border border-border/40"
                   }`}
                   style={
@@ -294,7 +445,11 @@ const ChatbotPage = () => {
                       : { boxShadow: `0 2px 12px -4px hsl(0 0% 0% / 0.06)` }
                   }
                 >
-                  {msg.content}
+                  {msg.role === "assistant" ? (
+                    <FormattedMessage content={msg.content} glow={theme.glow} />
+                  ) : (
+                    msg.content
+                  )}
                 </div>
                 {msg.role === "user" && (
                   <div className="shrink-0 mt-1">
