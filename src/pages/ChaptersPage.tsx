@@ -76,7 +76,7 @@ const ChaptersPage = () => {
             }}
           >
             <Accordion type="single" collapsible className="space-y-3">
-              {chapters.map((ch) => (
+              {chapters.map((ch, index) => (
                 <AccordionItem
                   key={ch.id}
                   value={ch.id}

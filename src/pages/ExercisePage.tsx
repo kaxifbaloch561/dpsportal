@@ -5,8 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Loader2, ClipboardList } from "lucide-react";
 
 const EXERCISE_TYPE_LABELS: Record<string, string> = {
   fill_in_the_blanks: "Fill in the Blanks",
