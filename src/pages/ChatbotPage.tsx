@@ -434,9 +434,9 @@ const ChatbotPage = () => {
                   </div>
                 )}
                 <div
-                  className={`max-w-[78%] rounded-[20px] px-5 py-4 text-sm leading-relaxed whitespace-pre-wrap ${
+                  className={`max-w-[82%] rounded-[20px] px-5 py-4 text-sm ${
                     msg.role === "user"
-                      ? "rounded-br-lg text-white"
+                      ? "rounded-br-lg text-white whitespace-pre-wrap leading-relaxed"
                       : "bg-card/90 backdrop-blur-sm text-foreground rounded-bl-lg border border-border/40"
                   }`}
                   style={
@@ -445,7 +445,11 @@ const ChatbotPage = () => {
                       : { boxShadow: `0 2px 12px -4px hsl(0 0% 0% / 0.06)` }
                   }
                 >
-                  {msg.content}
+                  {msg.role === "assistant" ? (
+                    <FormattedMessage content={msg.content} glow={theme.glow} />
+                  ) : (
+                    msg.content
+                  )}
                 </div>
                 {msg.role === "user" && (
                   <div className="shrink-0 mt-1">
