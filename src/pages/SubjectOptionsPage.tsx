@@ -33,12 +33,12 @@ const SubjectOptionsPage = () => {
       gradient: "from-[hsl(14,100%,60%)] to-[hsl(340,80%,55%)]",
     },
     {
-      label: "Practice Questions",
-      icon: <ClipboardList size={28} />,
-      description: "Coming soon",
+      label: "Make a Paper",
+      icon: <FileText size={28} />,
+      description: "Generate custom test papers from exercises",
       path: "",
-      gradient: "from-[hsl(220,10%,70%)] to-[hsl(220,10%,55%)]",
-      disabled: true,
+      gradient: "from-[hsl(160,70%,45%)] to-[hsl(200,80%,50%)]",
+      onClick: () => setPaperOpen(true),
     },
   ];
 
