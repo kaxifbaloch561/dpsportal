@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { classesData } from "@/data/classesData";
-import { MessageSquare, BookOpen, ClipboardList } from "lucide-react";
+import { MessageSquare, BookOpen, FileText } from "lucide-react";
 import SubjectBadge from "@/components/SubjectBadge";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
+import MakeAPaper from "@/components/MakeAPaper";
 
 const SubjectOptionsPage = () => {
   const { classId, subjectId } = useParams();
   const navigate = useNavigate();
+  const [paperOpen, setPaperOpen] = useState(false);
   const cls = classesData.find((c) => c.id === Number(classId));
   const subject = cls?.subjects.find((s) => s.id === subjectId);
 
@@ -30,12 +33,12 @@ const SubjectOptionsPage = () => {
       gradient: "from-[hsl(14,100%,60%)] to-[hsl(340,80%,55%)]",
     },
     {
-      label: "Practice Questions",
-      icon: <ClipboardList size={28} />,
-      description: "Coming soon",
+      label: "Make a Paper",
+      icon: <FileText size={28} />,
+      description: "Generate custom test papers from exercises",
       path: "",
-      gradient: "from-[hsl(220,10%,70%)] to-[hsl(220,10%,55%)]",
-      disabled: true,
+      gradient: "from-[hsl(160,70%,45%)] to-[hsl(200,80%,50%)]",
+      onClick: () => setPaperOpen(true),
     },
   ];
 
@@ -73,13 +76,8 @@ const SubjectOptionsPage = () => {
           {options.map((opt) => (
             <button
               key={opt.label}
-              onClick={() => opt.path && navigate(opt.path)}
-              disabled={opt.disabled}
-              className={`group bg-card border border-border rounded-3xl p-8 flex flex-col items-center gap-4 shadow-sm transition-all duration-300 relative overflow-hidden ${
-                opt.disabled
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
-              }`}
+              onClick={() => opt.onClick ? opt.onClick() : opt.path && navigate(opt.path)}
+              className="group bg-card border border-border rounded-3xl p-8 flex flex-col items-center gap-4 shadow-sm transition-all duration-300 relative overflow-hidden hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
             >
               <div
                 className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${opt.gradient} text-white flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-lg`}
@@ -90,13 +88,20 @@ const SubjectOptionsPage = () => {
               <span className="text-xs text-muted-foreground text-center">
                 {opt.description}
               </span>
-              {!opt.disabled && (
-                <div className={`absolute inset-0 bg-gradient-to-br ${opt.gradient} opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300 rounded-3xl`} />
-              )}
+              <div className={`absolute inset-0 bg-gradient-to-br ${opt.gradient} opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300 rounded-3xl`} />
             </button>
           ))}
         </div>
       </div>
+
+      <MakeAPaper
+        open={paperOpen}
+        onOpenChange={setPaperOpen}
+        classId={cls.id}
+        subjectId={subject.id}
+        className={cls.name}
+        subjectName={subject.name}
+      />
     </PageShell>
   );
 };
