@@ -128,7 +128,7 @@ function renderStructuredText(text: string) {
   const sectionHeaderMatch = text.match(/^(\([a-z]\)\s*)?([A-Z][A-Za-z\s]+):\s*/);
 
   // Try to split by numbered points like "1-", "2-", "i.", "ii." etc.
-  const numberedPattern = /\s*(?=\d+[-–]\s)/;
+  const numberedPattern = /\s+(?=\d+[-–]\s)/;
   const romanPattern = /\s+(?=(?:i{1,3}|iv|vi{0,3}|ix|x)\.\s)/i;
 
   let heading: string | null = null;
