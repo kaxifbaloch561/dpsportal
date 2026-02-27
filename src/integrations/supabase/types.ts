@@ -127,7 +127,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      search_chapter_qa: {
+        Args: {
+          p_class_id: number
+          p_limit?: number
+          p_query: string
+          p_subject_id: string
+        }
+        Returns: {
+          answer: string
+          question: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
