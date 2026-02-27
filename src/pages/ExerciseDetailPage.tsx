@@ -1,11 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { classesData } from "@/data/classesData";
 import { supabase } from "@/integrations/supabase/client";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import { Loader2 } from "lucide-react";
+import { Loader2, Copy, Check } from "lucide-react";
+import { toast } from "sonner";
 
 const EXERCISE_TYPE_LABELS: Record<string, string> = {
   fill_in_the_blanks: "Fill in the Blanks",
@@ -101,65 +103,142 @@ interface ExerciseItem {
   exercise_type: string;
 }
 
-/** Renders answer text with proper formatting: detects numbered points, Roman numerals, and paragraphs */
+/** Renders answer text with proper headings, bold text, and structured bullet points */
 const FormattedAnswer = ({ text }: { text: string }) => {
-  // Split by common delimiters for structured answers
-  // Detect patterns like "i.", "ii.", "1-", "2-", "(a)", etc.
-  const lines = text.split(/(?<=\.)\s+(?=(?:[ivxlcdm]+\.|[0-9]+[-.)]\s|\([a-z]\)))/i);
-  
-  // If no structured splitting found, try splitting by sentence-ending patterns followed by numbered items
-  const segments = lines.length <= 1 
-    ? text.split(/\s*(?=\d+[-–]\s)/) 
-    : lines;
+  // Split into paragraphs by double-newline or by section headers like (a), (b)
+  const sections = text.split(/\n\n+/);
 
-  // If still single block, render as clean paragraphs split by double-space or period patterns
-  if (segments.length <= 1) {
-    // Try splitting by (a), (b) style headers
-    const headerSplit = text.split(/\s*(?=\([a-z]\)\s)/i);
-    if (headerSplit.length > 1) {
-      return (
-        <div className="space-y-3">
-          {headerSplit.map((seg, i) => {
-            const headerMatch = seg.match(/^\(([a-z])\)\s*(.*)/i);
-            if (headerMatch) {
-              const [, , rest] = headerMatch;
-              // Further split sub-content by roman numerals
-              const subPoints = rest.split(/\s*(?=[ivx]+\.\s)/i).filter(Boolean);
-              return (
-                <div key={i}>
-                  <p className="font-semibold text-foreground mb-2">{seg.match(/^\([a-z]\)\s*[^:]+:/i)?.[0] || seg.substring(0, seg.indexOf(':') + 1) || seg.substring(0, 60)}</p>
-                  {subPoints.length > 1 ? (
-                    <div className="space-y-1.5">
-                      {subPoints.map((point, j) => (
-                        <p key={j} className="text-foreground/90 leading-relaxed pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[0.6em] before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary/30">
-                          {point.trim()}
-                        </p>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-foreground/90 leading-relaxed">{rest.trim()}</p>
-                  )}
-                </div>
-              );
-            }
-            return <p key={i} className="text-foreground/90 leading-relaxed">{seg.trim()}</p>;
-          })}
-        </div>
-      );
-    }
-
-    // Plain paragraph
-    return <p className="text-foreground/90 leading-[1.8] text-[0.935rem]">{text}</p>;
+  // If single block, parse inline structure
+  if (sections.length <= 1) {
+    return <>{renderStructuredText(text)}</>;
   }
 
   return (
-    <div className="space-y-2">
-      {segments.map((seg, i) => (
-        <p key={i} className="text-foreground/90 leading-[1.8] text-[0.935rem] pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[0.65em] before:w-1.5 before:h-1.5 before:rounded-full before:bg-primary/30">
-          {seg.trim()}
-        </p>
+    <div className="space-y-4">
+      {sections.map((section, i) => (
+        <div key={i}>{renderStructuredText(section.trim())}</div>
       ))}
     </div>
+  );
+};
+
+/** Parse a text block and render with headings, bold, and bullet points */
+function renderStructuredText(text: string) {
+  // Check for section headers like "(a) Agricultural Reforms:" or "Achievements:" or "Challenges:"
+  const sectionHeaderMatch = text.match(/^(\([a-z]\)\s*)?([A-Z][A-Za-z\s]+):\s*/);
+
+  // Try to split by numbered points like "1-", "2-", "i.", "ii." etc.
+  const numberedPattern = /\s*(?=\d+[-–]\s)/;
+  const romanPattern = /\s+(?=(?:i{1,3}|iv|vi{0,3}|ix|x)\.\s)/i;
+
+  let heading: string | null = null;
+  let body = text;
+
+  if (sectionHeaderMatch) {
+    heading = sectionHeaderMatch[0].replace(/:?\s*$/, '');
+    body = text.slice(sectionHeaderMatch[0].length);
+  }
+
+  // Try splitting by numbered items (1-, 2-, etc.)
+  let points = body.split(numberedPattern).filter(Boolean);
+
+  // If no numbered split, try roman numerals
+  if (points.length <= 1) {
+    points = body.split(romanPattern).filter(Boolean);
+  }
+
+  // If no structured points found, render as paragraph
+  if (points.length <= 1) {
+    return (
+      <div>
+        {heading && (
+          <h4 className="font-bold text-foreground text-[0.95rem] mb-2">{heading}</h4>
+        )}
+        <p className="text-foreground/85 leading-[1.85] text-[0.925rem]">
+          {renderBoldText(body.trim())}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {heading && (
+        <h4 className="font-bold text-foreground text-[0.95rem] mb-2.5">{heading}</h4>
+      )}
+      <div className="space-y-2">
+        {points.map((point, i) => (
+          <div
+            key={i}
+            className="flex gap-2.5 text-[0.925rem] leading-[1.85] text-foreground/85"
+          >
+            <span className="flex-shrink-0 mt-[0.45em] w-1.5 h-1.5 rounded-full bg-primary/40" />
+            <span>{renderBoldText(point.trim())}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Render text with **bold** markers or detect key phrases to bold */
+function renderBoldText(text: string): React.ReactNode {
+  // Handle explicit bold markers **text**
+  const boldPattern = /\*\*(.*?)\*\*/g;
+  if (boldPattern.test(text)) {
+    const parts = text.split(/\*\*(.*?)\*\*/g);
+    return (
+      <>
+        {parts.map((part, i) =>
+          i % 2 === 1 ? (
+            <strong key={i} className="font-semibold text-foreground">{part}</strong>
+          ) : (
+            <span key={i}>{part}</span>
+          )
+        )}
+      </>
+    );
+  }
+
+  // Auto-bold key terms before colons in list items, e.g. "Written Constitution: The..."
+  const colonMatch = text.match(/^([ivx]+\.\s*)?([A-Z][A-Za-z\s\-&'']+):\s*/i);
+  if (colonMatch) {
+    const prefix = colonMatch[0];
+    const rest = text.slice(prefix.length);
+    return (
+      <>
+        <strong className="font-semibold text-foreground">{prefix.trim()}</strong>{" "}
+        {rest}
+      </>
+    );
+  }
+
+  return text;
+}
+
+/** Copy button component */
+const CopyButton = ({ text }: { text: string }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Failed to copy");
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="flex-shrink-0 p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+      title="Copy question & answer"
+    >
+      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+    </button>
   );
 };
 
@@ -169,21 +248,25 @@ const ExerciseCard = ({ item, index, exerciseType }: { item: ExerciseItem; index
   const isShortAnswer = exerciseType === "short_question_answers";
   const options = (item.options as string[]) || [];
 
+  // Build full copyable text
+  const copyText = `Q.${index} ${item.question}\n\nAns: ${item.answer || item.correct_option || ""}`;
+
   return (
     <div className="bg-card border border-border rounded-2xl p-6 sm:p-7">
-      {/* Question */}
-      <div className="flex gap-3 mb-4">
+      {/* Question + Copy */}
+      <div className="flex gap-3 items-start">
         <span className="flex-shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary text-sm font-bold mt-0.5">
           Q.{index}
         </span>
-        <p className="font-semibold text-foreground text-[1.05rem] leading-relaxed pt-0.5">
+        <p className="flex-1 font-semibold text-foreground text-[1.05rem] leading-relaxed pt-0.5">
           {item.question}
         </p>
+        <CopyButton text={copyText} />
       </div>
 
       {/* MCQ Options */}
       {isMCQ && options.length > 0 && (
-        <div className="ml-11 space-y-1.5 mb-4">
+        <div className="ml-11 space-y-1.5 mt-3 mb-4">
           {options.map((opt: string, i: number) => {
             const letter = String.fromCharCode(65 + i);
             return (
@@ -197,11 +280,11 @@ const ExerciseCard = ({ item, index, exerciseType }: { item: ExerciseItem; index
 
       {/* Answer Section */}
       {item.answer && (
-        <div className="ml-11 mt-3 pt-3 border-t border-border/60">
-          <p className="text-xs font-semibold uppercase tracking-wider text-primary/70 mb-2">
-            {isLongAnswer ? "Answer" : isShortAnswer ? "Answer" : "Ans"}
+        <div className="ml-11 mt-4 pt-4 border-t border-border/60">
+          <p className="text-xs font-bold uppercase tracking-widest text-primary/80 mb-3">
+            {isLongAnswer || isShortAnswer ? "Answer" : "Ans"}
           </p>
-          <div className={isLongAnswer || isShortAnswer ? "text-[0.935rem]" : ""}>
+          <div className={isLongAnswer || isShortAnswer ? "text-[0.925rem]" : ""}>
             <FormattedAnswer text={item.answer} />
           </div>
         </div>
@@ -209,8 +292,8 @@ const ExerciseCard = ({ item, index, exerciseType }: { item: ExerciseItem; index
 
       {/* MCQ Correct Answer */}
       {isMCQ && item.correct_option && !item.answer && (
-        <div className="ml-11 mt-3 pt-3 border-t border-border/60">
-          <p className="text-xs font-semibold uppercase tracking-wider text-primary/70 mb-1">
+        <div className="ml-11 mt-4 pt-4 border-t border-border/60">
+          <p className="text-xs font-bold uppercase tracking-widest text-primary/80 mb-1.5">
             Correct Answer
           </p>
           <p className="text-sm text-foreground font-medium">
