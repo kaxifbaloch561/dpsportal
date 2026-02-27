@@ -383,7 +383,10 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
             <div className="space-y-3 mb-6">
               {QUESTION_TYPES.filter((type) => availableTypes.includes(type.key)).map((type) => (
                 <div key={type.key} className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
-                  <span className="text-sm font-medium text-foreground">{type.label}</span>
+                  <div>
+                    <span className="text-sm font-medium text-foreground">{type.label}</span>
+                    <span className="text-xs text-muted-foreground ml-2">({typeCounts[type.key] || 0} available)</span>
+                  </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setConfig((c) => ({ ...c, [type.key]: Math.max(0, (c[type.key] || 0) - 1) }))}
