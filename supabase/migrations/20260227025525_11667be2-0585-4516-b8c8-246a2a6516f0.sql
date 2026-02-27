@@ -1,0 +1,1 @@
+ALTER TABLE public.chapter_exercises ADD CONSTRAINT chapter_exercises_exercise_type_check CHECK (exercise_type IN ('fill_in_the_blanks', 'choose_correct_answer', 'match_columns', 'true_false', 'long_question_answers', 'short_question_answers'));
