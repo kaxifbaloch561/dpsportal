@@ -45,14 +45,9 @@ function shuffleArray<T>(arr: T[]): T[] {
 const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName, subjectName }: MakeAPaperProps) => {
   const [step, setStep] = useState<Step>("mode");
   const [selectedChapters, setSelectedChapters] = useState<number[]>([]);
-  const [config, setConfig] = useState<Record<string, number>>({
-    long_question_answers: 3,
-    short_question_answers: 5,
-    fill_in_the_blanks: 5,
-    match_columns: 0,
-    true_false: 0,
-    choose_correct_answer: 5,
-  });
+  const [config, setConfig] = useState<Record<string, number>>({});
+  const [availableTypes, setAvailableTypes] = useState<string[]>([]);
+  const [loadingTypes, setLoadingTypes] = useState(false);
   const [paper, setPaper] = useState<{ type: string; question: string; options?: string[]; correct_option?: string }[]>([]);
   const [allExercises, setAllExercises] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
@@ -79,6 +74,33 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     setSelectedChapters([]);
     setPaper([]);
     setAllExercises([]);
+    setConfig({});
+    setAvailableTypes([]);
+  };
+
+  const fetchAvailableTypes = async () => {
+    setLoadingTypes(true);
+    try {
+      const { data, error } = await supabase
+        .from("chapter_exercises")
+        .select("exercise_type")
+        .eq("class_id", classId)
+        .eq("subject_id", subjectId)
+        .in("chapter_number", selectedChapters);
+      if (error) throw error;
+      const types = [...new Set((data || []).map((d: any) => d.exercise_type))];
+      setAvailableTypes(types);
+      // Set default counts only for available types
+      const defaults: Record<string, number> = {};
+      types.forEach((t) => {
+        defaults[t] = t === "long_question_answers" ? 3 : 5;
+      });
+      setConfig(defaults);
+    } catch {
+      toast.error("Failed to load exercise types");
+    } finally {
+      setLoadingTypes(false);
+    }
   };
 
   const handleClose = (val: boolean) => {
@@ -327,10 +349,14 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
               </div>
             )}
             <Button
-              onClick={() => setStep("config")}
-              disabled={selectedChapters.length === 0}
+              onClick={async () => {
+                await fetchAvailableTypes();
+                setStep("config");
+              }}
+              disabled={selectedChapters.length === 0 || loadingTypes}
               className="w-full rounded-xl"
             >
+              {loadingTypes ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               Next — Configure Questions
             </Button>
           </>
@@ -349,7 +375,7 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
             </DialogHeader>
             <p className="text-sm text-muted-foreground mb-4">Set how many questions of each type you want.</p>
             <div className="space-y-3 mb-6">
-              {QUESTION_TYPES.map((type) => (
+              {QUESTION_TYPES.filter((type) => availableTypes.includes(type.key)).map((type) => (
                 <div key={type.key} className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
                   <span className="text-sm font-medium text-foreground">{type.label}</span>
                   <div className="flex items-center gap-2">
