@@ -6,8 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import { Loader2, Copy, Check } from "lucide-react";
+import { Loader2, Copy, Check, Download } from "lucide-react";
 import { toast } from "sonner";
+import jsPDF from "jspdf";
 
 const EXERCISE_TYPE_LABELS: Record<string, string> = {
   fill_in_the_blanks: "Fill in the Blanks",
@@ -16,6 +17,88 @@ const EXERCISE_TYPE_LABELS: Record<string, string> = {
   true_false: "True and False",
   long_question_answers: "Long Question Answers",
   short_question_answers: "Short Question Answers",
+};
+
+/** Generate and download a PDF of exercises */
+const handleDownloadPdf = (
+  exercises: any[],
+  typeLabel: string,
+  className: string,
+  subjectName: string,
+  chapNum: number
+) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 18;
+  const maxWidth = pageWidth - margin * 2;
+  let y = 20;
+
+  const checkPage = (needed: number) => {
+    if (y + needed > doc.internal.pageSize.getHeight() - 15) {
+      doc.addPage();
+      y = 20;
+    }
+  };
+
+  // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(`${className} — ${subjectName}`, margin, y);
+  y += 8;
+  doc.setFontSize(13);
+  doc.text(`Chapter ${chapNum} — ${typeLabel}`, margin, y);
+  y += 12;
+
+  // Separator line
+  doc.setDrawColor(200, 200, 200);
+  doc.line(margin, y, pageWidth - margin, y);
+  y += 8;
+
+  exercises.forEach((item, idx) => {
+    checkPage(30);
+
+    // Question
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    const qLines = doc.splitTextToSize(`Q.${idx + 1}  ${item.question}`, maxWidth);
+    doc.text(qLines, margin, y);
+    y += qLines.length * 5.5 + 3;
+
+    // Answer
+    const ansText = item.answer || item.correct_option || "";
+    if (ansText) {
+      checkPage(15);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(80, 80, 80);
+      doc.text("Ans:", margin + 2, y);
+      y += 5;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(50, 50, 50);
+      const aLines = doc.splitTextToSize(ansText, maxWidth - 4);
+      aLines.forEach((line: string) => {
+        checkPage(6);
+        doc.text(line, margin + 2, y);
+        y += 5;
+      });
+      y += 2;
+    }
+
+    // Separator between questions
+    doc.setTextColor(0, 0, 0);
+    y += 4;
+    if (idx < exercises.length - 1) {
+      doc.setDrawColor(230, 230, 230);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 6;
+    }
+  });
+
+  const fileName = `Ch${chapNum}_${typeLabel.replace(/\s+/g, "_")}.pdf`;
+  doc.save(fileName);
+  toast.success("PDF downloaded!");
 };
 
 const ExerciseDetailPage = () => {
@@ -58,15 +141,30 @@ const ExerciseDetailPage = () => {
       ]} />
 
       <div className="flex-1 px-4 sm:px-8 pb-8 overflow-y-auto">
-        <h2
-          className="text-2xl font-bold text-foreground mb-6 mt-4"
-          style={{
-            animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
-            opacity: 0,
-          }}
-        >
-          {typeLabel}
-        </h2>
+        <div className="flex items-center justify-between mb-6 mt-4">
+          <h2
+            className="text-2xl font-bold text-foreground"
+            style={{
+              animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
+              opacity: 0,
+            }}
+          >
+            {typeLabel}
+          </h2>
+          {exercises && exercises.length > 0 && (
+            <button
+              onClick={() => handleDownloadPdf(exercises, typeLabel, cls?.name || "", subject?.name || "", chapNum)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md"
+              style={{
+                animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.4s",
+                opacity: 0,
+              }}
+            >
+              <Download className="w-4 h-4" />
+              Download PDF
+            </button>
+          )}
+        </div>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
