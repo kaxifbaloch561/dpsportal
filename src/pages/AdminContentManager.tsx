@@ -80,6 +80,46 @@ const AdminContentManager = () => {
   });
   const [savingExercise, setSavingExercise] = useState(false);
 
+  const selectedClassData = classesData.find((c) => c.id === selectedClass);
+
+  // Fetch chapters
+  const fetchChapters = async () => {
+    if (!selectedClass || !selectedSubject) return;
+    setLoading(true);
+    const { data } = await supabase
+      .from("chapters")
+      .select("*")
+      .eq("class_id", selectedClass)
+      .eq("subject_id", selectedSubject)
+      .order("chapter_number", { ascending: true });
+    setChapters(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (selectedClass && selectedSubject) fetchChapters();
+    else setChapters([]);
+  }, [selectedClass, selectedSubject]);
+
+  // Fetch exercises for a chapter
+  const fetchExercises = async (ch: Chapter) => {
+    setLoadingExercises(true);
+    const { data } = await supabase
+      .from("chapter_exercises")
+      .select("*")
+      .eq("class_id", ch.class_id)
+      .eq("subject_id", ch.subject_id)
+      .eq("chapter_number", ch.chapter_number)
+      .order("exercise_type")
+      .order("sort_order", { ascending: true });
+    setExercises((data as Exercise[]) || []);
+    setLoadingExercises(false);
+  };
+
+  useEffect(() => {
+    if (managingChapter) fetchExercises(managingChapter);
+  }, [managingChapter]);
+
   if (!isAdmin) {
     return <div className="p-10 text-center text-muted-foreground">Access denied</div>;
   }
