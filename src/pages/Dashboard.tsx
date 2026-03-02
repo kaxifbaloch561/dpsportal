@@ -7,8 +7,9 @@ import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import TeacherRequestForm from "@/components/TeacherRequestForm";
 import HowToUseGuide from "@/components/HowToUseGuide";
-import { Sparkles, AlertTriangle, Lightbulb, Info, LogOut } from "lucide-react";
+import { Sparkles, AlertTriangle, Lightbulb, Info, LogOut, Inbox } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import TeacherInbox from "@/components/TeacherInbox";
 
 const classThemes = [
   { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80%,55%))", shadow: "hsl(235,78%,65%)" },
