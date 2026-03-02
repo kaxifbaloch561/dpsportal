@@ -105,6 +105,7 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     setManualExercises([]);
     setManualSelected(new Set());
     setExpandedType(null);
+    setManualSearches({});
     setLockedIds(new Set());
     setReplaceIndex(null);
     setReplaceSearch("");
