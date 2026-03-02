@@ -75,6 +75,7 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
   const [manualLoading, setManualLoading] = useState(false);
   const [manualSelected, setManualSelected] = useState<Set<string>>(new Set());
   const [expandedType, setExpandedType] = useState<string | null>(null);
+  const [manualSearches, setManualSearches] = useState<Record<string, string>>({});
 
   // Fetch chapters list
   const { data: chapters, isLoading: chaptersLoading } = useQuery({
