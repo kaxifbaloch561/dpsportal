@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminContentManager from "./pages/AdminContentManager";
 import SubjectsPage from "./pages/SubjectsPage";
 import SubjectOptionsPage from "./pages/SubjectOptionsPage";
 import ChaptersPage from "./pages/ChaptersPage";
