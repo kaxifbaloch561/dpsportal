@@ -146,6 +146,7 @@ const Dashboard = () => {
         <TeacherRequestForm type={formType} open={!!formType} onOpenChange={(open) => { if (!open) setFormType(null); }} />
       )}
       <HowToUseGuide open={showGuide} onOpenChange={setShowGuide} />
+      <TeacherInbox open={showInbox} onOpenChange={setShowInbox} />
     </PageShell>
   );
 };
