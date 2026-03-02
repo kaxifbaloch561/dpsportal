@@ -63,7 +63,8 @@ const Dashboard = () => {
                 key={action.key}
                 onClick={() => {
                   if (action.key === "guide") setShowGuide(true);
-                  else setFormType(action.key);
+                   else if (action.key === "inbox") setShowInbox(true);
+                   else setFormType(action.key);
                 }}
                 className="flex items-center gap-2.5 p-3 rounded-2xl bg-card border border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                 style={{ animation: `slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.2 + i * 0.08}s`, opacity: 0 }}
