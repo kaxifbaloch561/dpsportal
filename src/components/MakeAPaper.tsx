@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, Shuffle, FileText, Copy, Check, Download, RefreshCw, ArrowLeft, ChevronUp, ChevronDown, Trash2, Hand } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, Shuffle, FileText, Copy, Check, Download, RefreshCw, ArrowLeft, ChevronUp, ChevronDown, Trash2, Hand, Lock, Unlock, Replace, Search } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 
@@ -23,7 +24,7 @@ interface MakeAPaperProps {
 }
 
 type PaperMode = "random" | "manual";
-type Step = "mode" | "chapters" | "config" | "paper" | "manual-browse" | "manual-review";
+type Step = "mode" | "chapters" | "config" | "paper" | "manual-browse" | "manual-review" | "replace";
 
 interface PaperQuestion {
   id: string;
@@ -64,6 +65,11 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
   const [copied, setCopied] = useState(false);
   const [typeCounts, setTypeCounts] = useState<Record<string, number>>({});
 
+  // Lock & Replace state
+  const [lockedIds, setLockedIds] = useState<Set<string>>(new Set());
+  const [replaceIndex, setReplaceIndex] = useState<number | null>(null);
+  const [replaceSearch, setReplaceSearch] = useState("");
+
   // Manual mode state
   const [manualExercises, setManualExercises] = useState<any[]>([]);
   const [manualLoading, setManualLoading] = useState(false);
@@ -98,6 +104,9 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     setManualExercises([]);
     setManualSelected(new Set());
     setExpandedType(null);
+    setLockedIds(new Set());
+    setReplaceIndex(null);
+    setReplaceSearch("");
   };
 
   const fetchAvailableTypes = async () => {
@@ -142,7 +151,6 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
         .order("sort_order");
       if (error) throw error;
       setManualExercises(data || []);
-      // Auto-expand first available type
       const types = [...new Set((data || []).map((d: any) => d.exercise_type))];
       if (types.length > 0) setExpandedType(types[0]);
     } catch {
@@ -163,7 +171,6 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     );
   };
 
-  // Toggle manual question selection
   const toggleManualQuestion = (id: string) => {
     setManualSelected((prev) => {
       const next = new Set(prev);
@@ -173,7 +180,6 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     });
   };
 
-  // Select/deselect all of a type
   const toggleAllOfType = (typeKey: string) => {
     const typeExercises = manualExercises.filter((e) => e.exercise_type === typeKey);
     const allSelected = typeExercises.every((e) => manualSelected.has(e.id));
@@ -187,7 +193,6 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     });
   };
 
-  // Build paper from manual selections
   const buildManualPaper = () => {
     const selected = manualExercises.filter((e) => manualSelected.has(e.id));
     const result: PaperQuestion[] = selected.map((q) => ({
@@ -201,7 +206,6 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     setStep("manual-review");
   };
 
-  // Reorder functions
   const movePaperQuestion = (index: number, direction: "up" | "down") => {
     setPaper((prev) => {
       const arr = [...prev];
@@ -213,7 +217,23 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
   };
 
   const removePaperQuestion = (index: number) => {
+    const q = paper[index];
+    setLockedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(q.id);
+      return next;
+    });
     setPaper((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Toggle lock on a question
+  const toggleLock = (questionId: string) => {
+    setLockedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(questionId)) next.delete(questionId);
+      else next.add(questionId);
+      return next;
+    });
   };
 
   const generatePaper = useCallback(async (exercises?: any[]) => {
@@ -253,6 +273,7 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
       }
 
       setPaper(result);
+      setLockedIds(new Set());
       setStep("paper");
     } catch {
       toast.error("Failed to generate paper");
@@ -261,13 +282,94 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     }
   }, [allExercises, classId, subjectId, selectedChapters, config]);
 
+  // Regenerate: keep locked questions, reshuffle unlocked slots
   const regeneratePaper = () => {
-    generatePaper(allExercises);
+    const lockedQuestions = paper.filter((q) => lockedIds.has(q.id));
+    const lockedIdSet = new Set(lockedQuestions.map((q) => q.id));
+
+    const result: PaperQuestion[] = [];
+    for (const type of QUESTION_TYPES) {
+      const count = config[type.key] || 0;
+      if (count === 0) continue;
+
+      const lockedOfType = lockedQuestions.filter((q) => q.type === type.key);
+      const neededCount = count - lockedOfType.length;
+
+      // Pool excluding all locked questions
+      const pool = allExercises.filter(
+        (e: any) => e.exercise_type === type.key && !lockedIdSet.has(e.id)
+      );
+      const newPicked = shuffleArray(pool).slice(0, Math.max(0, neededCount));
+
+      // Merge: locked first, then new picks
+      lockedOfType.forEach((q) => result.push(q));
+      newPicked.forEach((q: any) => {
+        result.push({
+          id: q.id,
+          type: type.key,
+          question: q.question,
+          options: q.options as string[] | undefined,
+          correct_option: q.correct_option || undefined,
+        });
+      });
+    }
+
+    setPaper(result);
+    toast.success("Paper regenerated! Locked questions preserved.");
+  };
+
+  // Open replace view for a specific question
+  const openReplace = (index: number) => {
+    setReplaceIndex(index);
+    setReplaceSearch("");
+    setStep("replace");
+  };
+
+  // Get replacement candidates for the question being replaced
+  const getReplaceCandidates = () => {
+    if (replaceIndex === null) return [];
+    const q = paper[replaceIndex];
+    if (!q) return [];
+    const currentPaperIds = new Set(paper.map((p) => p.id));
+    // Show all questions of same type from selected chapters (including current one for context)
+    const all = allExercises.filter((e: any) => e.exercise_type === q.type);
+    // Filter by search
+    const search = replaceSearch.toLowerCase().trim();
+    if (search) {
+      return all.filter((e: any) => e.question.toLowerCase().includes(search));
+    }
+    return all;
+  };
+
+  // Replace the question at replaceIndex with a new one
+  const doReplace = (newExercise: any) => {
+    if (replaceIndex === null) return;
+    const oldQ = paper[replaceIndex];
+    // Remove lock from old question if it was locked
+    setLockedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(oldQ.id);
+      return next;
+    });
+    setPaper((prev) => {
+      const arr = [...prev];
+      arr[replaceIndex] = {
+        id: newExercise.id,
+        type: newExercise.exercise_type,
+        question: newExercise.question,
+        options: newExercise.options as string[] | undefined,
+        correct_option: newExercise.correct_option || undefined,
+      };
+      return arr;
+    });
+    toast.success("Question replaced!");
+    setReplaceIndex(null);
+    setReplaceSearch("");
+    setStep("paper");
   };
 
   const getTypeLabel = (key: string) => QUESTION_TYPES.find((t) => t.key === key)?.label || key;
 
-  // Group paper by type for display
   const groupedPaper = QUESTION_TYPES.reduce<Record<string, PaperQuestion[]>>((acc, type) => {
     const items = paper.filter((p) => p.type === type.key);
     if (items.length > 0) acc[type.key] = items;
@@ -277,7 +379,6 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
   const buildPaperText = () => {
     let text = `${clsName} — ${subjectName}\nPaper\n${"─".repeat(40)}\n\n`;
     let globalQ = 1;
-    // For manual-review, paper is in custom order (not grouped)
     if (step === "manual-review") {
       paper.forEach((q) => {
         text += `Q.${globalQ}  ${q.question}\n`;
@@ -370,7 +471,6 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     };
 
     if (step === "manual-review") {
-      // Custom order
       paper.forEach(renderQuestion);
     } else {
       for (const typeKey of Object.keys(groupedPaper)) {
@@ -388,14 +488,12 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
     toast.success("PDF downloaded!");
   };
 
-  // Manual browse: group exercises by type
   const manualGrouped = QUESTION_TYPES.reduce<Record<string, any[]>>((acc, type) => {
     const items = manualExercises.filter((e) => e.exercise_type === type.key);
     if (items.length > 0) acc[type.key] = items;
     return acc;
   }, {});
 
-  // Chapters step next handler based on mode
   const handleChaptersNext = async () => {
     if (mode === "random") {
       await fetchAvailableTypes();
@@ -405,6 +503,11 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
       setStep("manual-browse");
     }
   };
+
+  // For replace step
+  const replaceCandidates = step === "replace" ? getReplaceCandidates() : [];
+  const replaceQuestion = replaceIndex !== null ? paper[replaceIndex] : null;
+  const currentPaperIds = new Set(paper.map((p) => p.id));
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -445,7 +548,7 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
           </>
         )}
 
-        {/* Step: Chapter Selection (shared for both modes) */}
+        {/* Step: Chapter Selection */}
         {step === "chapters" && (
           <>
             <DialogHeader>
@@ -583,7 +686,6 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
 
                   return (
                     <div key={typeKey} className="rounded-xl border border-border overflow-hidden">
-                      {/* Type header - collapsible */}
                       <button
                         onClick={() => setExpandedType(isExpanded ? null : typeKey)}
                         className="w-full flex items-center justify-between p-3 bg-muted/50 hover:bg-muted transition-colors"
@@ -602,7 +704,6 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
 
                       {isExpanded && (
                         <div className="divide-y divide-border">
-                          {/* Select all row */}
                           <label className="flex items-center gap-3 p-2.5 px-3 cursor-pointer hover:bg-muted/30 transition-colors">
                             <Checkbox
                               checked={allSelected}
@@ -743,7 +844,7 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
           </>
         )}
 
-        {/* Step: Generated Paper (Random mode) */}
+        {/* Step: Generated Paper (Random mode) — with Lock & Replace */}
         {step === "paper" && (
           <>
             <DialogHeader>
@@ -756,61 +857,209 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
                 <p className="text-xs mt-1">Try selecting different chapters or adjusting counts.</p>
               </div>
             ) : (
-              <div className="space-y-6 mb-4">
-                {Object.keys(groupedPaper).map((typeKey) => {
-                  const items = groupedPaper[typeKey];
-                  let startIdx = 0;
-                  for (const tk of Object.keys(groupedPaper)) {
-                    if (tk === typeKey) break;
-                    startIdx += groupedPaper[tk].length;
-                  }
+              <>
+                {/* Lock/Replace legend */}
+                <div className="flex items-center gap-4 mb-3 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Lock = keep on regenerate</span>
+                  <span className="flex items-center gap-1"><Replace className="w-3 h-3" /> Replace = swap question</span>
+                </div>
 
-                  return (
-                    <div key={typeKey}>
-                      <h3 className="text-sm font-bold uppercase tracking-widest text-primary/80 mb-3 border-b border-border pb-2">
-                        {getTypeLabel(typeKey)}
-                      </h3>
-                      <div className="space-y-3">
-                        {items.map((q, i) => (
-                          <div key={i} className="text-sm">
-                            <p className="font-semibold text-foreground leading-relaxed">
-                              <span className="text-primary/70 mr-1.5">Q.{startIdx + i + 1}</span>
-                              {q.question}
-                            </p>
-                            {q.options && q.options.length > 0 && (
-                              <div className="ml-8 mt-1 space-y-0.5">
-                                {q.options.map((opt, oi) => (
-                                  <p key={oi} className="text-muted-foreground text-xs">
-                                    ({String.fromCharCode(97 + oi)}) {opt}
-                                  </p>
-                                ))}
+                <div className="space-y-6 mb-4">
+                  {Object.keys(groupedPaper).map((typeKey) => {
+                    const items = groupedPaper[typeKey];
+                    let startIdx = 0;
+                    for (const tk of Object.keys(groupedPaper)) {
+                      if (tk === typeKey) break;
+                      startIdx += groupedPaper[tk].length;
+                    }
+
+                    return (
+                      <div key={typeKey}>
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-primary/80 mb-3 border-b border-border pb-2">
+                          {getTypeLabel(typeKey)}
+                        </h3>
+                        <div className="space-y-2">
+                          {items.map((q, i) => {
+                            const globalIdx = paper.findIndex((p) => p.id === q.id);
+                            const isLocked = lockedIds.has(q.id);
+
+                            return (
+                              <div
+                                key={q.id}
+                                className={`group relative p-3 rounded-xl border transition-all duration-200 ${
+                                  isLocked
+                                    ? "border-primary/40 bg-primary/5"
+                                    : "border-border bg-card hover:border-border"
+                                }`}
+                              >
+                                <div className="flex items-start gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-sm text-foreground leading-relaxed">
+                                      <span className="text-primary/70 mr-1.5">Q.{startIdx + i + 1}</span>
+                                      {q.question}
+                                    </p>
+                                    {q.options && q.options.length > 0 && (
+                                      <div className="ml-8 mt-1 space-y-0.5">
+                                        {q.options.map((opt, oi) => (
+                                          <p key={oi} className="text-muted-foreground text-xs">
+                                            ({String.fromCharCode(97 + oi)}) {opt}
+                                          </p>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                  {/* Lock & Replace buttons */}
+                                  <div className="flex items-center gap-1 shrink-0">
+                                    <button
+                                      onClick={() => toggleLock(q.id)}
+                                      title={isLocked ? "Unlock question" : "Lock question"}
+                                      className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                                        isLocked
+                                          ? "bg-primary text-primary-foreground shadow-sm"
+                                          : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                                      }`}
+                                    >
+                                      {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+                                    </button>
+                                    <button
+                                      onClick={() => openReplace(globalIdx)}
+                                      title="Replace question"
+                                      className="w-8 h-8 rounded-lg bg-muted text-muted-foreground flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+                                    >
+                                      <Replace className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
-                            )}
-                          </div>
-                        ))}
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
 
             {/* Actions */}
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <Button onClick={handleCopy} variant="outline" className="flex-1 rounded-xl gap-2">
-                  {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-                  {copied ? "Copied!" : "Copy"}
-                </Button>
-                <Button onClick={handleDownloadPdf} variant="outline" className="flex-1 rounded-xl gap-2">
-                  <Download className="w-4 h-4" />
-                  Download PDF
+            {paper.length > 0 && (
+              <div className="flex flex-col gap-2">
+                {lockedIds.size > 0 && (
+                  <p className="text-xs text-center text-primary font-medium">
+                    🔒 {lockedIds.size} question{lockedIds.size !== 1 ? "s" : ""} locked — will be preserved on regenerate
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <Button onClick={handleCopy} variant="outline" className="flex-1 rounded-xl gap-2">
+                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                    {copied ? "Copied!" : "Copy"}
+                  </Button>
+                  <Button onClick={handleDownloadPdf} variant="outline" className="flex-1 rounded-xl gap-2">
+                    <Download className="w-4 h-4" />
+                    Download PDF
+                  </Button>
+                </div>
+                <Button onClick={regeneratePaper} className="w-full rounded-xl gap-2">
+                  <RefreshCw className="w-4 h-4" />
+                  Create Another Paper
                 </Button>
               </div>
-              <Button onClick={regeneratePaper} className="w-full rounded-xl gap-2">
-                <RefreshCw className="w-4 h-4" />
-                Create Another Paper
-              </Button>
+            )}
+          </>
+        )}
+
+        {/* Step: Replace Question */}
+        {step === "replace" && replaceQuestion && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold flex items-center gap-2">
+                <button onClick={() => { setStep("paper"); setReplaceIndex(null); setReplaceSearch(""); }} className="p-1 rounded-lg hover:bg-muted transition-colors">
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                Replace Question
+              </DialogTitle>
+            </DialogHeader>
+
+            {/* Current question being replaced */}
+            <div className="p-3 rounded-xl border border-destructive/30 bg-destructive/5 mb-4">
+              <p className="text-xs font-semibold text-destructive/70 mb-1">Replacing:</p>
+              <p className="text-sm text-foreground">{replaceQuestion.question}</p>
+            </div>
+
+            {/* Section label + count */}
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-bold text-foreground">
+                {getTypeLabel(replaceQuestion.type)}
+              </p>
+              <span className="text-xs font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
+                {replaceCandidates.length} available
+              </span>
+            </div>
+
+            {/* Search bar */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                value={replaceSearch}
+                onChange={(e) => setReplaceSearch(e.target.value)}
+                placeholder="Search questions..."
+                className="pl-9 rounded-xl"
+              />
+            </div>
+
+            {/* Questions list */}
+            <div className="space-y-2 max-h-[40vh] overflow-y-auto">
+              {replaceCandidates.length === 0 ? (
+                <p className="text-center text-muted-foreground py-6 text-sm">No questions found.</p>
+              ) : (
+                replaceCandidates.map((ex: any, idx: number) => {
+                  const isInPaper = currentPaperIds.has(ex.id);
+                  const isCurrent = ex.id === replaceQuestion.id;
+
+                  return (
+                    <button
+                      key={ex.id}
+                      onClick={() => !isCurrent && doReplace(ex)}
+                      disabled={isCurrent}
+                      className={`w-full text-left p-3 rounded-xl border transition-all duration-200 ${
+                        isCurrent
+                          ? "border-primary/40 bg-primary/5 opacity-60 cursor-not-allowed"
+                          : isInPaper
+                          ? "border-border bg-muted/30 hover:border-primary/30 hover:bg-primary/5"
+                          : "border-border bg-card hover:border-primary/40 hover:bg-primary/5 hover:shadow-sm"
+                      }`}
+                    >
+                      <div className="flex items-start gap-2">
+                        <span className="text-xs font-bold text-primary/60 mt-0.5 shrink-0">
+                          {idx + 1}.
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground leading-relaxed">{ex.question}</p>
+                          {ex.options && (ex.options as string[]).length > 0 && (
+                            <div className="mt-1 space-y-0.5">
+                              {(ex.options as string[]).map((opt: string, oi: number) => (
+                                <p key={oi} className="text-xs text-muted-foreground">
+                                  ({String.fromCharCode(97 + oi)}) {opt}
+                                </p>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        {isCurrent && (
+                          <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full shrink-0">
+                            Current
+                          </span>
+                        )}
+                        {isInPaper && !isCurrent && (
+                          <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full shrink-0">
+                            In Paper
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })
+              )}
             </div>
           </>
         )}
