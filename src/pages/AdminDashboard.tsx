@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
-import { Bell, LogOut, MessageSquare, Send, CheckCheck, Lightbulb, AlertTriangle, Sparkles, Filter } from "lucide-react";
+import { Bell, LogOut, MessageSquare, Send, CheckCheck, Lightbulb, AlertTriangle, Sparkles, Filter, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -92,9 +92,14 @@ const AdminDashboard = () => {
             </span>
           )}
         </div>
-        <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
-          <LogOut size={16} /> Logout
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => navigate("/admin/content")} className="rounded-xl gap-2">
+            <BookOpen size={16} /> Manage Content
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
+            <LogOut size={16} /> Logout
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
