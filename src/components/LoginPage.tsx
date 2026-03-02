@@ -1,15 +1,30 @@
 import { useState } from "react";
 import { Eye, EyeOff, BookOpen } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginPageProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (role: "admin" | "teacher") => void;
 }
 
 const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    const result = login(email, password);
+    if (result.success) {
+      const role = email.trim().toLowerCase() === "adminkaxif@dps" ? "admin" : "teacher";
+      onLoginSuccess(role);
+    } else {
+      setError(result.error || "Login failed");
+    }
+  };
 
   return (
     <div
@@ -34,18 +49,25 @@ const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8" style={{ animation: "slideDown 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
           <img src={schoolLogo} alt="DPS SIBI" className="w-24 h-24 mb-3" />
-          <h1 className="text-2xl font-bold text-foreground">Teacher Login</h1>
+          <h1 className="text-2xl font-bold text-foreground">DPS Login Portal</h1>
           <p className="text-muted-foreground text-sm">Divisional Public School, SIBI</p>
         </div>
 
-        {/* Teacher badge */}
+        {/* Badge */}
         <div className="flex items-center justify-center gap-2 mb-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold shadow-lg" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s", opacity: 0 }}>
           <BookOpen size={16} />
-          Teacher Portal
+          Teacher & Admin Portal
         </div>
 
+        {/* Error */}
+        {error && (
+          <div className="mb-4 p-3 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center font-medium">
+            {error}
+          </div>
+        )}
+
         {/* Form */}
-        <form onSubmit={(e) => { e.preventDefault(); onLoginSuccess(); }} className="space-y-4" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.7s", opacity: 0 }}>
+        <form onSubmit={handleSubmit} className="space-y-4" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.7s", opacity: 0 }}>
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">Email or ID</label>
             <input

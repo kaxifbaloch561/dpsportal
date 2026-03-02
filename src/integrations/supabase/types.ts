@@ -122,6 +122,42 @@ export type Database = {
         }
         Relationships: []
       }
+      teacher_requests: {
+        Row: {
+          admin_reply: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          replied_at: string | null
+          subject: string
+          teacher_email: string
+          type: string
+        }
+        Insert: {
+          admin_reply?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          replied_at?: string | null
+          subject: string
+          teacher_email: string
+          type: string
+        }
+        Update: {
+          admin_reply?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          replied_at?: string | null
+          subject?: string
+          teacher_email?: string
+          type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
