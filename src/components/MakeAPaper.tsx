@@ -704,45 +704,73 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
                         </div>
                       </button>
 
-                      {isExpanded && (
-                        <div className="divide-y divide-border">
-                          <label className="flex items-center gap-3 p-2.5 px-3 cursor-pointer hover:bg-muted/30 transition-colors">
-                            <Checkbox
-                              checked={allSelected}
-                              onCheckedChange={() => toggleAllOfType(typeKey)}
-                            />
-                            <span className="text-xs font-semibold text-primary">
-                              {allSelected ? "Deselect All" : "Select All"}
-                            </span>
-                          </label>
-                          {items.map((ex: any) => (
-                            <label
-                              key={ex.id}
-                              className={`flex items-start gap-3 p-2.5 px-3 cursor-pointer transition-colors ${
-                                manualSelected.has(ex.id) ? "bg-primary/5" : "hover:bg-muted/20"
-                              }`}
-                            >
-                              <Checkbox
-                                checked={manualSelected.has(ex.id)}
-                                onCheckedChange={() => toggleManualQuestion(ex.id)}
-                                className="mt-0.5"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm text-foreground leading-relaxed">{ex.question}</p>
-                                {ex.options && (ex.options as string[]).length > 0 && (
-                                  <div className="mt-1 space-y-0.5">
-                                    {(ex.options as string[]).map((opt: string, oi: number) => (
-                                      <p key={oi} className="text-xs text-muted-foreground">
-                                        ({String.fromCharCode(97 + oi)}) {opt}
-                                      </p>
-                                    ))}
-                                  </div>
-                                )}
+                      {isExpanded && (() => {
+                        const searchTerm = (manualSearches[typeKey] || "").toLowerCase().trim();
+                        const filteredItems = searchTerm
+                          ? items.filter((ex: any) => ex.question.toLowerCase().includes(searchTerm))
+                          : items;
+
+                        return (
+                          <div className="divide-y divide-border">
+                            {/* Search bar for this section */}
+                            <div className="p-2.5 px-3">
+                              <div className="relative">
+                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                                <Input
+                                  value={manualSearches[typeKey] || ""}
+                                  onChange={(e) => setManualSearches((prev) => ({ ...prev, [typeKey]: e.target.value }))}
+                                  placeholder={`Search ${getTypeLabel(typeKey).toLowerCase()}...`}
+                                  className="pl-8 h-8 text-xs rounded-lg"
+                                />
                               </div>
+                            </div>
+                            <label className="flex items-center gap-3 p-2.5 px-3 cursor-pointer hover:bg-muted/30 transition-colors">
+                              <Checkbox
+                                checked={allSelected}
+                                onCheckedChange={() => toggleAllOfType(typeKey)}
+                              />
+                              <span className="text-xs font-semibold text-primary">
+                                {allSelected ? "Deselect All" : "Select All"}
+                              </span>
+                              {searchTerm && (
+                                <span className="text-[10px] text-muted-foreground ml-auto">
+                                  {filteredItems.length} of {items.length} shown
+                                </span>
+                              )}
                             </label>
-                          ))}
-                        </div>
-                      )}
+                            {filteredItems.length === 0 ? (
+                              <p className="text-center text-xs text-muted-foreground py-4">No matching questions found.</p>
+                            ) : (
+                              filteredItems.map((ex: any) => (
+                                <label
+                                  key={ex.id}
+                                  className={`flex items-start gap-3 p-2.5 px-3 cursor-pointer transition-colors ${
+                                    manualSelected.has(ex.id) ? "bg-primary/5" : "hover:bg-muted/20"
+                                  }`}
+                                >
+                                  <Checkbox
+                                    checked={manualSelected.has(ex.id)}
+                                    onCheckedChange={() => toggleManualQuestion(ex.id)}
+                                    className="mt-0.5"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm text-foreground leading-relaxed">{ex.question}</p>
+                                    {ex.options && (ex.options as string[]).length > 0 && (
+                                      <div className="mt-1 space-y-0.5">
+                                        {(ex.options as string[]).map((opt: string, oi: number) => (
+                                          <p key={oi} className="text-xs text-muted-foreground">
+                                            ({String.fromCharCode(97 + oi)}) {opt}
+                                          </p>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                </label>
+                              ))
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   );
                 })}
