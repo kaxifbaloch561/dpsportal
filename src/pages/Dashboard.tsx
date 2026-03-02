@@ -7,8 +7,9 @@ import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import TeacherRequestForm from "@/components/TeacherRequestForm";
 import HowToUseGuide from "@/components/HowToUseGuide";
-import { Sparkles, AlertTriangle, Lightbulb, Info, LogOut } from "lucide-react";
+import { Sparkles, AlertTriangle, Lightbulb, Info, LogOut, Inbox } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import TeacherInbox from "@/components/TeacherInbox";
 
 const classThemes = [
   { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80%,55%))", shadow: "hsl(235,78%,65%)" },
@@ -28,6 +29,7 @@ const quickActions = [
   { key: "problem" as const, icon: AlertTriangle, label: "Report a Problem", color: "hsl(0,72%,55%)" },
   { key: "suggestion" as const, icon: Lightbulb, label: "Suggestions", color: "hsl(45,90%,50%)" },
   { key: "guide" as const, icon: Info, label: "How to Use", color: "hsl(160,60%,38%)" },
+  { key: "inbox" as const, icon: Inbox, label: "My Inbox", color: "hsl(200,85%,50%)" },
 ];
 
 const Dashboard = () => {
@@ -35,6 +37,7 @@ const Dashboard = () => {
   const { logout } = useAuth();
   const [formType, setFormType] = useState<"feature" | "problem" | "suggestion" | null>(null);
   const [showGuide, setShowGuide] = useState(false);
+  const [showInbox, setShowInbox] = useState(false);
 
   const handleLogout = () => { logout(); navigate("/"); };
 
@@ -60,7 +63,8 @@ const Dashboard = () => {
                 key={action.key}
                 onClick={() => {
                   if (action.key === "guide") setShowGuide(true);
-                  else setFormType(action.key);
+                   else if (action.key === "inbox") setShowInbox(true);
+                   else setFormType(action.key);
                 }}
                 className="flex items-center gap-2.5 p-3 rounded-2xl bg-card border border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                 style={{ animation: `slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.2 + i * 0.08}s`, opacity: 0 }}
@@ -142,6 +146,7 @@ const Dashboard = () => {
         <TeacherRequestForm type={formType} open={!!formType} onOpenChange={(open) => { if (!open) setFormType(null); }} />
       )}
       <HowToUseGuide open={showGuide} onOpenChange={setShowGuide} />
+      <TeacherInbox open={showInbox} onOpenChange={setShowInbox} />
     </PageShell>
   );
 };
