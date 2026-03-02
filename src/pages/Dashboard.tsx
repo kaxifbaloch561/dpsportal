@@ -37,6 +37,7 @@ const Dashboard = () => {
   const { logout } = useAuth();
   const [formType, setFormType] = useState<"feature" | "problem" | "suggestion" | null>(null);
   const [showGuide, setShowGuide] = useState(false);
+  const [showInbox, setShowInbox] = useState(false);
 
   const handleLogout = () => { logout(); navigate("/"); };
 
