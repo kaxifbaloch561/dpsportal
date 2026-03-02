@@ -56,7 +56,7 @@ const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
         {/* Badge */}
         <div className="flex items-center justify-center gap-2 mb-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold shadow-lg" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s", opacity: 0 }}>
           <BookOpen size={16} />
-          Teacher & Admin Portal
+          Teachers Login Portal
         </div>
 
         {/* Error */}
