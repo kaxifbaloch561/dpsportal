@@ -29,6 +29,7 @@ const quickActions = [
   { key: "problem" as const, icon: AlertTriangle, label: "Report a Problem", color: "hsl(0,72%,55%)" },
   { key: "suggestion" as const, icon: Lightbulb, label: "Suggestions", color: "hsl(45,90%,50%)" },
   { key: "guide" as const, icon: Info, label: "How to Use", color: "hsl(160,60%,38%)" },
+  { key: "inbox" as const, icon: Inbox, label: "My Inbox", color: "hsl(200,85%,50%)" },
 ];
 
 const Dashboard = () => {
