@@ -38,12 +38,18 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchRequests = async () => {
-    const { data } = await supabase
-      .from("teacher_requests")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (data) setRequests(data);
-    setLoading(false);
+    try {
+      const { data, error } = await supabase
+        .from("teacher_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) console.error("Fetch requests error:", error);
+      if (data) setRequests(data);
+    } catch (err) {
+      console.error("Unexpected fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
