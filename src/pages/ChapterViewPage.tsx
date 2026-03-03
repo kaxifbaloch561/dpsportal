@@ -63,43 +63,75 @@ function preprocessContent(raw: string): string {
   // 7) Label lines: "Learning Outcomes:" etc.
   text = text.replace(/(?:^|\s)(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*/gi, "\n\n**$1:**\n");
 
-  // ─── PHASE 2: Identify heading lines and bold-wrap them ───
+  // ─── PHASE 2: Split heading+body lines and format ───
+  // After phase 1, lines may start with a heading pattern followed by body text.
+  // E.g. "1. Economic Development in Pakistan At the time of..."
+  // We need to split these into heading line + body line.
+
+  const headingPatterns = [
+    // Numbered: "1. Title Words..."
+    /^(\d+\.\s+(?:[A-Z][A-Za-z,()'\u2019-]*\s*){2,}?)(?=(?:At |The [a-z]|In [a-z]|This |It |After |During |As [a-z]|Its |However |There |Upto |According |But |One |Although |With |Under |These |About |That |Most |Almost |General |For |To |No |An? ))/,
+    // Lettered with period: "a. First Five Year Plan (1955-60)"
+    /^([a-i]\.\s+(?:[A-Z][A-Za-z0-9,()'\u2019-]*\s*){2,}?)(?=(?:In |The |This |It |After |During |As |However |There |At |Under |These |To |For ))/,
+    // Roman with period: "i. Medium Term Development Plan (2005-10)"
+    /^((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+(?:[A-Z][A-Za-z0-9,()'\u2019-]*\s*){1,}?)(?=(?:After |The |This |In |It |Pakistan |At |However |Like |There |Improved ))/,
+    // Lettered with paren: "a) Cottage Industry"
+    /^([a-z]\)\s+(?:[A-Z][A-Za-z0-9,()'\u2019:-]*\s*){1,}?)(?=(?:In |The |This |It |After |During |As |However |There |At |These |Most |They |To ))/,
+    // Roman with paren: "i) Use of Chemical Fertilizer:"
+    /^((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\)\s+(?:[A-Z][A-Za-z0-9,()'\u2019:-]*\s*){1,}?)(?=(?:Today |The |In |This |It |Like |Improved |Pakistan ))/,
+  ];
+
   const lines = text.split("\n");
-  const processed = lines.map(line => {
+  const expanded: string[] = [];
+  for (const line of lines) {
     const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("**")) return line;
-
-    // Numbered main heading: "1. Economic Development in Pakistan"
-    const numHead = trimmed.match(/^(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]+)$/);
-    if (numHead && numHead[1].length > 10 && numHead[1].length < 120) {
-      return `**${trimmed}**`;
+    if (!trimmed || trimmed.startsWith("**")) {
+      expanded.push(line);
+      continue;
     }
-
-    // Lettered heading with period: "a. First Five Year Plan (1955-60)"
-    const letHead = trimmed.match(/^([a-i]\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]+)$/);
-    if (letHead && letHead[1].length > 8 && letHead[1].length < 120) {
-      return `**${trimmed}**`;
-    }
-
-    // Roman heading with period: "i. Mining" (short lines that are headings)
-    const romHead = trimmed.match(/^((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]+)$/);
-    if (romHead && romHead[1].length > 5 && romHead[1].length < 120) {
-      return `**${trimmed}**`;
-    }
-
-    // Split long paragraph blocks into ~4-sentence chunks
-    if (trimmed.length >= 400) {
-      const sentences = trimmed.split(/(?<=[.!?]["']?)\s+(?=[A-Z])/);
-      if (sentences.length > 3) {
-        const chunks: string[] = [];
-        for (let i = 0; i < sentences.length; i += 4) {
-          chunks.push(sentences.slice(i, i + 4).join(" "));
-        }
-        return chunks.join("\n\n");
+    let matched = false;
+    for (const pat of headingPatterns) {
+      const m = trimmed.match(pat);
+      if (m && m[1].length > 5 && m[1].length < 150) {
+        expanded.push(`**${m[1].trim()}**`);
+        const body = trimmed.slice(m[1].length).trim();
+        if (body) expanded.push(body);
+        matched = true;
+        break;
       }
     }
+    if (!matched) {
+      // Pure heading lines (entire line is a heading)
+      const pureNum = trimmed.match(/^(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]+)$/);
+      if (pureNum && pureNum[1].length > 10 && pureNum[1].length < 120) {
+        expanded.push(`**${trimmed}**`);
+        continue;
+      }
+      const pureLet = trimmed.match(/^([a-i]\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]+)$/);
+      if (pureLet && pureLet[1].length > 8 && pureLet[1].length < 120) {
+        expanded.push(`**${trimmed}**`);
+        continue;
+      }
+      const pureRom = trimmed.match(/^((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]+)$/);
+      if (pureRom && pureRom[1].length > 5 && pureRom[1].length < 120) {
+        expanded.push(`**${trimmed}**`);
+        continue;
+      }
+      expanded.push(line);
+    }
+  }
 
-    return line;
+  // ─── PHASE 3: Split long paragraphs into readable chunks ───
+  const processed = expanded.map(line => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("**") || trimmed.length < 400) return line;
+    const sentences = trimmed.split(/(?<=[.!?]["']?)\s+(?=[A-Z])/);
+    if (sentences.length <= 3) return line;
+    const chunks: string[] = [];
+    for (let i = 0; i < sentences.length; i += 4) {
+      chunks.push(sentences.slice(i, i + 4).join(" "));
+    }
+    return chunks.join("\n\n");
   });
 
   return processed.join("\n");
