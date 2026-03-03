@@ -17,38 +17,42 @@ function preprocessContent(raw: string): string {
 
   let text = raw;
 
-  // 1) Numbered main headings: "1. Economic Development in Pakistan"
-  // Match digit-dot followed by title words, ending before a sentence-like continuation
+  // Known heading patterns found in Pakistan Studies textbooks
+  // We use specific known titles to avoid false positives from sentence fragments
+
+  // 1) Numbered main headings: "1. Title" — must appear after sentence end (. or start)
+  //    Match: period/start, then digit-dot-space-CapitalWord
   text = text.replace(
-    /(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]+?)(?=\s+(?:At the|The |In |This |It |After |During |As |Its |However |Pakistan |Steps ))/g,
+    /(?<=\.\s|\n|^)(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]{10,}?)(?=\s+(?:At |The |In |This |It |After |During |As |Its |However |Pakistan ))/g,
     "\n\n**$1**\n\n"
   );
 
   // 2) Lettered sub-headings: "a. First Five Year Plan (1955-60)"
-  // Greedy match up to and including parenthetical year ranges
+  //    Only match when preceded by sentence end (period + space) to avoid matching mid-word letters
   text = text.replace(
-    /([a-z]\.\s+[A-Z][A-Za-z0-9\s,'\u2019-]+(?:\([^)]*\))?)(?=\s+(?:[A-Z][a-z]|The |In |This |It |After |During |As |Its |However ))/g,
+    /(?<=\.\s)([a-i]\.\s+[A-Z][A-Za-z]{2,}[A-Za-z0-9\s,'\u2019-]*(?:\([^)]*\))?)(?=\s+(?:[A-Z][a-z]|The |In |This |It |After |During |As |Its |However ))/g,
     "\n\n**$1**\n\n"
   );
 
   // 3) Roman numeral sub-headings: "i. Medium Term Development Plan (2005-10)"
+  //    Only match "i." through "ix." preceded by sentence end
   text = text.replace(
-    /([ivxlc]+\.\s+[A-Z][A-Za-z0-9\s,'\u2019-]+(?:\([^)]*\))?)(?=\s+(?:[A-Z][a-z]|The |In |This |It |After |During |As ))/g,
+    /(?<=\.\s)((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+[A-Z][A-Za-z0-9\s,'\u2019-]+(?:\([^)]*\))?)(?=\s+(?:[A-Z][a-z]|The |In |This |It |After |During |As ))/g,
     "\n\n**$1**\n\n"
   );
 
   // 4) Label lines: "Learning Outcomes:" etc.
   text = text.replace(/(?:^|\s)(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*/gi, "\n\n**$1:**\n");
 
-  // 5) Split remaining long blocks into paragraph chunks of ~3 sentences
+  // 5) Split remaining long blocks into paragraph chunks of ~3-4 sentences
   const lines = text.split("\n");
   const processed = lines.map(line => {
     if (line.length < 400) return line;
     const sentences = line.split(/(?<=\.)\s+(?=[A-Z])/);
     if (sentences.length <= 3) return line;
     const chunks: string[] = [];
-    for (let i = 0; i < sentences.length; i += 3) {
-      chunks.push(sentences.slice(i, i + 3).join(" "));
+    for (let i = 0; i < sentences.length; i += 4) {
+      chunks.push(sentences.slice(i, i + 4).join(" "));
     }
     return chunks.join("\n\n");
   });
