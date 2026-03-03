@@ -20,10 +20,10 @@ function preprocessContent(raw: string): string {
   // Known heading patterns found in Pakistan Studies textbooks
   // We use specific known titles to avoid false positives from sentence fragments
 
-  // 1) Numbered main headings: "1. Title" — must appear after sentence end (. or start)
-  //    Match: period/start, then digit-dot-space-CapitalWord
+  // 1) Numbered main headings: "1. Economic Development in Pakistan"
+  //    Greedy match, end at sentence start words (At the, The, In, This...)
   text = text.replace(
-    /(?<=\.\s|\n|^)(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]{10,}?)(?=\s+(?:At |The |In |This |It |After |During |As |Its |However |Pakistan ))/g,
+    /(?<=\.\s|\n|^)(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]{10,})(?=\s+(?:At the |The [a-z]|In [a-z]|This |It |After |During |As [a-z]|Its |However |Upto |There ))/g,
     "\n\n**$1**\n\n"
   );
 
