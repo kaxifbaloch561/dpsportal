@@ -69,16 +69,16 @@ function preprocessContent(raw: string): string {
   // We need to split these into heading line + body line.
 
   const headingPatterns = [
-    // Numbered: "1. Title Words..."
-    /^(\d+\.\s+(?:[A-Z][A-Za-z,()'\u2019-]*\s*){2,}?)(?=(?:At |The [a-z]|In [a-z]|This |It |After |During |As [a-z]|Its |However |There |Upto |According |But |One |Although |With |Under |These |About |That |Most |Almost |General |For |To |No |An? ))/,
+    // Numbered: "1. Economic Development in Pakistan" — allow lowercase connector words
+    /^(\d+\.\s+(?:[A-Za-z,()'\u2019-]+\s*){2,}?)(?=(?:At the |The [a-z]|In [a-z]|This |It [a-z]|After |During |As [a-z]|Its |However,? |There |Upto |According |But [a-z]|One |Although |With the |Under |These |About |That |Most |Almost |General |For the |To [a-z]|No [a-z]|An? [a-z]))/,
     // Lettered with period: "a. First Five Year Plan (1955-60)"
-    /^([a-i]\.\s+(?:[A-Z][A-Za-z0-9,()'\u2019-]*\s*){2,}?)(?=(?:In |The |This |It |After |During |As |However |There |At |Under |These |To |For ))/,
+    /^([a-i]\.\s+(?:[A-Za-z0-9,()'\u2019-]+\s*){2,}?)(?=(?:In [a-z]|The [a-z]|This |It |After |During |As |However |There |At the |Under |These |To [a-z]|For the ))/,
     // Roman with period: "i. Medium Term Development Plan (2005-10)"
-    /^((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+(?:[A-Z][A-Za-z0-9,()'\u2019-]*\s*){1,}?)(?=(?:After |The |This |In |It |Pakistan |At |However |Like |There |Improved ))/,
-    // Lettered with paren: "a) Cottage Industry"
-    /^([a-z]\)\s+(?:[A-Z][A-Za-z0-9,()'\u2019:-]*\s*){1,}?)(?=(?:In |The |This |It |After |During |As |However |There |At |These |Most |They |To ))/,
-    // Roman with paren: "i) Use of Chemical Fertilizer:"
-    /^((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\)\s+(?:[A-Z][A-Za-z0-9,()'\u2019:-]*\s*){1,}?)(?=(?:Today |The |In |This |It |Like |Improved |Pakistan ))/,
+    /^((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+(?:[A-Za-z0-9,()'\u2019-]+\s*){1,}?)(?=(?:After |The [a-z]|This |In [a-z]|It |Pakistan |At the |However |Like |There |Improved ))/,
+    // Lettered with paren: "a) Cottage Industry" "b) Reforms"
+    /^([a-z]\)\s+(?:[A-Za-z0-9,()'\u2019:-]+\s*){1,}?)(?=(?:In [a-z]|The [a-z]|This |It |After |During |As |However |There |At |These |Most |They |To [a-z]|It is ))/,
+    // Roman with paren: "i) Use of Chemical Fertilizer:" "ii) Use of Machinery:"
+    /^((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\)\s+(?:[A-Za-z0-9,()'\u2019:-]+\s*){1,}?)(?=(?:Today |The [a-z]|In [a-z]|This |It |Like |Improved |Pakistan ))/,
   ];
 
   const lines = text.split("\n");
