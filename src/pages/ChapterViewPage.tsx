@@ -17,29 +17,35 @@ function preprocessContent(raw: string): string {
 
   let text = raw;
 
-  // 1) Insert double-newlines before structural headings so they become separate blocks
+  // 1) Numbered main headings: "1. Economic Development in Pakistan"
+  // Match digit-dot followed by title words, ending before a sentence-like continuation
+  text = text.replace(
+    /(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]+?)(?=\s+(?:At the|The |In |This |It |After |During |As |Its |However |Pakistan |Steps ))/g,
+    "\n\n**$1**\n\n"
+  );
 
-  // Numbered main headings: "1. Economic Development in Pakistan"
-  text = text.replace(/(?<=[\s.!?])\s*(\d+\.\s+[A-Z][A-Za-z\s,()'-]{10,}?)(?=\s+(?:[A-Z]))/g, "\n\n**$1**\n\n");
+  // 2) Lettered sub-headings: "a. First Five Year Plan (1955-60)"
+  // Greedy match up to and including parenthetical year ranges
+  text = text.replace(
+    /([a-z]\.\s+[A-Z][A-Za-z0-9\s,'\u2019-]+(?:\([^)]*\))?)(?=\s+(?:[A-Z][a-z]|The |In |This |It |After |During |As |Its |However ))/g,
+    "\n\n**$1**\n\n"
+  );
 
-  // Lettered sub-headings: "a. First Five Year Plan (1955-60)"
-  text = text.replace(/(?<=[\s.!?])\s*([a-z]\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]{8,}?)(?=\s+(?:[A-Z]|The|In|This|It|After|During|As|Its|However))/g, "\n\n**$1**\n\n");
+  // 3) Roman numeral sub-headings: "i. Medium Term Development Plan (2005-10)"
+  text = text.replace(
+    /([ivxlc]+\.\s+[A-Z][A-Za-z0-9\s,'\u2019-]+(?:\([^)]*\))?)(?=\s+(?:[A-Z][a-z]|The |In |This |It |After |During |As ))/g,
+    "\n\n**$1**\n\n"
+  );
 
-  // Roman numeral sub-headings: "i. Medium Term Development Plan"
-  text = text.replace(/(?<=[\s.!?])\s*([ivxlc]+\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]{8,}?)(?=\s+(?:[A-Z]|The|In|This|It|After|During|As))/g, "\n\n**$1**\n\n");
-
-  // Label lines: "Learning Outcomes:" etc.
+  // 4) Label lines: "Learning Outcomes:" etc.
   text = text.replace(/(?:^|\s)(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*/gi, "\n\n**$1:**\n");
 
-  // 2) Now split remaining long blocks into paragraphs at logical break points
-  //    We group ~3-5 sentences together rather than splitting every sentence
+  // 5) Split remaining long blocks into paragraph chunks of ~3 sentences
   const lines = text.split("\n");
   const processed = lines.map(line => {
     if (line.length < 400) return line;
-    // Split into sentences
     const sentences = line.split(/(?<=\.)\s+(?=[A-Z])/);
     if (sentences.length <= 3) return line;
-    // Group sentences into chunks of 3-4
     const chunks: string[] = [];
     for (let i = 0; i < sentences.length; i += 3) {
       chunks.push(sentences.slice(i, i + 3).join(" "));
