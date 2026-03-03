@@ -65,17 +65,27 @@ const AdminDashboard = () => {
 
   const handleReply = async (id: string) => {
     if (!replyText.trim()) return;
-    await supabase
-      .from("teacher_requests")
-      .update({ admin_reply: replyText, is_read: true, replied_at: new Date().toISOString() })
-      .eq("id", id);
-    toast({ title: "Reply sent!" });
-    setReplyingTo(null);
-    setReplyText("");
+    try {
+      const { error } = await supabase
+        .from("teacher_requests")
+        .update({ admin_reply: replyText, is_read: true, replied_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+      toast({ title: "Reply sent!" });
+      setReplyingTo(null);
+      setReplyText("");
+    } catch (err) {
+      console.error("Reply error:", err);
+      toast({ title: "Failed to send reply", variant: "destructive" });
+    }
   };
 
   const markRead = async (id: string) => {
-    await supabase.from("teacher_requests").update({ is_read: true }).eq("id", id);
+    try {
+      await supabase.from("teacher_requests").update({ is_read: true }).eq("id", id);
+    } catch (err) {
+      console.error("Mark read error:", err);
+    }
   };
 
   const handleLogout = () => { logout(); navigate("/"); };

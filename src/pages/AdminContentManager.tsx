@@ -259,9 +259,15 @@ const AdminContentManager = () => {
 
   const deleteExercise = async (ex: Exercise) => {
     if (!confirm("Delete this exercise?")) return;
-    await supabase.from("chapter_exercises").delete().eq("id", ex.id);
-    toast({ title: "Exercise deleted" });
-    fetchExercises(managingChapter!);
+    try {
+      const { error } = await supabase.from("chapter_exercises").delete().eq("id", ex.id);
+      if (error) throw error;
+      toast({ title: "Exercise deleted" });
+      fetchExercises(managingChapter!);
+    } catch (err) {
+      console.error("Delete exercise error:", err);
+      toast({ title: "Failed to delete exercise", variant: "destructive" });
+    }
   };
 
   return (
