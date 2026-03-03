@@ -21,43 +21,91 @@ function preprocessContent(raw: string): string {
   let text = raw;
 
   // ─── PHASE 1: Inject line breaks before heading patterns ───
-  // This is for wall-of-text content that has no newlines at all.
+  // Works on wall-of-text content with very few newlines.
+  // Strategy: insert \n\n BEFORE the heading pattern.
 
-  // 1a) Numbered main headings: "1. Economic Development" "2. Sectors of Economy"
-  text = text.replace(/(?<=\.[\s"'])\s*(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]{8,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
+  // 1) Numbered main headings: "1. Economic Development in Pakistan"
+  //    Match digit-dot followed by title-case words, greedy up to sentence start
+  text = text.replace(
+    /(?<=[\.\!\?]["'\s])\s*(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]{8,}?(?:[a-z]\s|[a-z]\)|[)]\s))(?=[A-Z])/g,
+    "\n\n**$1**\n\n"
+  );
+  // Fallback: simpler numbered heading detection - break before "N. Title"
+  text = text.replace(
+    /(?<=[\.\!\?]["'\s])\s*(?=(\d+\.\s+[A-Z][a-z]))/g,
+    "\n\n"
+  );
 
-  // 1b) Lettered sub-headings with period: "a. First Five Year Plan (1955-60)"
-  text = text.replace(/(?<=\.[\s"'])\s*([a-i]\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]{5,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
+  // 2) Lettered sub-headings with period: "a. First Five Year Plan (1955-60)"
+  text = text.replace(
+    /(?<=[\.\!\?]["'\s])\s*(?=([a-i]\.\s+[A-Z][A-Za-z]))/g,
+    "\n\n"
+  );
 
-  // 1c) Roman numeral sub-headings with period: "i. Mining", "ii. Agriculture"
-  text = text.replace(/(?<=\.[\s"'])\s*((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]{3,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
+  // 3) Roman numeral sub-headings with period: "i. Mining", "ii. Agriculture"
+  text = text.replace(
+    /(?<=[\.\!\?]["'\s])\s*(?=((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+[A-Z][A-Za-z]))/g,
+    "\n\n"
+  );
 
-  // 2a) Lettered sub-headings with paren: "a) Primary Sector:" "b) Reforms"
-  text = text.replace(/(?<=\.[\s"'])\s*([a-z]\)\s+[A-Z][A-Za-z0-9\s,()'\u2019:-]{3,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
+  // 4) Lettered sub-headings with paren: "a) Primary Sector:" "b) Reforms"
+  text = text.replace(
+    /(?<=[\.\!\?]["'\s])\s*(?=([a-z]\)\s+[A-Z][A-Za-z]))/g,
+    "\n\n"
+  );
 
-  // 2b) Roman numeral sub-headings with paren: "i) Use of Chemical Fertilizer:"
-  text = text.replace(/(?<=\.[\s"'])\s*((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\)\s+[A-Z][A-Za-z0-9\s,()'\u2019:-]{3,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
+  // 5) Roman numeral sub-headings with paren: "i) Use of Chemical Fertilizer:"
+  text = text.replace(
+    /(?<=[\.\!\?]["'\s])\s*(?=((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\)\s+[A-Z][A-Za-z]))/g,
+    "\n\n"
+  );
 
-  // 2c) Parenthetical roman numerals: "(i) To explore..." as list items
-  text = text.replace(/(?<=\.[\s"'])\s*(\([ivx]+\)\s+)/g, "\n$1");
+  // 6) Parenthetical roman numerals as list items: "(i) To explore..."
+  text = text.replace(
+    /(?<=[\.\!\?:]["'\s])\s*(?=\([ivx]+\)\s+[A-Z])/g,
+    "\n"
+  );
 
-  // 3) Label lines: "Learning Outcomes:" etc.
+  // 7) Label lines: "Learning Outcomes:" etc.
   text = text.replace(/(?:^|\s)(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*/gi, "\n\n**$1:**\n");
 
-  // ─── PHASE 2: Split remaining long blocks into paragraph chunks ───
+  // ─── PHASE 2: Identify heading lines and bold-wrap them ───
   const lines = text.split("\n");
   const processed = lines.map(line => {
     const trimmed = line.trim();
-    if (trimmed.length < 400) return line;
-    // Don't split heading lines
-    if (trimmed.startsWith("**")) return line;
-    const sentences = trimmed.split(/(?<=[.!?]["']?)\s+(?=[A-Z])/);
-    if (sentences.length <= 3) return line;
-    const chunks: string[] = [];
-    for (let i = 0; i < sentences.length; i += 4) {
-      chunks.push(sentences.slice(i, i + 4).join(" "));
+    if (!trimmed || trimmed.startsWith("**")) return line;
+
+    // Numbered main heading: "1. Economic Development in Pakistan"
+    const numHead = trimmed.match(/^(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]+)$/);
+    if (numHead && numHead[1].length > 10 && numHead[1].length < 120) {
+      return `**${trimmed}**`;
     }
-    return chunks.join("\n\n");
+
+    // Lettered heading with period: "a. First Five Year Plan (1955-60)"
+    const letHead = trimmed.match(/^([a-i]\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]+)$/);
+    if (letHead && letHead[1].length > 8 && letHead[1].length < 120) {
+      return `**${trimmed}**`;
+    }
+
+    // Roman heading with period: "i. Mining" (short lines that are headings)
+    const romHead = trimmed.match(/^((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]+)$/);
+    if (romHead && romHead[1].length > 5 && romHead[1].length < 120) {
+      return `**${trimmed}**`;
+    }
+
+    // Split long paragraph blocks into ~4-sentence chunks
+    if (trimmed.length >= 400) {
+      const sentences = trimmed.split(/(?<=[.!?]["']?)\s+(?=[A-Z])/);
+      if (sentences.length > 3) {
+        const chunks: string[] = [];
+        for (let i = 0; i < sentences.length; i += 4) {
+          chunks.push(sentences.slice(i, i + 4).join(" "));
+        }
+        return chunks.join("\n\n");
+      }
+    }
+
+    return line;
   });
 
   return processed.join("\n");
