@@ -86,14 +86,23 @@ const AdminContentManager = () => {
   const fetchChapters = async () => {
     if (!selectedClass || !selectedSubject) return;
     setLoading(true);
-    const { data } = await supabase
-      .from("chapters")
-      .select("*")
-      .eq("class_id", selectedClass)
-      .eq("subject_id", selectedSubject)
-      .order("chapter_number", { ascending: true });
-    setChapters(data || []);
-    setLoading(false);
+    try {
+      const { data, error } = await supabase
+        .from("chapters")
+        .select("*")
+        .eq("class_id", selectedClass)
+        .eq("subject_id", selectedSubject)
+        .order("chapter_number", { ascending: true });
+      if (error) {
+        toast({ title: "Failed to load chapters", description: error.message, variant: "destructive" });
+      }
+      setChapters(data || []);
+    } catch (err) {
+      console.error("Fetch chapters error:", err);
+      toast({ title: "Something went wrong", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
