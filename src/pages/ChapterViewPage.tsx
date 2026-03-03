@@ -24,15 +24,9 @@ function preprocessContent(raw: string): string {
   // Works on wall-of-text content with very few newlines.
   // Strategy: insert \n\n BEFORE the heading pattern.
 
-  // 1) Numbered main headings: "1. Economic Development in Pakistan"
-  //    Match digit-dot followed by title-case words, greedy up to sentence start
+  // 1) Break before numbered main headings: "1. Title Words"
   text = text.replace(
-    /(?<=[\.\!\?]["'\s])\s*(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]{8,}?(?:[a-z]\s|[a-z]\)|[)]\s))(?=[A-Z])/g,
-    "\n\n**$1**\n\n"
-  );
-  // Fallback: simpler numbered heading detection - break before "N. Title"
-  text = text.replace(
-    /(?<=[\.\!\?]["'\s])\s*(?=(\d+\.\s+[A-Z][a-z]))/g,
+    /(?<=[\.\!\?]["'\s])\s*(?=\d+\.\s+[A-Z][a-z])/g,
     "\n\n"
   );
 
