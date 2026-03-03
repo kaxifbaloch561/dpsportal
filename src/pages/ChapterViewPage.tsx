@@ -13,42 +13,45 @@ import React from "react";
 /* ── Preprocess unformatted content to inject structural breaks ── */
 function preprocessContent(raw: string): string {
   // If content already has markdown formatting with enough lines, return as-is
-  if (raw.includes("**") && raw.split("\n").length > 30) return raw;
+  const lineCount = raw.split("\n").length;
+  if (raw.includes("**") && lineCount > 30) return raw;
+  // If already well-structured with many lines, return as-is
+  if (lineCount > 50) return raw;
 
   let text = raw;
 
-  // Known heading patterns found in Pakistan Studies textbooks
-  // We use specific known titles to avoid false positives from sentence fragments
+  // ─── PHASE 1: Inject line breaks before heading patterns ───
+  // This is for wall-of-text content that has no newlines at all.
 
-  // 1) Numbered main headings: "1. Economic Development in Pakistan"
-  //    Greedy match, end at sentence start words (At the, The, In, This...)
-  text = text.replace(
-    /(?<=\.\s|\n|^)(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]{10,})(?=\s+(?:At the |The [a-z]|In [a-z]|This |It |After |During |As [a-z]|Its |However |Upto |There ))/g,
-    "\n\n**$1**\n\n"
-  );
+  // 1a) Numbered main headings: "1. Economic Development" "2. Sectors of Economy"
+  text = text.replace(/(?<=\.[\s"'])\s*(\d+\.\s+[A-Z][A-Za-z\s,()'\u2019-]{8,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
 
-  // 2) Lettered sub-headings: "a. First Five Year Plan (1955-60)"
-  //    Only match when preceded by sentence end (period + space) to avoid matching mid-word letters
-  text = text.replace(
-    /(?<=\.\s)([a-i]\.\s+[A-Z][A-Za-z]{2,}[A-Za-z0-9\s,'\u2019-]*(?:\([^)]*\))?)(?=\s+(?:[A-Z][a-z]|The |In |This |It |After |During |As |Its |However ))/g,
-    "\n\n**$1**\n\n"
-  );
+  // 1b) Lettered sub-headings with period: "a. First Five Year Plan (1955-60)"
+  text = text.replace(/(?<=\.[\s"'])\s*([a-i]\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]{5,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
 
-  // 3) Roman numeral sub-headings: "i. Medium Term Development Plan (2005-10)"
-  //    Only match "i." through "ix." preceded by sentence end
-  text = text.replace(
-    /(?<=\.\s)((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+[A-Z][A-Za-z0-9\s,'\u2019-]+(?:\([^)]*\))?)(?=\s+(?:[A-Z][a-z]|The |In |This |It |After |During |As ))/g,
-    "\n\n**$1**\n\n"
-  );
+  // 1c) Roman numeral sub-headings with period: "i. Mining", "ii. Agriculture"
+  text = text.replace(/(?<=\.[\s"'])\s*((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]{3,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
 
-  // 4) Label lines: "Learning Outcomes:" etc.
+  // 2a) Lettered sub-headings with paren: "a) Primary Sector:" "b) Reforms"
+  text = text.replace(/(?<=\.[\s"'])\s*([a-z]\)\s+[A-Z][A-Za-z0-9\s,()'\u2019:-]{3,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
+
+  // 2b) Roman numeral sub-headings with paren: "i) Use of Chemical Fertilizer:"
+  text = text.replace(/(?<=\.[\s"'])\s*((?:i|ii|iii|iv|v|vi|vii|viii|ix|x)\)\s+[A-Z][A-Za-z0-9\s,()'\u2019:-]{3,}?)(?=\s+[A-Z])/g, "\n\n**$1**\n\n");
+
+  // 2c) Parenthetical roman numerals: "(i) To explore..." as list items
+  text = text.replace(/(?<=\.[\s"'])\s*(\([ivx]+\)\s+)/g, "\n$1");
+
+  // 3) Label lines: "Learning Outcomes:" etc.
   text = text.replace(/(?:^|\s)(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*/gi, "\n\n**$1:**\n");
 
-  // 5) Split remaining long blocks into paragraph chunks of ~3-4 sentences
+  // ─── PHASE 2: Split remaining long blocks into paragraph chunks ───
   const lines = text.split("\n");
   const processed = lines.map(line => {
-    if (line.length < 400) return line;
-    const sentences = line.split(/(?<=\.)\s+(?=[A-Z])/);
+    const trimmed = line.trim();
+    if (trimmed.length < 400) return line;
+    // Don't split heading lines
+    if (trimmed.startsWith("**")) return line;
+    const sentences = trimmed.split(/(?<=[.!?]["']?)\s+(?=[A-Z])/);
     if (sentences.length <= 3) return line;
     const chunks: string[] = [];
     for (let i = 0; i < sentences.length; i += 4) {
