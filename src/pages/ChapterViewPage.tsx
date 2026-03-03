@@ -10,28 +10,41 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 
 /* ── Professional Book-Style Content Renderer ── */
-/* ── Preprocess unformatted content to inject line-breaks ── */
+/* ── Preprocess unformatted content to inject structural breaks ── */
 function preprocessContent(raw: string): string {
-  // If content already has markdown formatting, return as-is
+  // If content already has markdown formatting with enough lines, return as-is
   if (raw.includes("**") && raw.split("\n").length > 30) return raw;
 
   let text = raw;
 
-  // Insert newlines before numbered main headings: "1. Title" pattern
-  text = text.replace(/(?<=[.!?])\s+(\d+\.\s+[A-Z][A-Za-z\s,()'-]{10,}?)(?=\s+[A-Z])/g, "\n\n$1\n\n");
+  // 1) Insert double-newlines before structural headings so they become separate blocks
 
-  // Insert newlines before lettered sub-headings: "a. Title" pattern  
-  text = text.replace(/(?<=[.!?])\s+([a-z]\.\s+[A-Z][A-Za-z0-9\s,()'-]{8,}?)(?=\s+(?:[A-Z]|The|In|This|It|After|During|As))/g, "\n\n$1\n\n");
+  // Numbered main headings: "1. Economic Development in Pakistan"
+  text = text.replace(/(?<=[\s.!?])\s*(\d+\.\s+[A-Z][A-Za-z\s,()'-]{10,}?)(?=\s+(?:[A-Z]))/g, "\n\n**$1**\n\n");
 
-  // Insert newlines before "Learning Outcomes:" or similar label lines
-  text = text.replace(/(?:^|\s)(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*/gi, "\n\n$1:\n");
+  // Lettered sub-headings: "a. First Five Year Plan (1955-60)"
+  text = text.replace(/(?<=[\s.!?])\s*([a-z]\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]{8,}?)(?=\s+(?:[A-Z]|The|In|This|It|After|During|As|Its|However))/g, "\n\n**$1**\n\n");
 
-  // Break very long lines (500+ chars) at sentence boundaries for readability
+  // Roman numeral sub-headings: "i. Medium Term Development Plan"
+  text = text.replace(/(?<=[\s.!?])\s*([ivxlc]+\.\s+[A-Z][A-Za-z0-9\s,()'\u2019-]{8,}?)(?=\s+(?:[A-Z]|The|In|This|It|After|During|As))/g, "\n\n**$1**\n\n");
+
+  // Label lines: "Learning Outcomes:" etc.
+  text = text.replace(/(?:^|\s)(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*/gi, "\n\n**$1:**\n");
+
+  // 2) Now split remaining long blocks into paragraphs at logical break points
+  //    We group ~3-5 sentences together rather than splitting every sentence
   const lines = text.split("\n");
   const processed = lines.map(line => {
-    if (line.length < 500) return line;
-    // Split at sentence boundaries (period followed by space and capital)
-    return line.replace(/\.\s+(?=[A-Z])/g, ".\n");
+    if (line.length < 400) return line;
+    // Split into sentences
+    const sentences = line.split(/(?<=\.)\s+(?=[A-Z])/);
+    if (sentences.length <= 3) return line;
+    // Group sentences into chunks of 3-4
+    const chunks: string[] = [];
+    for (let i = 0; i < sentences.length; i += 3) {
+      chunks.push(sentences.slice(i, i + 3).join(" "));
+    }
+    return chunks.join("\n\n");
   });
 
   return processed.join("\n");
