@@ -113,16 +113,25 @@ const AdminContentManager = () => {
   // Fetch exercises for a chapter
   const fetchExercises = async (ch: Chapter) => {
     setLoadingExercises(true);
-    const { data } = await supabase
-      .from("chapter_exercises")
-      .select("*")
-      .eq("class_id", ch.class_id)
-      .eq("subject_id", ch.subject_id)
-      .eq("chapter_number", ch.chapter_number)
-      .order("exercise_type")
-      .order("sort_order", { ascending: true });
-    setExercises((data as Exercise[]) || []);
-    setLoadingExercises(false);
+    try {
+      const { data, error } = await supabase
+        .from("chapter_exercises")
+        .select("*")
+        .eq("class_id", ch.class_id)
+        .eq("subject_id", ch.subject_id)
+        .eq("chapter_number", ch.chapter_number)
+        .order("exercise_type")
+        .order("sort_order", { ascending: true });
+      if (error) {
+        toast({ title: "Failed to load exercises", description: error.message, variant: "destructive" });
+      }
+      setExercises((data as Exercise[]) || []);
+    } catch (err) {
+      console.error("Fetch exercises error:", err);
+      toast({ title: "Something went wrong", variant: "destructive" });
+    } finally {
+      setLoadingExercises(false);
+    }
   };
 
   useEffect(() => {
