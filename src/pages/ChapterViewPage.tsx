@@ -156,6 +156,43 @@ function renderSection(section: string) {
       continue;
     }
 
+    // Plain-text numbered main heading (e.g. "1. Economic Development in Pakistan")
+    const plainNumberedHeading = trimmed.match(/^(\d+)\.\s+([A-Z][A-Za-z\s,()'-]+)$/);
+    if (plainNumberedHeading && plainNumberedHeading[2].length > 10 && plainNumberedHeading[2].length < 120) {
+      elements.push(
+        <h2 key={i} className="text-xl font-extrabold text-foreground mt-8 mb-3 flex items-center gap-3 leading-tight">
+          <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground text-sm font-black shadow-lg shrink-0">
+            {plainNumberedHeading[1]}
+          </span>
+          <span>{plainNumberedHeading[2]}</span>
+        </h2>
+      );
+      continue;
+    }
+
+    // Plain-text lettered sub-heading (e.g. "a. First Five Year Plan (1955-60)")
+    const plainLetterHeading = trimmed.match(/^([a-z])\.\s+([A-Z][A-Za-z0-9\s,()'-]+)$/);
+    if (plainLetterHeading && plainLetterHeading[2].length > 8 && plainLetterHeading[2].length < 120) {
+      elements.push(
+        <h4 key={i} className="text-base font-bold text-foreground mt-5 mb-2 flex items-start gap-2 leading-snug">
+          <span className="text-primary font-black shrink-0">{plainLetterHeading[1]}.</span>
+          <span>{plainLetterHeading[2]}</span>
+        </h4>
+      );
+      continue;
+    }
+
+    // "Title:" label lines (e.g. "Learning Outcomes:")
+    const labelMatch = trimmed.match(/^([A-Z][A-Za-z\s]{2,30}):\s*$/);
+    if (labelMatch) {
+      elements.push(
+        <h3 key={i} className="text-lg font-bold text-foreground mt-6 mb-2 leading-snug">
+          {labelMatch[1]}
+        </h3>
+      );
+      continue;
+    }
+
     elements.push(
       <p key={i} className="text-sm text-muted-foreground leading-[1.9] py-1">
         {parseInlineBold(trimmed)}
