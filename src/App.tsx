@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,31 +20,35 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = React.forwardRef<HTMLDivElement>((_, ref) => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/content" element={<AdminContentManager />} />
-            <Route path="/class/:classId" element={<SubjectsPage />} />
-            <Route path="/class/:classId/subject/:subjectId" element={<SubjectOptionsPage />} />
-            <Route path="/class/:classId/subject/:subjectId/chapters" element={<ChaptersPage />} />
-            <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber" element={<ChapterViewPage />} />
-            <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber/exercise" element={<ExercisePage />} />
-            <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber/exercise/:exerciseType" element={<ExerciseDetailPage />} />
-            <Route path="/class/:classId/subject/:subjectId/chat" element={<ChatbotPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div ref={ref}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/content" element={<AdminContentManager />} />
+              <Route path="/class/:classId" element={<SubjectsPage />} />
+              <Route path="/class/:classId/subject/:subjectId" element={<SubjectOptionsPage />} />
+              <Route path="/class/:classId/subject/:subjectId/chapters" element={<ChaptersPage />} />
+              <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber" element={<ChapterViewPage />} />
+              <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber/exercise" element={<ExercisePage />} />
+              <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber/exercise/:exerciseType" element={<ExerciseDetailPage />} />
+              <Route path="/class/:classId/subject/:subjectId/chat" element={<ChatbotPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
-);
+));
+
+App.displayName = "App";
 
 export default App;

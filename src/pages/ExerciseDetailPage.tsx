@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import React, { useState } from "react";
 import { classesData } from "@/data/classesData";
 import { supabase } from "@/integrations/supabase/client";
 import PageShell from "@/components/PageShell";
@@ -335,7 +335,7 @@ const CopyButton = ({ text }: { text: string }) => {
       className="flex-shrink-0 p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
       title="Copy question & answer"
     >
-      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+      {copied ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
     </button>
   );
 };

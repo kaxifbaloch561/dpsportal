@@ -86,14 +86,23 @@ const AdminContentManager = () => {
   const fetchChapters = async () => {
     if (!selectedClass || !selectedSubject) return;
     setLoading(true);
-    const { data } = await supabase
-      .from("chapters")
-      .select("*")
-      .eq("class_id", selectedClass)
-      .eq("subject_id", selectedSubject)
-      .order("chapter_number", { ascending: true });
-    setChapters(data || []);
-    setLoading(false);
+    try {
+      const { data, error } = await supabase
+        .from("chapters")
+        .select("*")
+        .eq("class_id", selectedClass)
+        .eq("subject_id", selectedSubject)
+        .order("chapter_number", { ascending: true });
+      if (error) {
+        toast({ title: "Failed to load chapters", description: error.message, variant: "destructive" });
+      }
+      setChapters(data || []);
+    } catch (err) {
+      console.error("Fetch chapters error:", err);
+      toast({ title: "Something went wrong", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -104,16 +113,25 @@ const AdminContentManager = () => {
   // Fetch exercises for a chapter
   const fetchExercises = async (ch: Chapter) => {
     setLoadingExercises(true);
-    const { data } = await supabase
-      .from("chapter_exercises")
-      .select("*")
-      .eq("class_id", ch.class_id)
-      .eq("subject_id", ch.subject_id)
-      .eq("chapter_number", ch.chapter_number)
-      .order("exercise_type")
-      .order("sort_order", { ascending: true });
-    setExercises((data as Exercise[]) || []);
-    setLoadingExercises(false);
+    try {
+      const { data, error } = await supabase
+        .from("chapter_exercises")
+        .select("*")
+        .eq("class_id", ch.class_id)
+        .eq("subject_id", ch.subject_id)
+        .eq("chapter_number", ch.chapter_number)
+        .order("exercise_type")
+        .order("sort_order", { ascending: true });
+      if (error) {
+        toast({ title: "Failed to load exercises", description: error.message, variant: "destructive" });
+      }
+      setExercises((data as Exercise[]) || []);
+    } catch (err) {
+      console.error("Fetch exercises error:", err);
+      toast({ title: "Something went wrong", variant: "destructive" });
+    } finally {
+      setLoadingExercises(false);
+    }
   };
 
   useEffect(() => {
@@ -174,10 +192,16 @@ const AdminContentManager = () => {
 
   const deleteChapter = async (ch: Chapter) => {
     if (!confirm(`Delete "${ch.chapter_title}"? This will also delete all exercises for this chapter.`)) return;
-    await supabase.from("chapter_exercises").delete().eq("class_id", ch.class_id).eq("subject_id", ch.subject_id).eq("chapter_number", ch.chapter_number);
-    await supabase.from("chapters").delete().eq("id", ch.id);
-    toast({ title: "Chapter deleted" });
-    fetchChapters();
+    try {
+      await supabase.from("chapter_exercises").delete().eq("class_id", ch.class_id).eq("subject_id", ch.subject_id).eq("chapter_number", ch.chapter_number);
+      const { error } = await supabase.from("chapters").delete().eq("id", ch.id);
+      if (error) throw error;
+      toast({ title: "Chapter deleted" });
+      fetchChapters();
+    } catch (err) {
+      console.error("Delete chapter error:", err);
+      toast({ title: "Failed to delete chapter", variant: "destructive" });
+    }
   };
 
   // Exercise CRUD
@@ -235,9 +259,15 @@ const AdminContentManager = () => {
 
   const deleteExercise = async (ex: Exercise) => {
     if (!confirm("Delete this exercise?")) return;
-    await supabase.from("chapter_exercises").delete().eq("id", ex.id);
-    toast({ title: "Exercise deleted" });
-    fetchExercises(managingChapter!);
+    try {
+      const { error } = await supabase.from("chapter_exercises").delete().eq("id", ex.id);
+      if (error) throw error;
+      toast({ title: "Exercise deleted" });
+      fetchExercises(managingChapter!);
+    } catch (err) {
+      console.error("Delete exercise error:", err);
+      toast({ title: "Failed to delete exercise", variant: "destructive" });
+    }
   };
 
   return (
