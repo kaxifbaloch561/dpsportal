@@ -192,10 +192,16 @@ const AdminContentManager = () => {
 
   const deleteChapter = async (ch: Chapter) => {
     if (!confirm(`Delete "${ch.chapter_title}"? This will also delete all exercises for this chapter.`)) return;
-    await supabase.from("chapter_exercises").delete().eq("class_id", ch.class_id).eq("subject_id", ch.subject_id).eq("chapter_number", ch.chapter_number);
-    await supabase.from("chapters").delete().eq("id", ch.id);
-    toast({ title: "Chapter deleted" });
-    fetchChapters();
+    try {
+      await supabase.from("chapter_exercises").delete().eq("class_id", ch.class_id).eq("subject_id", ch.subject_id).eq("chapter_number", ch.chapter_number);
+      const { error } = await supabase.from("chapters").delete().eq("id", ch.id);
+      if (error) throw error;
+      toast({ title: "Chapter deleted" });
+      fetchChapters();
+    } catch (err) {
+      console.error("Delete chapter error:", err);
+      toast({ title: "Failed to delete chapter", variant: "destructive" });
+    }
   };
 
   // Exercise CRUD
