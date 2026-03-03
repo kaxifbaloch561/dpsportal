@@ -10,8 +10,36 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 
 /* ── Professional Book-Style Content Renderer ── */
+/* ── Preprocess unformatted content to inject line-breaks ── */
+function preprocessContent(raw: string): string {
+  // If content already has markdown formatting, return as-is
+  if (raw.includes("**") && raw.split("\n").length > 30) return raw;
+
+  let text = raw;
+
+  // Insert newlines before numbered main headings: "1. Title" pattern
+  text = text.replace(/(?<=[.!?])\s+(\d+\.\s+[A-Z][A-Za-z\s,()'-]{10,}?)(?=\s+[A-Z])/g, "\n\n$1\n\n");
+
+  // Insert newlines before lettered sub-headings: "a. Title" pattern  
+  text = text.replace(/(?<=[.!?])\s+([a-z]\.\s+[A-Z][A-Za-z0-9\s,()'-]{8,}?)(?=\s+(?:[A-Z]|The|In|This|It|After|During|As))/g, "\n\n$1\n\n");
+
+  // Insert newlines before "Learning Outcomes:" or similar label lines
+  text = text.replace(/(?:^|\s)(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*/gi, "\n\n$1:\n");
+
+  // Break very long lines (500+ chars) at sentence boundaries for readability
+  const lines = text.split("\n");
+  const processed = lines.map(line => {
+    if (line.length < 500) return line;
+    // Split at sentence boundaries (period followed by space and capital)
+    return line.replace(/\.\s+(?=[A-Z])/g, ".\n");
+  });
+
+  return processed.join("\n");
+}
+
 const FormattedChapterContent = ({ content }: { content: string }) => {
-  const sections = content.split(/\n---\n/);
+  const processed = preprocessContent(content);
+  const sections = processed.split(/\n---\n/);
 
   return (
     <div className="py-6 px-4 md:px-8 space-y-1">
