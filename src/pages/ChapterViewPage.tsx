@@ -194,6 +194,32 @@ function renderSection(section: string) {
       continue;
     }
 
+    // Lettered sub-heading without bold: "a. Title Here"
+    const plainLetterSub = trimmed.match(/^([a-i])\.\s+([A-Z][A-Za-z0-9\s,()'-]{8,120})$/);
+    if (plainLetterSub) {
+      elements.push(
+        <h4 key={i} className="text-base font-bold text-foreground mt-5 mb-2 flex items-start gap-2 leading-snug">
+          <span className="text-primary font-black shrink-0">{plainLetterSub[1]}.</span>
+          <span>{plainLetterSub[2]}</span>
+        </h4>
+      );
+      continue;
+    }
+
+    // Roman numeral sub-heading without bold: "i. Title Here"
+    const plainRomanSub = trimmed.match(/^(i{1,3}|iv|vi{0,3}|ix|x)\.\s+([A-Z][A-Za-z0-9\s,()'-]{2,120})$/);
+    if (plainRomanSub) {
+      elements.push(
+        <h4 key={i} className="text-base font-bold text-foreground mt-5 mb-2 flex items-start gap-2 leading-snug">
+          <span className="inline-flex items-center justify-center min-w-[28px] h-7 rounded-lg bg-primary/15 text-primary text-xs font-black px-1.5">
+            {plainRomanSub[1]}
+          </span>
+          <span>{plainRomanSub[2]}</span>
+        </h4>
+      );
+      continue;
+    }
+
     elements.push(
       <p key={i} className="text-sm text-muted-foreground leading-[1.9] py-1">
         {parseInlineBold(trimmed)}
