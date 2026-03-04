@@ -1,8 +1,18 @@
 /**
  * Preprocesses raw chapter content into structured lines with markdown-like formatting.
- * Designed to handle "wall-of-text" content (few newlines, many characters) safely
+ * Handles "wall-of-text" content (few newlines, many characters) safely
  * without catastrophic regex backtracking.
  */
+
+// Common learning-outcome / bullet-start verbs (lowercase)
+const BULLET_VERBS = [
+  'discuss', 'describe', 'explain', 'define', 'identify', 'comprehend',
+  'analyse', 'analyze', 'narrate', 'point out', 'enumerate', 'evaluate',
+  'compare', 'differentiate', 'distinguish', 'list', 'state', 'mention',
+  'highlight', 'outline', 'summarize', 'understand', 'know', 'recall',
+  'recognize', 'classify', 'illustrate', 'interpret', 'apply', 'assess',
+  'examine', 'explore', 'elaborate',
+];
 
 /** Split a long text into sentences safely (no regex backtracking risk) */
 function splitSentences(text: string): string[] {
@@ -12,12 +22,35 @@ function splitSentences(text: string): string[] {
     const ch = text[i];
     if ((ch === '.' || ch === '!' || ch === '?') && i + 1 < text.length) {
       const next = text[i + 1];
-      // Check if next char is a space followed by uppercase (sentence boundary)
-      if (next === ' ' && i + 2 < text.length && text[i + 2] >= 'A' && text[i + 2] <= 'Z') {
-        results.push(text.slice(start, i + 1).trim());
-        start = i + 2;
+      if (next === ' ' && i + 2 < text.length) {
+        const afterSpace = text[i + 2];
+        // Sentence boundary: uppercase letter
+        if (afterSpace >= 'A' && afterSpace <= 'Z') {
+          results.push(text.slice(start, i + 1).trim());
+          start = i + 2;
+          continue;
+        }
+        // Sentence boundary: digit followed by ". " (numbered heading like "1. ")
+        if (afterSpace >= '0' && afterSpace <= '9') {
+          // Look ahead for "digit. " pattern (numbered section)
+          const lookAhead = text.slice(i + 2, i + 8);
+          if (/^\d+\.\s/.test(lookAhead)) {
+            results.push(text.slice(start, i + 1).trim());
+            start = i + 2;
+            continue;
+          }
+        }
+        // Sentence boundary: lowercase verb that starts a bullet item
+        const restAfterDot = text.slice(i + 2);
+        for (const verb of BULLET_VERBS) {
+          if (restAfterDot.startsWith(verb + ' ') || restAfterDot.startsWith(verb + ',')) {
+            results.push(text.slice(start, i + 1).trim());
+            start = i + 2;
+            break;
+          }
+        }
       }
-      // Also handle quote then space then uppercase
+      // Handle quote then space then uppercase
       if ((next === '"' || next === "'") && i + 2 < text.length && text[i + 2] === ' ' && i + 3 < text.length && text[i + 3] >= 'A' && text[i + 3] <= 'Z') {
         results.push(text.slice(start, i + 2).trim());
         start = i + 3;
@@ -31,31 +64,27 @@ function splitSentences(text: string): string[] {
 
 /** Detect if a short string is a heading pattern. Returns formatted heading or null. */
 function detectHeading(line: string): string | null {
-  if (line.length > 200) return null; // Headings are never this long
+  if (line.length > 200) return null;
 
   // Numbered main heading: "1. Economic Development in Pakistan"
-  const numMain = line.match(/^(\d+)\.\s+([A-Z].{5,120})$/);
-  if (numMain) return `**${line}**`;
+  if (/^(\d+)\.\s+([A-Z].{5,120})$/.test(line)) return `**${line}**`;
 
   // Lettered sub-heading: "a. First Five Year Plan (1955-60)"
-  const letSub = line.match(/^([a-i])\.\s+([A-Z].{5,120})$/);
-  if (letSub) return `**${line}**`;
+  if (/^([a-i])\.\s+([A-Z].{5,120})$/.test(line)) return `**${line}**`;
 
   // Roman numeral: "i. Mining"
-  const romSub = line.match(/^(i{1,3}|iv|vi{0,3}|ix|x)\.\s+([A-Z].{2,120})$/);
-  if (romSub) return `**${line}**`;
+  if (/^(i{1,3}|iv|vi{0,3}|ix|x)\.\s+([A-Z].{2,120})$/.test(line)) return `**${line}**`;
 
   // Lettered with paren: "a) Primary Sector"
-  const letParen = line.match(/^([a-z])\)\s+([A-Z].{3,120})$/);
-  if (letParen) return `**${line}**`;
+  if (/^([a-z])\)\s+([A-Z].{3,120})$/.test(line)) return `**${line}**`;
 
   // Roman with paren: "i) Use of Chemical Fertilizer"
-  const romParen = line.match(/^(i{1,3}|iv|vi{0,3}|ix|x)\)\s+([A-Z].{3,120})$/);
-  if (romParen) return `**${line}**`;
+  if (/^(i{1,3}|iv|vi{0,3}|ix|x)\)\s+([A-Z].{3,120})$/.test(line)) return `**${line}**`;
 
   // Label lines: "Learning Outcomes:" etc.
-  const labelMatch = line.match(/^(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*$/i);
-  if (labelMatch) return `**${labelMatch[1]}:**`;
+  if (/^(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s*$/i.test(line)) {
+    return `**${line.replace(/:\s*$/, '')}:**`;
+  }
 
   return null;
 }
@@ -69,36 +98,26 @@ function trySplitHeadingBody(line: string): [string, string] | null {
   if (line.length < 10 || line.length > 5000) return null;
 
   // Only process lines starting with heading-like patterns
-  // Numbered: "1. "
   const numMatch = line.match(/^(\d+\.\s+)/);
-  if (numMatch) {
-    return findHeadingBreak(line, numMatch[1].length);
-  }
+  if (numMatch) return findHeadingBreak(line, numMatch[1].length);
 
-  // Lettered: "a. " or "a) "
   const letMatch = line.match(/^([a-i][.)]\s+)/);
-  if (letMatch) {
-    return findHeadingBreak(line, letMatch[1].length);
-  }
+  if (letMatch) return findHeadingBreak(line, letMatch[1].length);
 
-  // Roman: "i. " or "ii) "
   const romMatch = line.match(/^((?:i{1,3}|iv|vi{0,3}|ix|x)[.)]\s+)/);
-  if (romMatch) {
-    return findHeadingBreak(line, romMatch[1].length);
-  }
+  if (romMatch) return findHeadingBreak(line, romMatch[1].length);
 
   return null;
 }
 
 function findHeadingBreak(line: string, prefixLen: number): [string, string] | null {
-  // Look for a sentence boundary within the first 150 chars that looks like heading → body transition
   const searchEnd = Math.min(line.length, 150);
-  // Look for patterns like "Plan (1955-60) At the time" — transition words after a space
   const transitionWords = [
     'At the ', 'The ', 'In ', 'This ', 'It ', 'After ', 'During ', 'As ',
     'However', 'There ', 'Under ', 'These ', 'To ', 'For the ', 'Pakistan ',
     'One ', 'Although ', 'With ', 'About ', 'Most ', 'Almost ', 'No ', 'An ',
-    'Like ', 'Improved ', 'Today ', 'They ',
+    'Like ', 'Improved ', 'Today ', 'They ', 'According ', 'Since ', 'Before ',
+    'Between ', 'From ', 'Some ', 'Many ', 'Several ', 'All ', 'Various ',
   ];
 
   for (let i = prefixLen + 5; i < searchEnd; i++) {
@@ -117,6 +136,26 @@ function findHeadingBreak(line: string, prefixLen: number): [string, string] | n
   return null;
 }
 
+/**
+ * Detect if a line is a "label:" pattern followed by content.
+ * E.g. "Learning Outcomes: The study of this chapter..."
+ * Returns [label, rest] or null.
+ */
+function splitLabelContent(line: string): [string, string] | null {
+  const match = line.match(/^(Learning Outcomes|Objectives|Summary|Conclusion|Introduction):\s+(.+)/i);
+  if (match) return [match[1], match[2]];
+  return null;
+}
+
+/**
+ * Check if a sentence looks like a learning outcome / bullet item
+ * (starts with a lowercase verb from our list)
+ */
+function isBulletItem(sentence: string): boolean {
+  const lower = sentence.toLowerCase();
+  return BULLET_VERBS.some(v => lower.startsWith(v + ' ') || lower.startsWith(v + ','));
+}
+
 export function preprocessContent(raw: string): string {
   // If content already has markdown formatting with enough lines, return as-is
   const lineCount = raw.split("\n").length;
@@ -124,7 +163,6 @@ export function preprocessContent(raw: string): string {
   if (lineCount > 50) return raw;
 
   // Phase 1: Split the text into manageable lines
-  // First split by existing newlines
   const rawLines = raw.split("\n");
   const expandedLines: string[] = [];
 
@@ -135,7 +173,6 @@ export function preprocessContent(raw: string): string {
       continue;
     }
 
-    // If line is short enough, keep as-is
     if (trimmed.length < 300) {
       expandedLines.push(trimmed);
       continue;
@@ -148,23 +185,60 @@ export function preprocessContent(raw: string): string {
       continue;
     }
 
-    // Group sentences: check if any sentence starts with a heading pattern
     for (const sentence of sentences) {
       expandedLines.push(sentence);
     }
   }
 
-  // Phase 2: Detect headings and format them
+  // Phase 2: Detect labels, headings, bullet items, and format them
   const formatted: string[] = [];
-  for (const line of expandedLines) {
+  let inBulletSection = false; // Track if we're in a learning outcomes / bullet section
+
+  for (let idx = 0; idx < expandedLines.length; idx++) {
+    const line = expandedLines[idx];
     const trimmed = line.trim();
     if (!trimmed) {
       formatted.push("");
+      inBulletSection = false;
       continue;
     }
     if (trimmed.startsWith("**")) {
       formatted.push(trimmed);
       continue;
+    }
+
+    // Check for "Label: content" pattern (e.g. "Learning Outcomes: The study...")
+    const labelSplit = splitLabelContent(trimmed);
+    if (labelSplit) {
+      formatted.push(`**${labelSplit[0]}:**`);
+      formatted.push("");
+      // The rest after the label - try to process it
+      const restSentences = splitSentences(labelSplit[1]);
+      // Check if first sentence is intro text like "The study of this chapter..."
+      for (const s of restSentences) {
+        if (isBulletItem(s)) {
+          formatted.push(`- ${s.charAt(0).toUpperCase()}${s.slice(1)}`);
+          inBulletSection = true;
+        } else {
+          formatted.push(s);
+          // If this looks like intro text before bullets, set flag
+          if (s.toLowerCase().includes('enable the students to') || s.toLowerCase().includes('will be able to')) {
+            inBulletSection = true;
+          }
+        }
+      }
+      continue;
+    }
+
+    // If we're in a bullet section and the line starts with a verb, make it a bullet
+    if (inBulletSection && isBulletItem(trimmed)) {
+      formatted.push(`- ${trimmed.charAt(0).toUpperCase()}${trimmed.slice(1)}`);
+      continue;
+    }
+
+    // Stop bullet section when we hit a numbered heading
+    if (/^\d+\.\s+[A-Z]/.test(trimmed)) {
+      inBulletSection = false;
     }
 
     // Try pure heading detection (entire line is a heading)
@@ -179,6 +253,7 @@ export function preprocessContent(raw: string): string {
     if (split) {
       formatted.push(split[0]);
       formatted.push(split[1]);
+      inBulletSection = false;
       continue;
     }
 
