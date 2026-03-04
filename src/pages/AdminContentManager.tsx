@@ -12,6 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import RichTextEditor from "@/components/admin/RichTextEditor";
+import "@/components/admin/rich-editor-styles.css";
 import {
   Plus, Trash2, Edit3, Save, BookOpen, ClipboardList, Loader2,
   ChevronRight, ArrowLeft, X
