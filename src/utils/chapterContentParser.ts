@@ -262,6 +262,7 @@ export function preprocessContent(raw: string): string {
     // Try pure heading detection (entire line is a heading)
     const heading = detectHeading(trimmed);
     if (heading) {
+      formatted.push(""); // Add spacing before headings
       formatted.push(heading);
       continue;
     }
@@ -269,6 +270,7 @@ export function preprocessContent(raw: string): string {
     // Try splitting heading + body
     const split = trySplitHeadingBody(trimmed);
     if (split) {
+      formatted.push(""); // Add spacing before headings
       formatted.push(split[0]);
       formatted.push(split[1]);
       inBulletSection = false;
