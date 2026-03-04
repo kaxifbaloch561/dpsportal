@@ -410,26 +410,27 @@ const AdminContentManager = () => {
 
       {/* Chapter Form Dialog */}
       <Dialog open={showChapterForm} onOpenChange={setShowChapterForm}>
-        <DialogContent className="rounded-3xl max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogContent className="rounded-3xl max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingChapter ? "Edit Chapter" : "Add Chapter"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 mt-2">
-            <div>
-              <label className="text-sm font-medium text-foreground mb-1 block">Chapter Number</label>
-              <Input type="number" value={chapterForm.number} onChange={(e) => setChapterForm((p) => ({ ...p, number: e.target.value }))} className="rounded-xl" />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground mb-1 block">Title</label>
-              <Input value={chapterForm.title} onChange={(e) => setChapterForm((p) => ({ ...p, title: e.target.value }))} className="rounded-xl" placeholder="Chapter title..." />
+            <div className="flex gap-3">
+              <div className="w-32">
+                <label className="text-sm font-medium text-foreground mb-1 block">Chapter #</label>
+                <Input type="number" value={chapterForm.number} onChange={(e) => setChapterForm((p) => ({ ...p, number: e.target.value }))} className="rounded-xl" />
+              </div>
+              <div className="flex-1">
+                <label className="text-sm font-medium text-foreground mb-1 block">Title</label>
+                <Input value={chapterForm.title} onChange={(e) => setChapterForm((p) => ({ ...p, title: e.target.value }))} className="rounded-xl" placeholder="Chapter title..." />
+              </div>
             </div>
             <div>
               <label className="text-sm font-medium text-foreground mb-1 block">Content</label>
-              <Textarea
-                value={chapterForm.content}
-                onChange={(e) => setChapterForm((p) => ({ ...p, content: e.target.value }))}
-                className="rounded-xl min-h-[200px] text-sm"
-                placeholder="Full chapter content... Use **bold** for headings, --- for section breaks."
+              <RichTextEditor
+                content={chapterForm.content}
+                onChange={(html) => setChapterForm((p) => ({ ...p, content: html }))}
+                placeholder="Start writing the chapter content... Use headings, bold, bullets, and insert images."
               />
             </div>
             <Button onClick={saveChapter} disabled={savingChapter} className="w-full rounded-full gap-2">
