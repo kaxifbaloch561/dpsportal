@@ -267,7 +267,7 @@ const RichTextEditor = ({ content, onChange, placeholder }: RichTextEditorProps)
           Drag & drop images • Click 📷 to upload • Resize images by dragging corners
         </span>
         <span className="text-[10px] text-muted-foreground">
-          {editor.storage.characterCount?.characters?.() || 0} chars
+          Drag & drop images • Click 📷 to upload
         </span>
       </div>
     </div>
