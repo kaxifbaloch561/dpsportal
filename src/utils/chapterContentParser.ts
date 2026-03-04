@@ -128,7 +128,7 @@ function findHeadingBreak(line: string, prefixLen: number): [string, string] | n
   const searchEnd = Math.min(line.length, 150);
   const transitionWords = [
     'At the ', 'The ', 'In ', 'This ', 'It ', 'After ', 'During ', 'As ',
-    'However', 'There ', 'Under ', 'These ', 'To ', 'For the ', 'Pakistan ',
+    'However', 'There ', 'Under ', 'These ', 'To ', 'For the ',
     'One ', 'Although ', 'With ', 'About ', 'Most ', 'Almost ', 'No ', 'An ',
     'Like ', 'Improved ', 'Today ', 'They ', 'According ', 'Since ', 'Before ',
     'Between ', 'From ', 'Some ', 'Many ', 'Several ', 'All ', 'Various ',
@@ -138,6 +138,9 @@ function findHeadingBreak(line: string, prefixLen: number): [string, string] | n
     'Here ', 'Those ', 'Other ', 'Another ', 'New ', 'More ',
   ];
 
+  // Words that indicate the heading is incomplete if it ends with them
+  const incompleteEndings = ['in', 'of', 'to', 'for', 'at', 'by', 'on', 'the', 'a', 'an', 'and', 'or', 'with', 'from', 'into', 'upon', 'about', 'between', 'through', 'under', 'over', 'during'];
+
   for (let i = prefixLen + 5; i < searchEnd; i++) {
     if (line[i] === ' ') {
       const rest = line.slice(i + 1);
@@ -145,6 +148,9 @@ function findHeadingBreak(line: string, prefixLen: number): [string, string] | n
         if (rest.startsWith(tw)) {
           const heading = line.slice(0, i).trim();
           if (heading.length > 5 && heading.length < 150) {
+            // Check if heading ends with a preposition (incomplete heading)
+            const lastWord = heading.split(' ').pop()?.toLowerCase() || '';
+            if (incompleteEndings.includes(lastWord)) continue;
             return [`**${heading}**`, line.slice(i + 1)];
           }
         }
