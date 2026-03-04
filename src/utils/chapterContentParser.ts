@@ -32,9 +32,23 @@ function splitSentences(text: string): string[] {
         }
         // Sentence boundary: digit followed by ". " (numbered heading like "1. ")
         if (afterSpace >= '0' && afterSpace <= '9') {
-          // Look ahead for "digit. " pattern (numbered section)
           const lookAhead = text.slice(i + 2, i + 8);
           if (/^\d+\.\s/.test(lookAhead)) {
+            results.push(text.slice(start, i + 1).trim());
+            start = i + 2;
+            continue;
+          }
+        }
+        // Sentence boundary: lowercase letter followed by ". " then uppercase (lettered sub-heading like "a. First Five Year Plan")
+        if (afterSpace >= 'a' && afterSpace <= 'i' && i + 3 < text.length && text[i + 3] === '.' && i + 4 < text.length && text[i + 4] === ' ' && i + 5 < text.length && text[i + 5] >= 'A' && text[i + 5] <= 'Z') {
+          results.push(text.slice(start, i + 1).trim());
+          start = i + 2;
+          continue;
+        }
+        // Sentence boundary: roman numeral patterns followed by ". " then uppercase (e.g. "i. Mining", "ii. Agriculture")
+        if ((afterSpace === 'i' || afterSpace === 'v' || afterSpace === 'x') && i + 3 < text.length) {
+          const romanRest = text.slice(i + 2, i + 12);
+          if (/^(?:i{1,3}|iv|vi{0,3}|ix|x)\.\s[A-Z]/.test(romanRest)) {
             results.push(text.slice(start, i + 1).trim());
             start = i + 2;
             continue;
