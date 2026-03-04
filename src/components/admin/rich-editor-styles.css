@@ -124,3 +124,75 @@
 .tiptap .ProseMirror-selectednode {
   position: relative;
 }
+
+/* HTML content rendering in chapter view */
+.chapter-html-content h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: hsl(var(--foreground));
+}
+
+.chapter-html-content h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--foreground));
+}
+
+.chapter-html-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--foreground));
+}
+
+.chapter-html-content p {
+  font-size: 0.875rem;
+  line-height: 1.9;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 0.5rem;
+}
+
+.chapter-html-content strong {
+  color: hsl(var(--foreground));
+  font-weight: 700;
+}
+
+.chapter-html-content ul,
+.chapter-html-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+}
+
+.chapter-html-content li {
+  margin-bottom: 0.25rem;
+  line-height: 1.8;
+}
+
+.chapter-html-content blockquote {
+  border-left: 3px solid hsl(var(--primary) / 0.4);
+  padding-left: 1rem;
+  margin: 0.75rem 0;
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+
+.chapter-html-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 12px 0;
+  box-shadow: 0 2px 12px hsl(var(--foreground) / 0.08);
+}
+
+.chapter-html-content hr {
+  border: none;
+  border-top: 2px solid hsl(var(--border));
+  margin: 1.5rem 0;
+}
