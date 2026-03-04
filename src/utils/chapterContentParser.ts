@@ -54,6 +54,12 @@ function splitSentences(text: string): string[] {
             continue;
           }
         }
+        // Sentence boundary: lowercase letter followed by ") " then uppercase (lettered sub-heading like "b) Small Industry")
+        if (afterSpace >= 'a' && afterSpace <= 'z' && i + 3 < text.length && text[i + 3] === ')' && i + 4 < text.length && text[i + 4] === ' ' && i + 5 < text.length && text[i + 5] >= 'A' && text[i + 5] <= 'Z') {
+          results.push(text.slice(start, i + 1).trim());
+          start = i + 2;
+          continue;
+        }
         // Sentence boundary: lowercase verb that starts a bullet item
         const restAfterDot = text.slice(i + 2);
         for (const verb of BULLET_VERBS) {
