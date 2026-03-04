@@ -40,7 +40,7 @@ function renderSection(section: string) {
     const line = lines[i];
     const trimmed = line.trim();
     if (!trimmed) {
-      elements.push(<div key={i} className="h-2" />);
+      elements.push(<div key={i} className="h-4" />);
       continue;
     }
 

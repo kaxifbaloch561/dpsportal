@@ -32,13 +32,33 @@ function splitSentences(text: string): string[] {
         }
         // Sentence boundary: digit followed by ". " (numbered heading like "1. ")
         if (afterSpace >= '0' && afterSpace <= '9') {
-          // Look ahead for "digit. " pattern (numbered section)
           const lookAhead = text.slice(i + 2, i + 8);
           if (/^\d+\.\s/.test(lookAhead)) {
             results.push(text.slice(start, i + 1).trim());
             start = i + 2;
             continue;
           }
+        }
+        // Sentence boundary: lowercase letter followed by ". " then uppercase (lettered sub-heading like "a. First Five Year Plan")
+        if (afterSpace >= 'a' && afterSpace <= 'i' && i + 3 < text.length && text[i + 3] === '.' && i + 4 < text.length && text[i + 4] === ' ' && i + 5 < text.length && text[i + 5] >= 'A' && text[i + 5] <= 'Z') {
+          results.push(text.slice(start, i + 1).trim());
+          start = i + 2;
+          continue;
+        }
+        // Sentence boundary: roman numeral patterns followed by ". " then uppercase (e.g. "i. Mining", "ii. Agriculture")
+        if ((afterSpace === 'i' || afterSpace === 'v' || afterSpace === 'x') && i + 3 < text.length) {
+          const romanRest = text.slice(i + 2, i + 12);
+          if (/^(?:i{1,3}|iv|vi{0,3}|ix|x)\.\s[A-Z]/.test(romanRest)) {
+            results.push(text.slice(start, i + 1).trim());
+            start = i + 2;
+            continue;
+          }
+        }
+        // Sentence boundary: lowercase letter followed by ") " then uppercase (lettered sub-heading like "b) Small Industry")
+        if (afterSpace >= 'a' && afterSpace <= 'z' && i + 3 < text.length && text[i + 3] === ')' && i + 4 < text.length && text[i + 4] === ' ' && i + 5 < text.length && text[i + 5] >= 'A' && text[i + 5] <= 'Z') {
+          results.push(text.slice(start, i + 1).trim());
+          start = i + 2;
+          continue;
         }
         // Sentence boundary: lowercase verb that starts a bullet item
         const restAfterDot = text.slice(i + 2);
@@ -114,11 +134,18 @@ function findHeadingBreak(line: string, prefixLen: number): [string, string] | n
   const searchEnd = Math.min(line.length, 150);
   const transitionWords = [
     'At the ', 'The ', 'In ', 'This ', 'It ', 'After ', 'During ', 'As ',
-    'However', 'There ', 'Under ', 'These ', 'To ', 'For the ', 'Pakistan ',
+    'However', 'There ', 'Under ', 'These ', 'To ', 'For the ',
     'One ', 'Although ', 'With ', 'About ', 'Most ', 'Almost ', 'No ', 'An ',
     'Like ', 'Improved ', 'Today ', 'They ', 'According ', 'Since ', 'Before ',
     'Between ', 'From ', 'Some ', 'Many ', 'Several ', 'All ', 'Various ',
+    'His ', 'Her ', 'Its ', 'Their ', 'Our ', 'A ', 'On ', 'By ',
+    'Due ', 'Despite ', 'Because ', 'While ', 'When ', 'But ', 'So ',
+    'Such ', 'Each ', 'Every ', 'Both ', 'Either ', 'Neither ',
+    'Here ', 'Those ', 'Other ', 'Another ', 'New ', 'More ',
   ];
+
+  // Words that indicate the heading is incomplete if it ends with them
+  const incompleteEndings = ['in', 'of', 'to', 'for', 'at', 'by', 'on', 'the', 'a', 'an', 'and', 'or', 'with', 'from', 'into', 'upon', 'about', 'between', 'through', 'under', 'over', 'during'];
 
   for (let i = prefixLen + 5; i < searchEnd; i++) {
     if (line[i] === ' ') {
@@ -127,6 +154,9 @@ function findHeadingBreak(line: string, prefixLen: number): [string, string] | n
         if (rest.startsWith(tw)) {
           const heading = line.slice(0, i).trim();
           if (heading.length > 5 && heading.length < 150) {
+            // Check if heading ends with a preposition (incomplete heading)
+            const lastWord = heading.split(' ').pop()?.toLowerCase() || '';
+            if (incompleteEndings.includes(lastWord)) continue;
             return [`**${heading}**`, line.slice(i + 1)];
           }
         }
@@ -244,6 +274,7 @@ export function preprocessContent(raw: string): string {
     // Try pure heading detection (entire line is a heading)
     const heading = detectHeading(trimmed);
     if (heading) {
+      formatted.push(""); // Add spacing before headings
       formatted.push(heading);
       continue;
     }
@@ -251,6 +282,7 @@ export function preprocessContent(raw: string): string {
     // Try splitting heading + body
     const split = trySplitHeadingBody(trimmed);
     if (split) {
+      formatted.push(""); // Add spacing before headings
       formatted.push(split[0]);
       formatted.push(split[1]);
       inBulletSection = false;
