@@ -245,7 +245,37 @@ function groupSectionsIntoCards(sections: string[]) {
   return cards;
 }
 
+const isHtmlContent = (content: string) => {
+  return /<[a-z][\s\S]*>/i.test(content) && (
+    content.includes("<p>") || content.includes("<h1") || content.includes("<h2") || 
+    content.includes("<img") || content.includes("<ul") || content.includes("<ol")
+  );
+};
+
+const HtmlChapterContent = ({ content }: { content: string }) => (
+  <div className="py-4">
+    <div
+      className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-2xl overflow-hidden shadow-sm p-5 md:p-7"
+      style={{
+        animation: "slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
+        opacity: 0,
+      }}
+    >
+      <div
+        className="chapter-html-content prose prose-sm max-w-none"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    </div>
+  </div>
+);
+
 const FormattedChapterContent = ({ content }: { content: string }) => {
+  // If content is HTML (from rich editor), render it directly
+  if (isHtmlContent(content)) {
+    return <HtmlChapterContent content={content} />;
+  }
+
+  // Otherwise, use the plain-text parser
   const processed = preprocessContent(content);
   const sections = processed.split(/\n---\n/);
   const cards = groupSectionsIntoCards(sections);
@@ -261,7 +291,6 @@ const FormattedChapterContent = ({ content }: { content: string }) => {
             opacity: 0,
           }}
         >
-          {/* Card header with topic title */}
           {card.title && (
             <div className="px-5 md:px-7 pt-5 pb-3 border-b border-border/40 bg-gradient-to-r from-primary/[0.04] to-transparent">
               <div className="flex items-center gap-3.5">
@@ -274,8 +303,6 @@ const FormattedChapterContent = ({ content }: { content: string }) => {
               </div>
             </div>
           )}
-
-          {/* Card body */}
           <div className="px-5 md:px-7 py-4">
             {renderSection(card.content, idx)}
           </div>
