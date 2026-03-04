@@ -81,10 +81,8 @@ const ChapterViewPage = () => {
               </Button>
             </div>
 
-            {/* Chapter Content Card */}
-            <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-              <FormattedChapterContent content={chapter.content} />
-            </div>
+            {/* Chapter Content — each topic renders as its own card */}
+            <FormattedChapterContent content={chapter.content} />
           </div>
         )}
       </div>
