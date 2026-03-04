@@ -132,6 +132,10 @@ function findHeadingBreak(line: string, prefixLen: number): [string, string] | n
     'One ', 'Although ', 'With ', 'About ', 'Most ', 'Almost ', 'No ', 'An ',
     'Like ', 'Improved ', 'Today ', 'They ', 'According ', 'Since ', 'Before ',
     'Between ', 'From ', 'Some ', 'Many ', 'Several ', 'All ', 'Various ',
+    'His ', 'Her ', 'Its ', 'Their ', 'Our ', 'A ', 'On ', 'By ',
+    'Due ', 'Despite ', 'Because ', 'While ', 'When ', 'But ', 'So ',
+    'Such ', 'Each ', 'Every ', 'Both ', 'Either ', 'Neither ',
+    'Here ', 'Those ', 'Other ', 'Another ', 'New ', 'More ',
   ];
 
   for (let i = prefixLen + 5; i < searchEnd; i++) {
