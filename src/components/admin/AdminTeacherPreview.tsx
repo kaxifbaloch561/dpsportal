@@ -21,7 +21,9 @@ const AdminTeacherPreview = () => {
 
   return (
     <div className="px-6 pb-8">
-      <div className="flex items-center gap-2 mb-4">
+      <BreadcrumbNav crumbs={[{ label: "Admin", href: "/admin" }, { label: "Teacher Panel" }]} />
+
+      <div className="flex items-center gap-2 mb-4 mt-4">
         <Eye size={20} className="text-primary" />
         <span className="font-bold text-foreground">Teacher Panel Preview</span>
         <span className="text-xs text-muted-foreground">(View as teacher)</span>
