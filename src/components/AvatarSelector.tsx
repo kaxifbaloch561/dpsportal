@@ -2,17 +2,32 @@ import { useState } from "react";
 import { Camera, Upload, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const maleAvatars = Array.from({ length: 10 }, (_, i) => ({
-  id: `male-${i + 1}`,
-  url: `https://api.dicebear.com/7.x/avataaars/svg?seed=male${i + 1}&backgroundColor=b6e3f4`,
-  gender: "male" as const,
-}));
+import male1 from "@/assets/avatars/male-1.png";
+import male2 from "@/assets/avatars/male-2.png";
+import male3 from "@/assets/avatars/male-3.png";
+import male4 from "@/assets/avatars/male-4.png";
+import male5 from "@/assets/avatars/male-5.png";
+import female1 from "@/assets/avatars/female-1.png";
+import female2 from "@/assets/avatars/female-2.png";
+import female3 from "@/assets/avatars/female-3.png";
+import female4 from "@/assets/avatars/female-4.png";
+import female5 from "@/assets/avatars/female-5.png";
 
-const femaleAvatars = Array.from({ length: 10 }, (_, i) => ({
-  id: `female-${i + 1}`,
-  url: `https://api.dicebear.com/7.x/avataaars/svg?seed=female${i + 1}&backgroundColor=ffd5dc`,
-  gender: "female" as const,
-}));
+const maleAvatars = [
+  { id: "male-1", url: male1, gender: "male" as const },
+  { id: "male-2", url: male2, gender: "male" as const },
+  { id: "male-3", url: male3, gender: "male" as const },
+  { id: "male-4", url: male4, gender: "male" as const },
+  { id: "male-5", url: male5, gender: "male" as const },
+];
+
+const femaleAvatars = [
+  { id: "female-1", url: female1, gender: "female" as const },
+  { id: "female-2", url: female2, gender: "female" as const },
+  { id: "female-3", url: female3, gender: "female" as const },
+  { id: "female-4", url: female4, gender: "female" as const },
+  { id: "female-5", url: female5, gender: "female" as const },
+];
 
 const allAvatars = [...maleAvatars, ...femaleAvatars];
 
