@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { classesData } from "@/data/classesData";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 import { Eye } from "lucide-react";
 
 const classThemes = [
