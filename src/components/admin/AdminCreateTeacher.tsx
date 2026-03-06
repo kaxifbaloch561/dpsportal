@@ -23,6 +23,8 @@ const AdminCreateTeacher = ({ onBack, onCreated }: Props) => {
   const [password, setPassword] = useState("");
   const [classTeacher, setClassTeacher] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarType, setAvatarType] = useState<"avatar" | "photo">("avatar");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
