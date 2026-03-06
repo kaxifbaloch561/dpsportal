@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Check, X, Pause, Trash2, ArrowLeft, User, Mail, BookOpen, Shield, Eye, EyeOff } from "lucide-react";
+import { Check, X, Pause, Trash2, ArrowLeft, User, Mail, BookOpen, Shield, Eye, EyeOff, UserPlus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import AdminCreateTeacher from "./AdminCreateTeacher";
 
 interface TeacherAccount {
   id: string;
@@ -33,6 +34,7 @@ const AdminTeacherAccounts = () => {
   const [selectedTeacher, setSelectedTeacher] = useState<TeacherAccount | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [filter, setFilter] = useState<string>("all");
+  const [showCreate, setShowCreate] = useState(false);
 
   const fetchTeachers = async () => {
     setLoading(true);
@@ -86,6 +88,14 @@ const AdminTeacherAccounts = () => {
   };
 
   const filteredTeachers = filter === "all" ? teachers : teachers.filter((t) => t.status === filter);
+  if (showCreate) {
+    return (
+      <AdminCreateTeacher
+        onBack={() => setShowCreate(false)}
+        onCreated={() => { setShowCreate(false); fetchTeachers(); }}
+      />
+    );
+  }
 
   if (selectedTeacher) {
     return (
@@ -194,7 +204,12 @@ const AdminTeacherAccounts = () => {
     <div className="px-6 pb-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-foreground">Teacher Accounts</h3>
-        <span className="text-xs text-muted-foreground">{teachers.length} total</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">{teachers.length} total</span>
+          <Button size="sm" className="rounded-full" onClick={() => setShowCreate(true)}>
+            <UserPlus size={14} /> Create Account
+          </Button>
+        </div>
       </div>
 
       {/* Filter tabs */}
