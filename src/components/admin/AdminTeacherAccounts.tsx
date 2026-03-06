@@ -88,6 +88,14 @@ const AdminTeacherAccounts = () => {
   };
 
   const filteredTeachers = filter === "all" ? teachers : teachers.filter((t) => t.status === filter);
+  if (showCreate) {
+    return (
+      <AdminCreateTeacher
+        onBack={() => setShowCreate(false)}
+        onCreated={() => { setShowCreate(false); fetchTeachers(); }}
+      />
+    );
+  }
 
   if (selectedTeacher) {
     return (
