@@ -67,6 +67,8 @@ const AdminCreateTeacher = ({ onBack, onCreated }: Props) => {
       password,
       class_teacher: classTeacher,
       subjects: selectedSubjects,
+      avatar_url: avatarUrl || null,
+      avatar_type: avatarType,
       status: "approved",
       status_notification: "🎉 Your account was created by admin. Welcome to DPS Portal!",
     } as any);
