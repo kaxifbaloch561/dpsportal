@@ -39,7 +39,7 @@ const AdminTeacherPreview = () => {
           return (
             <button
               key={cls.id}
-              onClick={() => navigate(`/class/${cls.id}`)}
+              onClick={() => navigate(`/class/${cls.id}?from=admin`)}
               className="group relative cursor-pointer overflow-hidden rounded-[24px] border-0 p-0 transition-all duration-500 hover:-translate-y-3"
               style={{ boxShadow: `0 8px 28px -8px ${theme.shadow}55` }}
               onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 16px 48px -10px ${theme.shadow}88`; }}
