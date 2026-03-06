@@ -34,6 +34,7 @@ const AdminTeacherAccounts = () => {
   const [selectedTeacher, setSelectedTeacher] = useState<TeacherAccount | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [filter, setFilter] = useState<string>("all");
+  const [showCreate, setShowCreate] = useState(false);
 
   const fetchTeachers = async () => {
     setLoading(true);
