@@ -51,9 +51,14 @@ const AdminTeacherAccounts = () => {
   }, []);
 
   const updateStatus = async (id: string, status: string) => {
+    const notificationMessages: Record<string, string> = {
+      approved: "🎉 Congratulations! Your account has been approved by admin. You now have full access to the portal.",
+      rejected: "❌ Your account request has been rejected by admin. Please contact admin for more details.",
+      paused: "⏸️ Your account has been paused by admin. Please contact admin for resolution.",
+    };
     const { error } = await supabase
       .from("teacher_accounts")
-      .update({ status, updated_at: new Date().toISOString() })
+      .update({ status, updated_at: new Date().toISOString(), status_notification: notificationMessages[status] || null } as any)
       .eq("id", id);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
