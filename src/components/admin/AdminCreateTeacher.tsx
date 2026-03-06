@@ -3,6 +3,7 @@ import { ArrowLeft, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import AvatarSelector from "@/components/AvatarSelector";
 
 const ALL_SUBJECTS = [
   "English", "Mathematics", "اردو", "اسلامیات",
