@@ -1,23 +1,27 @@
 import { useState } from "react";
-import { Eye, EyeOff, BookOpen } from "lucide-react";
+import { Eye, EyeOff, BookOpen, UserPlus } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginPageProps {
   onLoginSuccess: (role: "admin" | "teacher") => void;
+  onCreateAccount: () => void;
 }
 
-const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
+const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    const result = login(email, password);
+    setLoading(true);
+    const result = await login(email, password);
+    setLoading(false);
     if (result.success) {
       const role = email.trim().toLowerCase() === "adminkaxif@dps" ? "admin" : "teacher";
       onLoginSuccess(role);
@@ -109,10 +113,11 @@ const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-full bg-primary text-primary-foreground font-bold text-base relative overflow-hidden transition-all duration-300 hover:-translate-y-1"
+            disabled={loading}
+            className="w-full py-3.5 rounded-full bg-primary text-primary-foreground font-bold text-base relative overflow-hidden transition-all duration-300 hover:-translate-y-1 disabled:opacity-70"
             style={{ boxShadow: "0 15px 30px hsl(235, 78%, 65%, 0.5)" }}
           >
-            <span className="relative z-10">Sign In</span>
+            <span className="relative z-10">{loading ? "Signing In..." : "Sign In"}</span>
             <span
               className="absolute top-0 w-1/2 h-full"
               style={{
@@ -124,7 +129,18 @@ const LoginPage = ({ onLoginSuccess }: LoginPageProps) => {
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-6" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.9s", opacity: 0 }}>
+        {/* Create Account Link */}
+        <div className="mt-5 text-center" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.9s", opacity: 0 }}>
+          <button
+            onClick={onCreateAccount}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline transition-all"
+          >
+            <UserPlus size={16} />
+            Create Teacher Account
+          </button>
+        </div>
+
+        <p className="text-center text-sm text-muted-foreground mt-4" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1.1s", opacity: 0 }}>
           Learning is Light — DPS SIBI
         </p>
       </div>

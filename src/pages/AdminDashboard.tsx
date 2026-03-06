@@ -3,15 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
-import { Bell, BookOpen, Users, LogOut } from "lucide-react";
+import { Bell, BookOpen, Users, LogOut, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminTeacherPreview from "@/components/admin/AdminTeacherPreview";
+import AdminTeacherAccounts from "@/components/admin/AdminTeacherAccounts";
 
 const tabs = [
   { key: "notifications", label: "Notifications", icon: Bell },
   { key: "content", label: "Manage Content", icon: BookOpen },
   { key: "teacher", label: "Teacher Panel", icon: Users },
+  { key: "accounts", label: "Teacher Accounts", icon: UserPlus },
 ] as const;
 
 type TabKey = (typeof tabs)[number]["key"];
@@ -36,7 +38,7 @@ const AdminDashboard = () => {
 
       {/* Tab navigation */}
       <div className="px-6 mb-4">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-4 gap-3">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
@@ -57,7 +59,7 @@ const AdminDashboard = () => {
                 }`}
               >
                 <Icon size={24} />
-                <span className="text-sm font-semibold">{tab.label}</span>
+                <span className="text-[11px] font-semibold text-center leading-tight">{tab.label}</span>
               </button>
             );
           })}
@@ -68,6 +70,7 @@ const AdminDashboard = () => {
       <div className="flex-1 overflow-auto">
         {activeTab === "notifications" && <AdminNotifications />}
         {activeTab === "teacher" && <AdminTeacherPreview />}
+        {activeTab === "accounts" && <AdminTeacherAccounts />}
       </div>
     </PageShell>
   );
