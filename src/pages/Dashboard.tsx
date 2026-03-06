@@ -40,6 +40,15 @@ const Dashboard = () => {
   const [showGuide, setShowGuide] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [loginNotification, setLoginNotification] = useState<string | null>(null);
+
+  useEffect(() => {
+    const notif = localStorage.getItem("dps_login_notification");
+    if (notif) {
+      setLoginNotification(notif);
+      localStorage.removeItem("dps_login_notification");
+    }
+  }, []);
 
   return (
     <PageShell>
