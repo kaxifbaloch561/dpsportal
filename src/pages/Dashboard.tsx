@@ -55,6 +55,21 @@ const Dashboard = () => {
       <DashboardHeader subtitle="Select your class to begin" />
       <BreadcrumbNav crumbs={[{ label: "Dashboard" }]} />
 
+      {/* Login notification banner */}
+      {loginNotification && (
+        <div className="px-8 mb-4" style={{ animation: "slideDown 0.5s ease forwards" }}>
+          <div className="relative p-4 rounded-2xl bg-primary/10 border border-primary/20 text-foreground text-sm font-medium">
+            <button
+              onClick={() => setLoginNotification(null)}
+              className="absolute top-2 right-3 text-muted-foreground hover:text-foreground text-lg leading-none"
+            >
+              ×
+            </button>
+            {loginNotification}
+          </div>
+        </div>
+      )}
+
       {/* Quick action buttons */}
       <div className="px-8 mb-4">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
