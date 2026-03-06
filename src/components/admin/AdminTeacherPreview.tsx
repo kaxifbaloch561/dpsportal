@@ -21,7 +21,7 @@ const AdminTeacherPreview = () => {
 
   return (
     <div className="px-6 pb-8">
-      <BreadcrumbNav crumbs={[{ label: "Admin", href: "/admin" }, { label: "Teacher Panel" }]} />
+      <BreadcrumbNav crumbs={[{ label: "Admin", path: "/admin" }, { label: "Teacher Panel" }]} />
 
       <div className="flex items-center gap-2 mb-4 mt-4">
         <Eye size={20} className="text-primary" />
