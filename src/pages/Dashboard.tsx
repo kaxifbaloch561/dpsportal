@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { classesData } from "@/data/classesData";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,11 +40,35 @@ const Dashboard = () => {
   const [showGuide, setShowGuide] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [loginNotification, setLoginNotification] = useState<string | null>(null);
+
+  useEffect(() => {
+    const notif = localStorage.getItem("dps_login_notification");
+    if (notif) {
+      setLoginNotification(notif);
+      localStorage.removeItem("dps_login_notification");
+    }
+  }, []);
 
   return (
     <PageShell>
       <DashboardHeader subtitle="Select your class to begin" />
       <BreadcrumbNav crumbs={[{ label: "Dashboard" }]} />
+
+      {/* Login notification banner */}
+      {loginNotification && (
+        <div className="px-8 mb-4" style={{ animation: "slideDown 0.5s ease forwards" }}>
+          <div className="relative p-4 rounded-2xl bg-primary/10 border border-primary/20 text-foreground text-sm font-medium">
+            <button
+              onClick={() => setLoginNotification(null)}
+              className="absolute top-2 right-3 text-muted-foreground hover:text-foreground text-lg leading-none"
+            >
+              ×
+            </button>
+            {loginNotification}
+          </div>
+        </div>
+      )}
 
       {/* Quick action buttons */}
       <div className="px-8 mb-4">

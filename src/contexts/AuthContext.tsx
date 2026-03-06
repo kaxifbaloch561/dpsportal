@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { data, error: dbError } = await supabase
         .from("teacher_accounts")
-        .select("email, password, status")
+        .select("email, password, status, status_notification")
         .eq("email", trimmedEmail)
         .maybeSingle();
 
@@ -57,10 +57,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Check account status
       if (data.status === "pending") return { success: false, error: "Your account is pending admin approval. Please wait." };
-      if (data.status === "rejected") return { success: false, error: "Your account has been rejected. Please contact the admin." };
-      if (data.status === "paused") return { success: false, error: "Your account has been paused. Please contact admin for resolution." };
+      if (data.status === "rejected") return { success: false, error: (data as any).status_notification || "Your account has been rejected. Please contact the admin." };
+      if (data.status === "paused") return { success: false, error: (data as any).status_notification || "Your account has been paused. Please contact admin for resolution." };
       if (data.status === "removed") return { success: false, error: "Your account has been removed. Please contact admin." };
       if (data.status !== "approved") return { success: false, error: "Account not active." };
+
+      // Store pending notification for display after login
+      const notification = (data as any).status_notification;
+      if (notification) {
+        localStorage.setItem("dps_login_notification", notification);
+        // Clear the notification in DB
+        supabase.from("teacher_accounts").update({ status_notification: null } as any).eq("email", trimmedEmail).then(() => {});
+      }
 
       setUser({ email: trimmedEmail, role: "teacher" });
       return { success: true };
