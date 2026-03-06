@@ -3,6 +3,7 @@ import { ArrowLeft, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import AvatarSelector from "@/components/AvatarSelector";
 
 const ALL_SUBJECTS = [
   "English", "Mathematics", "اردو", "اسلامیات",
@@ -22,6 +23,8 @@ const AdminCreateTeacher = ({ onBack, onCreated }: Props) => {
   const [password, setPassword] = useState("");
   const [classTeacher, setClassTeacher] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarType, setAvatarType] = useState<"avatar" | "photo">("avatar");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -64,6 +67,8 @@ const AdminCreateTeacher = ({ onBack, onCreated }: Props) => {
       password,
       class_teacher: classTeacher,
       subjects: selectedSubjects,
+      avatar_url: avatarUrl || null,
+      avatar_type: avatarType,
       status: "approved",
       status_notification: "🎉 Your account was created by admin. Welcome to DPS Portal!",
     } as any);
@@ -150,6 +155,11 @@ const AdminCreateTeacher = ({ onBack, onCreated }: Props) => {
               </button>
             ))}
           </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">Avatar</label>
+          <AvatarSelector value={avatarUrl} onChange={(url, type) => { setAvatarUrl(url); setAvatarType(type); }} />
         </div>
 
         <Button onClick={handleSubmit} disabled={submitting} className="w-full rounded-full">
