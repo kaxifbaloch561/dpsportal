@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-
+import AdminBackButton from "@/components/AdminBackButton";
 interface PageShellProps {
   children: ReactNode;
 }
@@ -46,6 +46,7 @@ const PageShell = ({ children }: PageShellProps) => {
         }}
       >
         {children}
+        <AdminBackButton />
         <footer className="text-center text-[11px] text-muted-foreground/60 font-medium py-3 mt-auto">
           DPS PORTAL — Developed by Kaxif Gull ❤️
         </footer>
