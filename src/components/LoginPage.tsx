@@ -139,10 +139,6 @@ const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
             Create Teacher Account
           </button>
         </div>
-
-        <p className="text-center text-sm text-muted-foreground mt-4" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1.1s", opacity: 0 }}>
-          Learning is Light — DPS SIBI <span className="text-green-500 font-semibold">رَبِّ زِدْنِي عِلْمًا</span>
-        </p>
       </div>
     </div>
   );
