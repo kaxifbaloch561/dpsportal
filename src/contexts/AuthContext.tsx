@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export type UserRole = "admin" | "teacher" | null;
 
@@ -9,15 +10,14 @@ interface AuthUser {
 
 interface AuthContextType {
   user: AuthUser | null;
-  login: (email: string, password: string) => { success: boolean; error?: string };
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isAdmin: boolean;
   isTeacher: boolean;
 }
 
-const CREDENTIALS: Record<string, { password: string; role: UserRole }> = {
+const ADMIN_CREDENTIALS: Record<string, { password: string; role: UserRole }> = {
   "adminkaxif@dps": { password: "adminkaxif@dps", role: "admin" },
-  "tutorimrantareen@dps": { password: "tutorimrantareen@dps", role: "teacher" },
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,13 +33,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     else localStorage.removeItem("dps_user");
   }, [user]);
 
-  const login = useCallback((email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const trimmedEmail = email.trim().toLowerCase();
-    const cred = CREDENTIALS[trimmedEmail];
-    if (!cred) return { success: false, error: "Invalid email address" };
-    if (cred.password !== password) return { success: false, error: "Incorrect password" };
-    setUser({ email: trimmedEmail, role: cred.role });
-    return { success: true };
+
+    // Check admin credentials first
+    const adminCred = ADMIN_CREDENTIALS[trimmedEmail];
+    if (adminCred) {
+      if (adminCred.password !== password) return { success: false, error: "Incorrect password" };
+      setUser({ email: trimmedEmail, role: adminCred.role });
+      return { success: true };
+    }
+
+    // Check teacher_accounts in database
+    try {
+      const { data, error: dbError } = await supabase
+        .from("teacher_accounts")
+        .select("email, password, status")
+        .eq("email", trimmedEmail)
+        .maybeSingle();
+
+      if (dbError || !data) return { success: false, error: "Invalid email address" };
+      if (data.password !== password) return { success: false, error: "Incorrect password" };
+
+      // Check account status
+      if (data.status === "pending") return { success: false, error: "Your account is pending admin approval. Please wait." };
+      if (data.status === "rejected") return { success: false, error: "Your account has been rejected. Please contact the admin." };
+      if (data.status === "paused") return { success: false, error: "Your account has been paused. Please contact admin for resolution." };
+      if (data.status === "removed") return { success: false, error: "Your account has been removed. Please contact admin." };
+      if (data.status !== "approved") return { success: false, error: "Account not active." };
+
+      setUser({ email: trimmedEmail, role: "teacher" });
+      return { success: true };
+    } catch {
+      return { success: false, error: "Login failed. Please try again." };
+    }
   }, []);
 
   const logout = useCallback(() => setUser(null), []);

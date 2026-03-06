@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import SplashScreen from "@/components/SplashScreen";
 import LoginPage from "@/components/LoginPage";
+import TeacherRegistration from "@/components/TeacherRegistration";
 
-type AppPhase = "splash" | "login";
+type AppPhase = "splash" | "login" | "register";
 
 const Index = () => {
   const { user } = useAuth();
@@ -27,7 +28,16 @@ const Index = () => {
     return <SplashScreen onFinished={handleSplashFinished} />;
   }
 
-  return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+  if (phase === "register") {
+    return <TeacherRegistration onBack={() => setPhase("login")} />;
+  }
+
+  return (
+    <LoginPage
+      onLoginSuccess={handleLoginSuccess}
+      onCreateAccount={() => setPhase("register")}
+    />
+  );
 };
 
 export default Index;
