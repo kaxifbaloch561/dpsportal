@@ -157,6 +157,11 @@ const AdminCreateTeacher = ({ onBack, onCreated }: Props) => {
           </div>
         </div>
 
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">Avatar</label>
+          <AvatarSelector value={avatarUrl} onChange={(url, type) => { setAvatarUrl(url); setAvatarType(type); }} />
+        </div>
+
         <Button onClick={handleSubmit} disabled={submitting} className="w-full rounded-full">
           <UserPlus size={16} />
           {submitting ? "Creating..." : "Create Account (Auto-Approved)"}
