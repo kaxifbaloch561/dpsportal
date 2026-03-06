@@ -122,6 +122,54 @@ export type Database = {
         }
         Relationships: []
       }
+      teacher_accounts: {
+        Row: {
+          avatar_type: string | null
+          avatar_url: string | null
+          class_teacher: string | null
+          created_at: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          middle_name: string | null
+          password: string
+          status: string | null
+          subjects: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_type?: string | null
+          avatar_url?: string | null
+          class_teacher?: string | null
+          created_at?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          middle_name?: string | null
+          password: string
+          status?: string | null
+          subjects?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_type?: string | null
+          avatar_url?: string | null
+          class_teacher?: string | null
+          created_at?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          middle_name?: string | null
+          password?: string
+          status?: string | null
+          subjects?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       teacher_requests: {
         Row: {
           admin_reply: string | null
