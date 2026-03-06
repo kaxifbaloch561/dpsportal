@@ -135,6 +135,7 @@ export type Database = {
           middle_name: string | null
           password: string
           status: string | null
+          status_notification: string | null
           subjects: string[] | null
           updated_at: string | null
         }
@@ -150,6 +151,7 @@ export type Database = {
           middle_name?: string | null
           password: string
           status?: string | null
+          status_notification?: string | null
           subjects?: string[] | null
           updated_at?: string | null
         }
@@ -165,6 +167,7 @@ export type Database = {
           middle_name?: string | null
           password?: string
           status?: string | null
+          status_notification?: string | null
           subjects?: string[] | null
           updated_at?: string | null
         }

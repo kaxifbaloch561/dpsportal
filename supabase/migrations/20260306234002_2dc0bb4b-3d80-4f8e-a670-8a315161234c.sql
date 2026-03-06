@@ -1,0 +1,1 @@
+ALTER TABLE public.teacher_accounts ADD COLUMN status_notification text DEFAULT NULL;
