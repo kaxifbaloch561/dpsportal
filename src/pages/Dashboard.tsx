@@ -75,6 +75,25 @@ const Dashboard = () => {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
+  // Fetch unread inbox count
+  useEffect(() => {
+    if (!user?.email) return;
+    const fetchUnread = async () => {
+      const { count } = await supabase
+        .from("admin_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("recipient_email", user.email)
+        .eq("is_read", false);
+      setUnreadInbox(count ?? 0);
+    };
+    fetchUnread();
+    const ch = supabase
+      .channel("dashboard-inbox-count")
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, () => fetchUnread())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [user?.email]);
+
   return (
     <PageShell>
       {/* Fixed top corners: Inbox (left) & Profile (right) */}
