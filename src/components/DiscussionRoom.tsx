@@ -13,7 +13,6 @@ import {
 import {
   Send,
   Mic,
-  MicOff,
   Paperclip,
   Image as ImageIcon,
   FileText,
@@ -23,8 +22,10 @@ import {
   Users,
   Clock,
   Download,
-  Trash2,
   Square,
+  Reply,
+  ChevronRight,
+  Circle,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -48,7 +49,17 @@ interface DiscussionMessage {
   file_url: string | null;
   file_name: string | null;
   file_type: string | null;
+  reply_to_id: string | null;
+  reply_to_name: string | null;
+  reply_to_text: string | null;
   created_at: string;
+}
+
+interface OnlineMember {
+  user_email: string;
+  user_name: string;
+  user_type: string;
+  last_seen: string;
 }
 
 interface DiscussionRoomProps {
@@ -65,12 +76,18 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const [recordingTime, setRecordingTime] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
+  const [replyTo, setReplyTo] = useState<DiscussionMessage | null>(null);
+  const [showMembers, setShowMembers] = useState(false);
+  const [onlineMembers, setOnlineMembers] = useState<OnlineMember[]>([]);
+  const [swipeState, setSwipeState] = useState<{ id: string; x: number } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const touchStartRef = useRef<{ x: number; y: number; id: string } | null>(null);
 
   const senderEmail = user?.role === "admin" ? "admin" : (user?.email || "");
   const [senderName, setSenderName] = useState(user?.role === "admin" ? "Admin" : "Teacher");
@@ -100,6 +117,45 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     if (data) setMessages(data as DiscussionMessage[]);
   }, []);
 
+  // Presence heartbeat
+  useEffect(() => {
+    if (!open || !senderEmail) return;
+
+    const updatePresence = async () => {
+      await (supabase as any)
+        .from("discussion_presence")
+        .upsert(
+          { user_email: senderEmail, user_name: senderName, user_type: senderType, last_seen: new Date().toISOString() },
+          { onConflict: "user_email" }
+        );
+    };
+
+    updatePresence();
+    const interval = setInterval(updatePresence, 15000);
+
+    return () => clearInterval(interval);
+  }, [open, senderEmail, senderName, senderType]);
+
+  // Fetch online members (admin only)
+  const fetchOnlineMembers = useCallback(async () => {
+    if (!isAdmin) return;
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { data } = await (supabase as any)
+      .from("discussion_presence")
+      .select("*")
+      .gte("last_seen", fiveMinAgo)
+      .order("last_seen", { ascending: false });
+    if (data) setOnlineMembers(data as OnlineMember[]);
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (open && isAdmin) {
+      fetchOnlineMembers();
+      const interval = setInterval(fetchOnlineMembers, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [open, isAdmin, fetchOnlineMembers]);
+
   useEffect(() => {
     if (open) {
       fetchMessages();
@@ -120,19 +176,26 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const handleSendText = async () => {
     if (!newMessage.trim()) return;
     setSending(true);
-    const { error } = await (supabase as any).from("discussion_messages").insert({
+    const payload: any = {
       sender_email: senderEmail,
       sender_name: senderName,
       sender_type: senderType,
       message: newMessage.trim(),
       message_type: "text",
-    });
+    };
+    if (replyTo) {
+      payload.reply_to_id = replyTo.id;
+      payload.reply_to_name = replyTo.sender_name;
+      payload.reply_to_text = replyTo.message_type === "text"
+        ? (replyTo.message || "").slice(0, 100)
+        : replyTo.message_type === "voice" ? "🎤 Voice clip" : `📎 ${replyTo.file_name || "File"}`;
+    }
+    const { error } = await (supabase as any).from("discussion_messages").insert(payload);
     if (error) toast.error("Failed to send");
-    else setNewMessage("");
+    else { setNewMessage(""); setReplyTo(null); }
     setSending(false);
   };
 
-  // Voice recording
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -151,7 +214,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
         reader.onloadend = async () => {
           const base64 = reader.result as string;
           setSending(true);
-           const { error } = await (supabase as any).from("discussion_messages").insert({
+          const payload: any = {
             sender_email: senderEmail,
             sender_name: senderName,
             sender_type: senderType,
@@ -160,8 +223,15 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
             file_url: base64,
             file_name: `voice-${Date.now()}.webm`,
             file_type: "audio/webm",
-          });
+          };
+          if (replyTo) {
+            payload.reply_to_id = replyTo.id;
+            payload.reply_to_name = replyTo.sender_name;
+            payload.reply_to_text = replyTo.message_type === "text" ? (replyTo.message || "").slice(0, 100) : "📎 File";
+          }
+          const { error } = await (supabase as any).from("discussion_messages").insert(payload);
           if (error) toast.error("Failed to send voice clip");
+          else setReplyTo(null);
           setSending(false);
           setRecordingTime(0);
         };
@@ -183,7 +253,6 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
   };
 
-  // File upload
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -200,7 +269,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
       else if (file.type.startsWith("audio/")) msgType = "voice";
 
       setSending(true);
-      const { error } = await (supabase as any).from("discussion_messages").insert({
+      const payload: any = {
         sender_email: senderEmail,
         sender_name: senderName,
         sender_type: senderType,
@@ -209,9 +278,15 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
         file_url: base64,
         file_name: file.name,
         file_type: file.type,
-      });
+      };
+      if (replyTo) {
+        payload.reply_to_id = replyTo.id;
+        payload.reply_to_name = replyTo.sender_name;
+        payload.reply_to_text = replyTo.message_type === "text" ? (replyTo.message || "").slice(0, 100) : "📎 File";
+      }
+      const { error } = await (supabase as any).from("discussion_messages").insert(payload);
       if (error) toast.error("Failed to upload file");
-      else toast.success("File sent!");
+      else { toast.success("File sent!"); setReplyTo(null); }
       setSending(false);
     };
     reader.readAsDataURL(file);
@@ -251,16 +326,73 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
+  // Touch handlers for swipe-to-reply
+  const handleTouchStart = (e: React.TouchEvent, msgId: string) => {
+    touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, id: msgId };
+  };
+
+  const handleTouchMove = (e: React.TouchEvent, msgId: string) => {
+    if (!touchStartRef.current || touchStartRef.current.id !== msgId) return;
+    const dx = e.touches[0].clientX - touchStartRef.current.x;
+    const dy = Math.abs(e.touches[0].clientY - touchStartRef.current.y);
+    if (dy > 30) { touchStartRef.current = null; setSwipeState(null); return; }
+    if (dx > 10) {
+      setSwipeState({ id: msgId, x: Math.min(dx, 80) });
+    }
+  };
+
+  const handleTouchEnd = (msgId: string) => {
+    if (swipeState && swipeState.id === msgId && swipeState.x >= 60) {
+      const msg = messages.find((m) => m.id === msgId);
+      if (msg) {
+        setReplyTo(msg);
+        inputRef.current?.focus();
+      }
+    }
+    setSwipeState(null);
+    touchStartRef.current = null;
+  };
+
+  const handleReplyClick = (msg: DiscussionMessage) => {
+    setReplyTo(msg);
+    inputRef.current?.focus();
+  };
+
+  const scrollToMessage = (msgId: string) => {
+    const el = document.getElementById(`msg-${msgId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("ring-2", "ring-primary/50");
+      setTimeout(() => el.classList.remove("ring-2", "ring-primary/50"), 2000);
+    }
+  };
+
   const renderMessage = (msg: DiscussionMessage) => {
     const isMine = msg.sender_email === senderEmail;
+    const swipeX = swipeState?.id === msg.id ? swipeState.x : 0;
 
     return (
-      <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"} group mb-2`}>
-        <div className={`relative max-w-[85%] rounded-2xl p-3 ${
+      <div
+        key={msg.id}
+        id={`msg-${msg.id}`}
+        className={`flex ${isMine ? "justify-end" : "justify-start"} group mb-2 transition-all duration-150`}
+        onTouchStart={(e) => handleTouchStart(e, msg.id)}
+        onTouchMove={(e) => handleTouchMove(e, msg.id)}
+        onTouchEnd={() => handleTouchEnd(msg.id)}
+        style={{ transform: `translateX(${swipeX}px)` }}
+      >
+        {/* Swipe reply indicator */}
+        {swipeX > 20 && (
+          <div className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-primary opacity-70">
+            <Reply size={18} />
+          </div>
+        )}
+
+        <div className={`relative max-w-[80%] rounded-2xl p-3 ${
           isMine
             ? msg.sender_type === "admin"
               ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-br-md"
-              : "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-br-md"
+              : "bg-gradient-to-br from-accent to-accent/80 text-accent-foreground rounded-br-md"
             : msg.sender_type === "admin"
               ? "bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20 text-foreground rounded-bl-md"
               : "bg-muted text-foreground rounded-bl-md"
@@ -275,9 +407,37 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
             </button>
           )}
 
+          {/* Reply button (desktop - on hover) */}
+          <button
+            onClick={() => handleReplyClick(msg)}
+            className="absolute -left-8 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-muted border border-border flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+          >
+            <Reply size={12} />
+          </button>
+
+          {/* Reply-to preview */}
+          {msg.reply_to_id && msg.reply_to_name && (
+            <button
+              onClick={() => msg.reply_to_id && scrollToMessage(msg.reply_to_id)}
+              className={`flex items-center gap-2 mb-2 px-2.5 py-1.5 rounded-xl text-left w-full transition-colors ${
+                isMine ? "bg-white/10 hover:bg-white/20" : "bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10"
+              }`}
+            >
+              <div className={`w-0.5 h-8 rounded-full shrink-0 ${isMine ? "bg-white/50" : "bg-primary/50"}`} />
+              <div className="min-w-0 flex-1">
+                <p className={`text-[10px] font-bold truncate ${isMine ? "text-white/80" : "text-primary/80"}`}>
+                  {msg.reply_to_name}
+                </p>
+                <p className={`text-[11px] truncate ${isMine ? "text-white/60" : "text-muted-foreground"}`}>
+                  {msg.reply_to_text}
+                </p>
+              </div>
+            </button>
+          )}
+
           {/* Sender name */}
           {!isMine && (
-            <p className={`text-[10px] font-bold mb-1 ${msg.sender_type === "admin" ? "text-primary" : "text-emerald-600 dark:text-emerald-400"}`}>
+            <p className={`text-[10px] font-bold mb-1 ${msg.sender_type === "admin" ? "text-primary" : "text-accent-foreground/70"}`}>
               {msg.sender_name} {msg.sender_type === "admin" && "👑"}
             </p>
           )}
@@ -369,25 +529,99 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
                 <SheetTitle className="text-base font-bold">Discussion Room</SheetTitle>
                 <p className="text-[11px] text-muted-foreground">Teachers & Admin Group Chat</p>
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-bold">Live</span>
+              <div className="flex items-center gap-2">
+                {/* Online members button - admin only */}
+                {isAdmin && (
+                  <button
+                    onClick={() => { fetchOnlineMembers(); setShowMembers(!showMembers); }}
+                    className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-muted hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Users size={14} />
+                    <span className="text-[10px] font-bold">{onlineMembers.length}</span>
+                  </button>
+                )}
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-[10px] font-bold">Live</span>
+                </div>
               </div>
             </div>
           </SheetHeader>
 
-          {/* Messages Area */}
-          <ScrollArea className="flex-1 p-4">
-            {messages.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                <Users size={48} className="mb-3 opacity-30" />
-                <p className="text-sm font-medium">No messages yet</p>
-                <p className="text-xs">Start the discussion!</p>
+          <div className="flex flex-1 overflow-hidden">
+            {/* Messages Area */}
+            <ScrollArea className="flex-1 p-4">
+              {messages.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                  <Users size={48} className="mb-3 opacity-30" />
+                  <p className="text-sm font-medium">No messages yet</p>
+                  <p className="text-xs">Start the discussion!</p>
+                </div>
+              )}
+              {messages.map(renderMessage)}
+              <div ref={messagesEndRef} />
+            </ScrollArea>
+
+            {/* Online Members Sidebar - admin only */}
+            {isAdmin && showMembers && (
+              <div className="w-56 border-l border-border bg-card/50 flex flex-col shrink-0">
+                <div className="p-3 border-b border-border flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-foreground">Online Members</h4>
+                  <button onClick={() => setShowMembers(false)} className="p-1 rounded-lg hover:bg-accent text-muted-foreground">
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+                <ScrollArea className="flex-1 p-2">
+                  {onlineMembers.length === 0 && (
+                    <p className="text-center text-muted-foreground py-6 text-[11px]">No one online</p>
+                  )}
+                  {onlineMembers.map((m) => {
+                    const isOnlineNow = Date.now() - new Date(m.last_seen).getTime() < 2 * 60 * 1000;
+                    return (
+                      <div key={m.user_email} className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-accent/50 transition-colors mb-1">
+                        <div className="relative">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                            m.user_type === "admin" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+                          }`}>
+                            {m.user_name.charAt(0).toUpperCase()}
+                          </div>
+                          <Circle
+                            size={8}
+                            fill={isOnlineNow ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"}
+                            className={`absolute -bottom-0.5 -right-0.5 ${isOnlineNow ? "text-primary" : "text-muted-foreground"}`}
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[11px] font-semibold text-foreground truncate">
+                            {m.user_name} {m.user_type === "admin" && "👑"}
+                          </p>
+                          <p className="text-[9px] text-muted-foreground">
+                            {isOnlineNow ? "Online now" : `${Math.floor((Date.now() - new Date(m.last_seen).getTime()) / 60000)}m ago`}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </ScrollArea>
               </div>
             )}
-            {messages.map(renderMessage)}
-            <div ref={messagesEndRef} />
-          </ScrollArea>
+          </div>
+
+          {/* Reply preview bar */}
+          {replyTo && (
+            <div className="px-3 py-2 bg-primary/5 border-t border-primary/10 flex items-center gap-2">
+              <Reply size={14} className="text-primary shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold text-primary truncate">{replyTo.sender_name}</p>
+                <p className="text-[11px] text-muted-foreground truncate">
+                  {replyTo.message_type === "text" ? replyTo.message : replyTo.message_type === "voice" ? "🎤 Voice clip" : `📎 ${replyTo.file_name || "File"}`}
+                </p>
+              </div>
+              <button onClick={() => setReplyTo(null)} className="p-1 rounded-lg hover:bg-accent text-muted-foreground">
+                <X size={14} />
+              </button>
+            </div>
+          )}
 
           {/* Recording indicator */}
           {isRecording && (
@@ -405,7 +639,6 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
           {!isRecording && (
             <div className="p-3 border-t border-border shrink-0">
               <div className="flex items-end gap-2">
-                {/* Attachment button */}
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   className="p-2.5 rounded-xl bg-muted hover:bg-accent text-muted-foreground hover:text-foreground transition-colors shrink-0"
@@ -419,18 +652,15 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
                   accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
                   onChange={handleFileSelect}
                 />
-
-                {/* Voice button */}
                 <button
                   onClick={startRecording}
                   className="p-2.5 rounded-xl bg-muted hover:bg-accent text-muted-foreground hover:text-foreground transition-colors shrink-0"
                 >
                   <Mic size={18} />
                 </button>
-
-                {/* Text input */}
                 <div className="flex-1 relative">
                   <Input
+                    ref={inputRef}
                     placeholder="Type a message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
@@ -438,8 +668,6 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
                     className="rounded-2xl pr-12 h-11 text-sm bg-muted border-0"
                   />
                 </div>
-
-                {/* Send button */}
                 <Button
                   size="icon"
                   onClick={handleSendText}
