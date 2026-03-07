@@ -86,6 +86,8 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const [onlineMembers, setOnlineMembers] = useState<OnlineMember[]>([]);
   const [swipeState, setSwipeState] = useState<{id: string;x: number;} | null>(null);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const [fileActionMenu, setFileActionMenu] = useState<{url: string; name: string; type: string;} | null>(null);
+  const [previewFile, setPreviewFile] = useState<{url: string; name: string; type: string;} | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
