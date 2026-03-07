@@ -73,9 +73,23 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const senderEmail = user?.role === "admin" ? "admin" : (user?.email || "");
-  const senderName = user?.role === "admin" ? "Admin" : (user?.name || "Teacher");
+  const [senderName, setSenderName] = useState(user?.role === "admin" ? "Admin" : "Teacher");
   const senderType = user?.role === "admin" ? "admin" : "teacher";
   const isAdmin = user?.role === "admin";
+
+  // Fetch teacher name
+  useEffect(() => {
+    if (user?.role === "teacher" && user?.email) {
+      supabase
+        .from("teacher_accounts")
+        .select("first_name, last_name")
+        .eq("email", user.email)
+        .single()
+        .then(({ data }) => {
+          if (data) setSenderName(`${data.first_name} ${data.last_name}`);
+        });
+    }
+  }, [user]);
 
   const fetchMessages = useCallback(async () => {
     const { data } = await supabase
