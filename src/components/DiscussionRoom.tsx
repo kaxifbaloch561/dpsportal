@@ -120,7 +120,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const handleSendText = async () => {
     if (!newMessage.trim()) return;
     setSending(true);
-    const { error } = await supabase.from("discussion_messages").insert({
+    const { error } = await (supabase as any).from("discussion_messages").insert({
       sender_email: senderEmail,
       sender_name: senderName,
       sender_type: senderType,
