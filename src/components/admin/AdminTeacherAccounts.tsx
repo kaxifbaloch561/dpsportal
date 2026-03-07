@@ -28,7 +28,11 @@ const statusColors: Record<string, string> = {
   removed: "bg-gray-100 text-gray-800 border-gray-200",
 };
 
-const AdminTeacherAccounts = () => {
+interface AdminTeacherAccountsProps {
+  isPrincipal?: boolean;
+}
+
+const AdminTeacherAccounts = ({ isPrincipal = false }: AdminTeacherAccountsProps) => {
   const [teachers, setTeachers] = useState<TeacherAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTeacher, setSelectedTeacher] = useState<TeacherAccount | null>(null);
