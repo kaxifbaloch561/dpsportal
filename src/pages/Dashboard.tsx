@@ -120,8 +120,8 @@ const Dashboard = () => {
       <BreadcrumbNav crumbs={[{ label: "Dashboard" }]} />
 
       {loginNotification && (
-        <div className="px-8 mb-4" style={{ animation: "slideDown 0.5s ease forwards" }}>
-          <div className="relative p-4 rounded-2xl bg-primary/10 border border-primary/20 text-foreground text-sm font-medium">
+        <div className="px-3 sm:px-8 mb-3" style={{ animation: "slideDown 0.5s ease forwards" }}>
+          <div className="relative p-3 sm:p-4 rounded-2xl bg-primary/10 border border-primary/20 text-foreground text-xs sm:text-sm font-medium pr-8">
             <button onClick={() => setLoginNotification(null)} className="absolute top-2 right-3 text-muted-foreground hover:text-foreground text-lg leading-none">×</button>
             {loginNotification}
           </div>
