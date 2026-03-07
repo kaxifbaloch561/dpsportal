@@ -125,7 +125,7 @@ const Dashboard = () => {
                   boxShadow: `0 8px 32px -8px ${theme.shadow}55`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 20px 60px -12px ${theme.shadow}88, 0 0 0 2px rgba(255,255,255,0.15)`;
+                  e.currentTarget.style.boxShadow = `0 24px 64px -12px ${theme.shadow}99, 0 0 0 2px rgba(255,255,255,0.2)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = `0 8px 32px -8px ${theme.shadow}55`;
