@@ -644,6 +644,24 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
             )}
           </div>
 
+          {/* Typing indicator */}
+          {typingUsers.length > 0 && (
+            <div className="px-4 py-1.5 flex items-center gap-2">
+              <div className="flex gap-1 items-center">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:0ms]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
+              </div>
+              <span className="text-[11px] text-muted-foreground italic">
+                {typingUsers.length === 1
+                  ? `${typingUsers[0]} is typing...`
+                  : typingUsers.length === 2
+                    ? `${typingUsers[0]} and ${typingUsers[1]} are typing...`
+                    : `${typingUsers[0]} and ${typingUsers.length - 1} others are typing...`}
+              </span>
+            </div>
+          )}
+
           {/* Reply preview bar */}
           {replyTo && (
             <div className="px-3 py-2 bg-primary/5 border-t border-primary/10 flex items-center gap-2">
