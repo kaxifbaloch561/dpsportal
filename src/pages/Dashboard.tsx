@@ -8,10 +8,10 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import TeacherRequestForm from "@/components/TeacherRequestForm";
 import HowToUseGuide from "@/components/HowToUseGuide";
 import TeacherProfile from "@/components/TeacherProfile";
-import { Sparkles, AlertTriangle, Lightbulb, Info, Inbox, User, MessageSquare } from "lucide-react";
+import { Sparkles, AlertTriangle, Info, Inbox, User, Megaphone } from "lucide-react";
 import TeacherInbox from "@/components/TeacherInbox";
-import TeacherDirectMessage from "@/components/TeacherDirectMessage";
 import AnnouncementPopup from "@/components/AnnouncementPopup";
+import { supabase } from "@/integrations/supabase/client";
 
 const classThemes = [
   { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80%,55%))", shadow: "hsl(235,78%,65%)" },
@@ -29,23 +29,20 @@ const classThemes = [
 const quickActions = [
   { key: "feature" as const, icon: Sparkles, label: "Ask for Features", color: "hsl(235,78%,62%)" },
   { key: "problem" as const, icon: AlertTriangle, label: "Report a Problem", color: "hsl(0,72%,55%)" },
-  { key: "suggestion" as const, icon: Lightbulb, label: "Suggestions", color: "hsl(45,90%,50%)" },
   { key: "guide" as const, icon: Info, label: "How to Use", color: "hsl(160,60%,38%)" },
-  { key: "inbox" as const, icon: Inbox, label: "My Inbox", color: "hsl(200,85%,50%)" },
-  { key: "dm" as const, icon: MessageSquare, label: "Chat with Admin", color: "hsl(340,80%,55%)" },
-  { key: "profile" as const, icon: User, label: "My Profile", color: "hsl(270,72%,55%)" },
 ];
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: classesData = [] } = useClassesData();
-  const [formType, setFormType] = useState<"feature" | "problem" | "suggestion" | null>(null);
+  const [formType, setFormType] = useState<"feature" | "problem" | null>(null);
   const [showGuide, setShowGuide] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const [showDM, setShowDM] = useState(false);
+  const [showAnnouncements, setShowAnnouncements] = useState(false);
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
+  const [announcementCount, setAnnouncementCount] = useState(0);
 
   useEffect(() => {
     const notif = localStorage.getItem("dps_login_notification");
@@ -55,9 +52,65 @@ const Dashboard = () => {
     }
   }, []);
 
+  // Fetch active announcement count
+  useEffect(() => {
+    const fetchCount = async () => {
+      const { data } = await supabase
+        .from("announcements")
+        .select("id, expires_at")
+        .eq("is_active", true);
+      if (data) {
+        const active = data.filter((a: any) => !a.expires_at || new Date(a.expires_at).getTime() > Date.now());
+        setAnnouncementCount(active.length);
+      }
+    };
+    fetchCount();
+    const ch = supabase
+      .channel("dashboard-ann-count")
+      .on("postgres_changes", { event: "*", schema: "public", table: "announcements" }, () => fetchCount())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, []);
+
   return (
     <PageShell>
       <DashboardHeader subtitle="Select your class to begin" />
+
+      {/* Top bar: Announcement (left), Inbox & Profile (right) */}
+      <div className="px-6 py-2 flex items-center justify-between">
+        {/* Left: Announcement button */}
+        <button
+          onClick={() => setShowAnnouncements(true)}
+          className="relative flex items-center gap-2 px-3 py-2 rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+        >
+          <Megaphone size={18} />
+          <span className="text-xs font-bold">Announcements</span>
+          {announcementCount > 0 && (
+            <span className="min-w-[20px] h-[20px] flex items-center justify-center bg-gradient-to-br from-yellow-400 to-amber-500 text-black text-[10px] font-bold rounded-full px-1 animate-pulse">
+              {announcementCount}
+            </span>
+          )}
+        </button>
+
+        {/* Right: Inbox & Profile */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowInbox(true)}
+            className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+          >
+            <Inbox size={18} />
+            <span className="text-xs font-bold">My Inbox</span>
+          </button>
+          <button
+            onClick={() => setShowProfile(true)}
+            className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+          >
+            <User size={18} />
+            <span className="text-xs font-bold">My Profile</span>
+          </button>
+        </div>
+      </div>
+
       <BreadcrumbNav crumbs={[{ label: "Dashboard" }]} />
 
       {loginNotification && (
@@ -70,7 +123,7 @@ const Dashboard = () => {
       )}
 
       <div className="px-8 mb-4">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {quickActions.map((action, i) => {
             const Icon = action.icon;
             return (
@@ -78,9 +131,6 @@ const Dashboard = () => {
                 key={action.key}
                 onClick={() => {
                   if (action.key === "guide") setShowGuide(true);
-                  else if (action.key === "inbox") setShowInbox(true);
-                  else if (action.key === "profile") setShowProfile(true);
-                  else if (action.key === "dm") setShowDM(true);
                   else setFormType(action.key);
                 }}
                 className="flex items-center gap-2.5 p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
@@ -152,8 +202,7 @@ const Dashboard = () => {
       <HowToUseGuide open={showGuide} onOpenChange={setShowGuide} />
       <TeacherInbox open={showInbox} onOpenChange={setShowInbox} />
       <TeacherProfile open={showProfile} onOpenChange={setShowProfile} />
-      <TeacherDirectMessage open={showDM} onOpenChange={setShowDM} />
-      <AnnouncementPopup />
+      <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />
     </PageShell>
   );
 };
