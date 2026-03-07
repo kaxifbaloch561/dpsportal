@@ -494,7 +494,13 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                             <span className={`text-[9px] ${isMe ? "text-primary-foreground/50" : "text-muted-foreground"}`}>
                               {new Date(msg.created_at).toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" })}
                             </span>
-                            {isMe && <CheckCheck size={13} className={msg.is_read ? "text-sky-200" : "text-primary-foreground/40"} />}
+                            {isMe && (
+                              msg.is_read
+                                ? <CheckCheck size={13} className="text-sky-300" />
+                                : msg.is_delivered
+                                  ? <CheckCheck size={13} className="text-primary-foreground/40" />
+                                  : <Check size={13} className="text-primary-foreground/40" />
+                            )}
                           </div>
                         </div>
                       </div>
