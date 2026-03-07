@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import { Bell, BookOpen, Users, LogOut, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminTeacherPreview from "@/components/admin/AdminTeacherPreview";
 import AdminTeacherAccounts from "@/components/admin/AdminTeacherAccounts";
@@ -22,8 +23,45 @@ const AdminDashboard = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabKey>("notifications");
+  const [unreadNotifs, setUnreadNotifs] = useState(0);
+  const [pendingAccounts, setPendingAccounts] = useState(0);
+
+  const fetchCounts = async () => {
+    const [notifRes, accountRes] = await Promise.all([
+      supabase.from("teacher_requests").select("id", { count: "exact", head: true }).eq("is_read", false),
+      supabase.from("teacher_accounts").select("id", { count: "exact", head: true }).eq("status", "pending"),
+    ]);
+    setUnreadNotifs(notifRes.count ?? 0);
+    setPendingAccounts(accountRes.count ?? 0);
+  };
+
+  useEffect(() => {
+    fetchCounts();
+    const ch1 = supabase
+      .channel("admin-badge-notifs")
+      .on("postgres_changes", { event: "*", schema: "public", table: "teacher_requests" }, () => fetchCounts())
+      .subscribe();
+    const ch2 = supabase
+      .channel("admin-badge-accounts")
+      .on("postgres_changes", { event: "*", schema: "public", table: "teacher_accounts" }, () => fetchCounts())
+      .subscribe();
+    return () => { supabase.removeChannel(ch1); supabase.removeChannel(ch2); };
+  }, []);
+
+  // When switching to a tab, refresh counts (seen items get marked read inside components)
+  useEffect(() => {
+    // Small delay to let the component mark things as read
+    const timer = setTimeout(fetchCounts, 1000);
+    return () => clearTimeout(timer);
+  }, [activeTab]);
 
   const handleLogout = () => { logout(); navigate("/"); };
+
+  const getBadge = (key: string) => {
+    if (key === "notifications" && unreadNotifs > 0) return unreadNotifs;
+    if (key === "accounts" && pendingAccounts > 0) return pendingAccounts;
+    return 0;
+  };
 
   return (
     <PageShell>
@@ -42,6 +80,7 @@ const AdminDashboard = () => {
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
+            const badge = getBadge(tab.key);
             return (
               <button
                 key={tab.key}
@@ -52,12 +91,17 @@ const AdminDashboard = () => {
                     setActiveTab(tab.key);
                   }
                 }}
-                className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300 ${
+                className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300 ${
                   isActive
                     ? "bg-primary text-primary-foreground border-primary shadow-lg scale-[1.02]"
                     : "bg-card border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:-translate-y-1 hover:shadow-md"
                 }`}
               >
+                {badge > 0 && (
+                  <span className="absolute -top-2 -right-2 min-w-[22px] h-[22px] flex items-center justify-center bg-destructive text-destructive-foreground text-[11px] font-bold rounded-full px-1.5 animate-pulse shadow-lg">
+                    {badge}
+                  </span>
+                )}
                 <Icon size={24} />
                 <span className="text-[11px] font-semibold text-center leading-tight">{tab.label}</span>
               </button>
