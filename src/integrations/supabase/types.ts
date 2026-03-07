@@ -21,6 +21,7 @@ export type Database = {
           file_type: string | null
           file_url: string | null
           id: string
+          is_delivered: boolean | null
           is_read: boolean
           message: string
           parent_id: string | null
@@ -35,6 +36,7 @@ export type Database = {
           file_type?: string | null
           file_url?: string | null
           id?: string
+          is_delivered?: boolean | null
           is_read?: boolean
           message: string
           parent_id?: string | null
@@ -49,6 +51,7 @@ export type Database = {
           file_type?: string | null
           file_url?: string | null
           id?: string
+          is_delivered?: boolean | null
           is_read?: boolean
           message?: string
           parent_id?: string | null

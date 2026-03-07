@@ -75,7 +75,7 @@ const Dashboard = () => {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
-  // Fetch unread inbox count
+  // Fetch unread inbox count + mark messages as delivered (user is online)
   useEffect(() => {
     if (!user?.email) return;
     const fetchUnread = async () => {
@@ -86,10 +86,19 @@ const Dashboard = () => {
         .eq("is_read", false);
       setUnreadInbox(count ?? 0);
     };
+    // Mark all incoming messages as delivered since user is online
+    const markDelivered = async () => {
+      await supabase
+        .from("admin_messages")
+        .update({ is_delivered: true } as any)
+        .eq("recipient_email", user.email)
+        .eq("is_delivered", false);
+    };
     fetchUnread();
+    markDelivered();
     const ch = supabase
       .channel("dashboard-inbox-count")
-      .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, () => fetchUnread())
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, () => { fetchUnread(); markDelivered(); })
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [user?.email]);
