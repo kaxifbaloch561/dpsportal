@@ -115,6 +115,7 @@ const AdminDashboard = () => {
       {/* Tab content */}
       <div className="flex-1 overflow-auto">
         {activeTab === "notifications" && <AdminNotifications />}
+        {activeTab === "classes" && <AdminClassesManager />}
         {activeTab === "teacher" && <AdminTeacherPreview />}
         {activeTab === "accounts" && <AdminTeacherAccounts />}
       </div>
