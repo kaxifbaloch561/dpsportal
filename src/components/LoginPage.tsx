@@ -4,7 +4,7 @@ import schoolLogo from "@/assets/school-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginPageProps {
-  onLoginSuccess: (role: "admin" | "teacher") => void;
+  onLoginSuccess: (role: "admin" | "principal" | "teacher") => void;
   onCreateAccount: () => void;
 }
 

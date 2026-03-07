@@ -214,9 +214,11 @@ const AdminTeacherAccounts = ({ isPrincipal = false }: AdminTeacherAccountsProps
         <h3 className="text-lg font-bold text-foreground">Teacher Accounts</h3>
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground">{teachers.length} total</span>
-          <Button size="sm" className="rounded-full" onClick={() => setShowCreate(true)}>
-            <UserPlus size={14} /> Create Account
-          </Button>
+          {!isPrincipal && (
+            <Button size="sm" className="rounded-full" onClick={() => setShowCreate(true)}>
+              <UserPlus size={14} /> Create Account
+            </Button>
+          )}
         </div>
       </div>
 

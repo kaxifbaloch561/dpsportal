@@ -88,6 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         isAdmin: user?.role === "admin",
+        isPrincipal: user?.role === "principal",
         isTeacher: user?.role === "teacher",
       }}
     >
