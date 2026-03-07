@@ -14,6 +14,7 @@ import AdminClassesManager from "@/components/admin/AdminClassesManager";
 const tabs = [
   { key: "notifications", label: "Notifications", icon: Bell },
   { key: "content", label: "Manage Content", icon: BookOpen },
+  { key: "classes", label: "Classes", icon: GraduationCap },
   { key: "teacher", label: "Teacher Panel", icon: Users },
   { key: "accounts", label: "Teacher Accounts", icon: UserPlus },
 ] as const;
