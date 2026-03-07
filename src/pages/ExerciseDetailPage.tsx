@@ -103,6 +103,7 @@ const handleDownloadPdf = (
 
 const ExerciseDetailPage = () => {
   const { classId, subjectId, chapterNumber, exerciseType } = useParams();
+  const { data: classesData = [] } = useClassesData();
   const cls = classesData.find((c) => c.id === Number(classId));
   const subject = cls?.subjects.find((s) => s.id === subjectId);
   const chapNum = Number(chapterNumber);
