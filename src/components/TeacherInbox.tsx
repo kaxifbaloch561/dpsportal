@@ -374,9 +374,15 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <p className="text-[11px] text-muted-foreground truncate pr-3">
-                            {isLastMine && <CheckCheck size={12} className="inline mr-1 text-primary/60" />}
-                            {lastMsg?.file_type?.startsWith("image") ? "📷 Photo" : lastMsg?.file_type?.startsWith("audio") ? "🎤 Voice" : lastMsg?.message || ""}
+                          <p className="text-[11px] text-muted-foreground truncate pr-3 flex items-center gap-0.5">
+                            {isLastMine && (
+                              lastMsg?.is_read
+                                ? <CheckCheck size={12} className="shrink-0 text-sky-500" />
+                                : lastMsg?.is_delivered
+                                  ? <CheckCheck size={12} className="shrink-0 text-muted-foreground/50" />
+                                  : <Check size={12} className="shrink-0 text-muted-foreground/50" />
+                            )}
+                            <span className="truncate">{lastMsg?.file_type?.startsWith("image") ? "📷 Photo" : lastMsg?.file_type?.startsWith("audio") ? "🎤 Voice" : lastMsg?.message || ""}</span>
                           </p>
                           {unread > 0 && (
                             <span className="min-w-[22px] h-[22px] flex items-center justify-center bg-primary text-primary-foreground text-[10px] font-bold rounded-full px-1.5 shrink-0 shadow-sm">
