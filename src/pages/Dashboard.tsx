@@ -6,7 +6,7 @@ import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import TeacherRequestForm from "@/components/TeacherRequestForm";
-import HowToUseGuide from "@/components/HowToUseGuide";
+
 import TeacherProfile from "@/components/TeacherProfile";
 import { Sparkles, AlertTriangle, Info, Mail, UserCircle2, Megaphone, MessagesSquare } from "lucide-react";
 import TeacherInbox from "@/components/TeacherInbox";
@@ -38,7 +38,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const { data: classesData = [] } = useClassesData();
   const [formType, setFormType] = useState<"feature" | "problem" | null>(null);
-  const [showGuide, setShowGuide] = useState(false);
+  
   const [showInbox, setShowInbox] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showAnnouncements, setShowAnnouncements] = useState(false);
@@ -178,7 +178,7 @@ const Dashboard = () => {
               <button
                 key={action.key}
                 onClick={() => {
-                  if (action.key === "guide") setShowGuide(true);
+                  if (action.key === "guide") navigate("/how-to-use");
                   else setFormType(action.key);
                 }}
                 className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2.5 p-2 sm:p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
@@ -247,7 +247,7 @@ const Dashboard = () => {
       </div>
 
       {formType && <TeacherRequestForm type={formType} open={!!formType} onOpenChange={(open) => { if (!open) setFormType(null); }} />}
-      <HowToUseGuide open={showGuide} onOpenChange={setShowGuide} />
+      
       <TeacherInbox open={showInbox} onOpenChange={setShowInbox} />
       <TeacherProfile open={showProfile} onOpenChange={setShowProfile} />
       <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />

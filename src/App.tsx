@@ -18,6 +18,7 @@ import ExercisePage from "./pages/ExercisePage";
 import ExerciseDetailPage from "./pages/ExerciseDetailPage";
 import ChatbotPage from "./pages/ChatbotPage";
 import NotFound from "./pages/NotFound";
+import HowToUsePage from "./pages/HowToUsePage";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/how-to-use" element={<HowToUsePage />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/principal" element={<PrincipalDashboard />} />
             <Route path="/admin/content" element={<AdminContentManager />} />
