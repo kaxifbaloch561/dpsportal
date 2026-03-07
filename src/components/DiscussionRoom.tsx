@@ -92,8 +92,8 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const touchStartRef = useRef<{x: number;y: number;id: string;} | null>(null);
 
   const senderEmail = user?.role === "admin" ? "admin" : user?.email || "";
-  const [senderName, setSenderName] = useState(user?.role === "admin" ? "Admin" : "Teacher");
-  const senderType = user?.role === "admin" ? "admin" : "teacher";
+  const [senderName, setSenderName] = useState(user?.role === "admin" ? "Admin" : user?.role === "principal" ? "Principal" : "Teacher");
+  const senderType = user?.role === "admin" ? "admin" : user?.role === "principal" ? "principal" : "teacher";
   const isAdmin = user?.role === "admin";
 
   // Fetch teacher name
@@ -173,13 +173,14 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     return () => clearInterval(interval);
   }, [open, senderEmail]);
 
-  // Fetch online members (admin only)
+  // Fetch online members (admin only) - exclude admin from list
   const fetchOnlineMembers = useCallback(async () => {
     if (!isAdmin) return;
     const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
     const { data } = await (supabase as any).
     from("discussion_presence").
     select("*").
+    neq("user_type", "admin").
     gte("last_seen", fiveMinAgo).
     order("last_seen", { ascending: false });
     if (data) setOnlineMembers(data as OnlineMember[]);
@@ -618,7 +619,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
                     <div key={m.user_email} className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-accent/50 transition-colors mb-1">
                         <div className="relative">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                        m.user_type === "admin" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`
+                        m.user_type === "principal" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`
                         }>
                             {m.user_name.charAt(0).toUpperCase()}
                           </div>
@@ -630,7 +631,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-[11px] font-semibold text-foreground truncate">
-                            {m.user_name} {m.user_type === "admin" && "👑"}
+                            {m.user_name} {m.user_type === "principal" && "🎓"}
                           </p>
                           <p className="text-[9px] text-muted-foreground">
                             {isOnlineNow ? "Online now" : `${Math.floor((Date.now() - new Date(m.last_seen).getTime()) / 60000)}m ago`}
