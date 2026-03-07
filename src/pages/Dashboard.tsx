@@ -128,7 +128,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      <div className="px-4 sm:px-8 mb-4">
+      <div className="px-3 sm:px-8 mb-4">
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {quickActions.map((action, i) => {
             const Icon = action.icon;
@@ -139,16 +139,16 @@ const Dashboard = () => {
                   if (action.key === "guide") setShowGuide(true);
                   else setFormType(action.key);
                 }}
-                className="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
+                className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2.5 p-2 sm:p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
                 style={{ animation: `slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.2 + i * 0.08}s`, opacity: 0 }}
               >
                 <div
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0"
+                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
                   style={{ background: action.color + "18", color: action.color }}
                 >
                   <Icon size={16} />
                 </div>
-                <span className="text-[10px] sm:text-xs font-semibold text-foreground text-left leading-tight">{action.label}</span>
+                <span className="text-[9px] sm:text-xs font-semibold text-foreground text-center sm:text-left leading-tight">{action.label}</span>
               </button>
             );
           })}
