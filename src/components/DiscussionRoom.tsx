@@ -310,8 +310,9 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     reader.onloadend = async () => {
       const base64 = reader.result as string;
       let msgType = "file";
-      if (file.type.startsWith("image/")) msgType = "image";else
-      if (file.type.startsWith("audio/")) msgType = "voice";
+      if (file.type.startsWith("image/")) msgType = "image";
+      else if (file.type.startsWith("video/")) msgType = "video";
+      else if (file.type.startsWith("audio/")) msgType = "voice";
 
       setSending(true);
       const payload: any = {
