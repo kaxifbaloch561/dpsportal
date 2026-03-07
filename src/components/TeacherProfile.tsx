@@ -2,10 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Mail, BookOpen, Shield, LogOut, Eye, EyeOff, X } from "lucide-react";
+import { User, Mail, BookOpen, Shield, LogOut, Eye, EyeOff, X, KeyRound, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
 
 interface TeacherData {
+  id: string;
   first_name: string;
   middle_name: string | null;
   last_name: string;
@@ -26,6 +29,11 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
   const navigate = useNavigate();
   const [teacher, setTeacher] = useState<TeacherData | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [currentPass, setCurrentPass] = useState("");
+  const [newPass, setNewPass] = useState("");
+  const [confirmPass, setConfirmPass] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open && user?.email) {
@@ -38,6 +46,12 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
           if (data) setTeacher(data as unknown as TeacherData);
         });
     }
+    if (!open) {
+      setChangingPassword(false);
+      setCurrentPass("");
+      setNewPass("");
+      setConfirmPass("");
+    }
   }, [open, user?.email]);
 
   const handleLogout = () => {
@@ -45,12 +59,54 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
     navigate("/");
   };
 
+  const handleChangePassword = async () => {
+    if (!teacher) return;
+    if (!currentPass || !newPass || !confirmPass) {
+      toast({ title: "تمام فیلڈز پُر کریں", variant: "destructive" });
+      return;
+    }
+    if (currentPass !== teacher.password) {
+      toast({ title: "موجودہ پاسورڈ غلط ہے", variant: "destructive" });
+      return;
+    }
+    if (newPass.length < 6) {
+      toast({ title: "نیا پاسورڈ کم از کم 6 حروف کا ہونا چاہیے", variant: "destructive" });
+      return;
+    }
+    if (newPass === currentPass) {
+      toast({ title: "نیا پاسورڈ پرانے سے مختلف ہونا چاہیے", variant: "destructive" });
+      return;
+    }
+    if (newPass !== confirmPass) {
+      toast({ title: "نیا پاسورڈ میچ نہیں ہو رہا", variant: "destructive" });
+      return;
+    }
+
+    setSaving(true);
+    const { error } = await supabase
+      .from("teacher_accounts")
+      .update({ password: newPass, updated_at: new Date().toISOString() })
+      .eq("id", teacher.id);
+    setSaving(false);
+
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "✅ پاسورڈ کامیابی سے تبدیل ہو گیا!" });
+      setTeacher({ ...teacher, password: newPass });
+      setChangingPassword(false);
+      setCurrentPass("");
+      setNewPass("");
+      setConfirmPass("");
+    }
+  };
+
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div
-        className="w-full max-w-md bg-card rounded-[32px] p-6 relative overflow-hidden"
+        className="w-full max-w-md bg-card rounded-[32px] p-6 relative overflow-hidden max-h-[90vh] overflow-y-auto"
         style={{
           boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.3)",
           animation: "containerSpring 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
@@ -117,6 +173,60 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
                 </div>
               </div>
             </div>
+
+            {/* Change Password Section */}
+            {!changingPassword ? (
+              <Button
+                variant="outline"
+                className="w-full rounded-full"
+                onClick={() => setChangingPassword(true)}
+              >
+                <KeyRound size={16} /> Change Password
+              </Button>
+            ) : (
+              <div className="space-y-3 bg-muted/50 rounded-2xl p-4" style={{ animation: "slideUp 0.3s ease forwards" }}>
+                <p className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <KeyRound size={16} className="text-primary" /> Change Password
+                </p>
+                <Input
+                  type="password"
+                  placeholder="Current Password"
+                  value={currentPass}
+                  onChange={(e) => setCurrentPass(e.target.value)}
+                  className="rounded-xl"
+                />
+                <Input
+                  type="password"
+                  placeholder="New Password (min 6 characters)"
+                  value={newPass}
+                  onChange={(e) => setNewPass(e.target.value)}
+                  className="rounded-xl"
+                />
+                <Input
+                  type="password"
+                  placeholder="Confirm New Password"
+                  value={confirmPass}
+                  onChange={(e) => setConfirmPass(e.target.value)}
+                  className="rounded-xl"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleChangePassword}
+                    disabled={saving}
+                    className="flex-1 rounded-full"
+                  >
+                    <Check size={14} /> {saving ? "Saving..." : "Update Password"}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => { setChangingPassword(false); setCurrentPass(""); setNewPass(""); setConfirmPass(""); }}
+                    className="rounded-full"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Logout */}
             <Button
