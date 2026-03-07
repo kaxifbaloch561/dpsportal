@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type UserRole = "admin" | "teacher" | null;
+export type UserRole = "admin" | "principal" | "teacher" | null;
 
 interface AuthUser {
   email: string;
