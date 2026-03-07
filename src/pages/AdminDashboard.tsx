@@ -89,7 +89,7 @@ const AdminDashboard = () => {
       </div>
 
       <div className="px-6 mb-4">
-        <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
