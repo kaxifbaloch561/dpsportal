@@ -38,7 +38,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const { data: classesData = [] } = useClassesData();
   const [formType, setFormType] = useState<"feature" | "problem" | null>(null);
-  const [showGuide, setShowGuide] = useState(false);
+  
   const [showInbox, setShowInbox] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showAnnouncements, setShowAnnouncements] = useState(false);
