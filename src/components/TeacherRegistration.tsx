@@ -36,7 +36,7 @@ const TeacherRegistration = ({ onBack }: { onBack: () => void }) => {
   const generatedEmail = useMemo(() => {
     if (!firstName.trim() || !lastName.trim()) return "";
     const clean = (s: string) => s.trim().toLowerCase().replace(/[^a-z]/g, "");
-    return `tutori${clean(firstName)}${clean(middleName)}${clean(lastName)}@dps.portal`;
+    return `tutor${clean(firstName)}${clean(middleName)}${clean(lastName)}@dps.portal`;
   }, [firstName, middleName, lastName]);
 
   const handleInfoNext = () => {
