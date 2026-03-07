@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { classesData } from "@/data/classesData";
+import { useClassesData } from "@/hooks/useClassesData";
 import { MessageSquare, BookOpen, FileText } from "lucide-react";
 import SubjectBadge from "@/components/SubjectBadge";
 import PageShell from "@/components/PageShell";
