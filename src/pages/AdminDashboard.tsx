@@ -84,14 +84,14 @@ const AdminDashboard = () => {
     <PageShell>
       <DashboardHeader subtitle="Admin Panel" />
 
-      <div className="px-6 py-3 flex items-center justify-end">
+      <div className="px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-end">
         <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
           <LogOut size={16} /> Logout
         </Button>
       </div>
 
-      <div className="px-6 mb-4">
-        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+      <div className="px-3 sm:px-6 mb-3 sm:mb-4">
+        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-9 gap-1.5 sm:gap-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
