@@ -178,7 +178,7 @@ const Dashboard = () => {
               <button
                 key={action.key}
                 onClick={() => {
-                  if (action.key === "guide") setShowGuide(true);
+                  if (action.key === "guide") navigate("/how-to-use");
                   else setFormType(action.key);
                 }}
                 className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2.5 p-2 sm:p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
