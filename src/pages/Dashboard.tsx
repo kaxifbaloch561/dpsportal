@@ -12,6 +12,7 @@ import { Sparkles, AlertTriangle, Info, Inbox, User, Megaphone, MessagesSquare }
 import TeacherInbox from "@/components/TeacherInbox";
 import AnnouncementPopup from "@/components/AnnouncementPopup";
 import { supabase } from "@/integrations/supabase/client";
+import DiscussionRoom from "@/components/DiscussionRoom";
 
 const classThemes = [
   { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80%,55%))", shadow: "hsl(235,78%,65%)" },
