@@ -122,6 +122,62 @@ export type Database = {
         }
         Relationships: []
       }
+      classes: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      subjects: {
+        Row: {
+          class_id: number
+          created_at: string
+          icon: string
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          class_id: number
+          created_at?: string
+          icon?: string
+          id?: string
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          class_id?: number
+          created_at?: string
+          icon?: string
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teacher_accounts: {
         Row: {
           avatar_type: string | null
