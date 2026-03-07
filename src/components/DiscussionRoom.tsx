@@ -151,7 +151,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
         reader.onloadend = async () => {
           const base64 = reader.result as string;
           setSending(true);
-          const { error } = await supabase.from("discussion_messages").insert({
+           const { error } = await (supabase as any).from("discussion_messages").insert({
             sender_email: senderEmail,
             sender_name: senderName,
             sender_type: senderType,
