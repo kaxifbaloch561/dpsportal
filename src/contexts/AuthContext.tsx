@@ -17,8 +17,9 @@ interface AuthContextType {
   isTeacher: boolean;
 }
 
-const ADMIN_CREDENTIALS: Record<string, { password: string; role: UserRole }> = {
+const FIXED_CREDENTIALS: Record<string, { password: string; role: UserRole }> = {
   "adminkaxif@dps": { password: "adminkaxif@dps", role: "admin" },
+  "principal.access@dps.portal": { password: "Principal.access@dps.portal", role: "principal" },
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
