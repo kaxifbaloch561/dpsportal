@@ -171,36 +171,38 @@ const AdminTeacherAccounts = ({ isPrincipal = false }: AdminTeacherAccountsProps
           </div>
 
           {/* Actions */}
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
-            {selectedTeacher.status === "pending" && (
-              <>
+          {!isPrincipal && (
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+              {selectedTeacher.status === "pending" && (
+                <>
+                  <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
+                    <Check size={14} /> Approve
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => updateStatus(selectedTeacher.id, "rejected")} className="rounded-full">
+                    <X size={14} /> Reject
+                  </Button>
+                </>
+              )}
+              {selectedTeacher.status === "approved" && (
+                <Button size="sm" variant="outline" onClick={() => updateStatus(selectedTeacher.id, "paused")} className="rounded-full text-orange-600 border-orange-300">
+                  <Pause size={14} /> Pause Account
+                </Button>
+              )}
+              {selectedTeacher.status === "paused" && (
+                <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
+                  <Check size={14} /> Reactivate
+                </Button>
+              )}
+              {selectedTeacher.status === "rejected" && (
                 <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
                   <Check size={14} /> Approve
                 </Button>
-                <Button size="sm" variant="destructive" onClick={() => updateStatus(selectedTeacher.id, "rejected")} className="rounded-full">
-                  <X size={14} /> Reject
-                </Button>
-              </>
-            )}
-            {selectedTeacher.status === "approved" && (
-              <Button size="sm" variant="outline" onClick={() => updateStatus(selectedTeacher.id, "paused")} className="rounded-full text-orange-600 border-orange-300">
-                <Pause size={14} /> Pause Account
+              )}
+              <Button size="sm" variant="destructive" onClick={() => removeTeacher(selectedTeacher.id)} className="rounded-full">
+                <Trash2 size={14} /> Remove Permanently
               </Button>
-            )}
-            {selectedTeacher.status === "paused" && (
-              <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
-                <Check size={14} /> Reactivate
-              </Button>
-            )}
-            {selectedTeacher.status === "rejected" && (
-              <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
-                <Check size={14} /> Approve
-              </Button>
-            )}
-            <Button size="sm" variant="destructive" onClick={() => removeTeacher(selectedTeacher.id)} className="rounded-full">
-              <Trash2 size={14} /> Remove Permanently
-            </Button>
-          </div>
+            </div>
+          )}
         </div>
       </div>
     );
