@@ -7,33 +7,33 @@
 @layer base {
   :root {
     --background: 230 60% 98%;
-    --foreground: 230 30% 15%;
+    --foreground: 230 35% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 230 30% 15%;
+    --card-foreground: 230 35% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 230 30% 15%;
+    --popover-foreground: 230 35% 12%;
 
-    --primary: 235 78% 65%;
+    --primary: 235 78% 58%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 235 78% 65%;
 
-    --secondary: 14 100% 72%;
+    --secondary: 14 100% 65%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 20% 96%;
-    --muted-foreground: 220 10% 55%;
+    --muted: 220 25% 94%;
+    --muted-foreground: 220 15% 42%;
 
-    --accent: 235 78% 65%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 235 60% 94%;
+    --accent-foreground: 235 78% 45%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 90%;
-    --input: 220 20% 90%;
-    --ring: 235 78% 65%;
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 235 78% 58%;
 
     --radius: 0.75rem;
 
@@ -52,27 +52,32 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Futuristic hover tokens */
+    --hover-glow: 235 78% 58%;
+    --hover-lift: -6px;
+    --hover-duration: 0.3s;
   }
 
   .dark {
-    --background: 230 30% 8%;
+    --background: 230 30% 6%;
     --foreground: 220 20% 95%;
-    --card: 230 30% 12%;
+    --card: 230 30% 10%;
     --card-foreground: 220 20% 95%;
-    --popover: 230 30% 12%;
+    --popover: 230 30% 10%;
     --popover-foreground: 220 20% 95%;
     --primary: 235 78% 65%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 14 100% 72%;
+    --secondary: 14 100% 68%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 230 20% 18%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 235 78% 65%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 230 20% 16%;
+    --muted-foreground: 220 12% 58%;
+    --accent: 235 40% 20%;
+    --accent-foreground: 235 78% 80%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
-    --border: 230 20% 20%;
-    --input: 230 20% 20%;
+    --border: 230 20% 18%;
+    --input: 230 20% 18%;
     --ring: 235 78% 65%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -82,6 +87,7 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --hover-glow: 235 78% 65%;
   }
 }
 
@@ -95,7 +101,102 @@
   }
 }
 
-/* Splash screen animations */
+/* ═══════════════════════════════════════════════════
+   FUTURISTIC HOVER SYSTEM
+   ═══════════════════════════════════════════════════ */
+
+/* Card hover — lift + glow border + shadow bloom */
+@layer utilities {
+  .hover-futuristic {
+    @apply relative transition-all duration-300 ease-out;
+  }
+  .hover-futuristic:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow:
+      0 12px 40px -8px hsl(var(--hover-glow) / 0.25),
+      0 4px 16px -4px hsl(var(--hover-glow) / 0.15),
+      inset 0 1px 0 hsl(var(--primary) / 0.1);
+  }
+  .hover-futuristic::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1.5px hsl(var(--primary) / 0.4);
+  }
+  .hover-futuristic:hover::after {
+    opacity: 1;
+  }
+
+  /* Button hover — glow pulse + slight scale */
+  .hover-btn-glow {
+    @apply relative overflow-hidden transition-all duration-300 ease-out;
+  }
+  .hover-btn-glow:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 6px 24px -4px hsl(var(--hover-glow) / 0.4),
+      0 2px 8px -2px hsl(var(--hover-glow) / 0.2);
+  }
+  .hover-btn-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, hsl(var(--primary-foreground) / 0.1) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+    pointer-events: none;
+  }
+  .hover-btn-glow:hover::before {
+    transform: translateX(100%);
+  }
+
+  /* Icon/small element hover — pop + rotate hint */
+  .hover-icon-pop {
+    @apply transition-all duration-200 ease-out;
+  }
+  .hover-icon-pop:hover {
+    transform: scale(1.15) rotate(-3deg);
+    filter: drop-shadow(0 4px 8px hsl(var(--hover-glow) / 0.3));
+  }
+
+  /* Tab/nav item — underline slide + color shift */
+  .hover-tab-slide {
+    @apply relative transition-colors duration-300;
+  }
+  .hover-tab-slide::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: hsl(var(--primary));
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    border-radius: 1px;
+  }
+  .hover-tab-slide:hover::after {
+    width: 80%;
+    left: 10%;
+  }
+
+  /* List item hover — subtle slide right + highlight */
+  .hover-list-item {
+    @apply transition-all duration-200 ease-out;
+  }
+  .hover-list-item:hover {
+    transform: translateX(4px);
+    background: hsl(var(--accent));
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   SPLASH / UTILITY ANIMATIONS
+   ═══════════════════════════════════════════════════ */
+
 @keyframes sibiPopAndGlow {
   0% {
     opacity: 0;
@@ -160,9 +261,9 @@
 }
 
 @keyframes pulseGlow {
-  0% { box-shadow: 0 0 0 0 hsl(235 78% 65% / 0.6); }
-  70% { box-shadow: 0 0 0 25px hsl(235 78% 65% / 0); }
-  100% { box-shadow: 0 0 0 0 hsl(235 78% 65% / 0); }
+  0% { box-shadow: 0 0 0 0 hsl(235 78% 58% / 0.6); }
+  70% { box-shadow: 0 0 0 25px hsl(235 78% 58% / 0); }
+  100% { box-shadow: 0 0 0 0 hsl(235 78% 58% / 0); }
 }
 
 @keyframes containerSpring {

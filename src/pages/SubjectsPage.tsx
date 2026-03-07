@@ -52,14 +52,14 @@ const SubjectsPage = () => {
               <button
                 key={subject.id}
                 onClick={() => navigate(`/class/${cls.id}/subject/${subject.id}`)}
-                className="group relative cursor-pointer overflow-hidden rounded-[28px] border-0 p-0 h-36 transition-all duration-500 hover:-translate-y-4"
+                className="group relative cursor-pointer overflow-hidden rounded-[28px] border-0 p-0 h-36 transition-all duration-500 hover:-translate-y-5 hover:scale-[1.03] active:scale-[0.98]"
                 style={{
                   animation: `cardEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.4 + i * 0.07}s`,
                   opacity: 0,
                   boxShadow: `0 8px 32px -8px ${theme.shadow}55`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 20px 60px -12px ${theme.shadow}88, 0 0 0 2px rgba(255,255,255,0.15)`;
+                  e.currentTarget.style.boxShadow = `0 24px 64px -12px ${theme.shadow}99, 0 0 0 2px rgba(255,255,255,0.2)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = `0 8px 32px -8px ${theme.shadow}55`;

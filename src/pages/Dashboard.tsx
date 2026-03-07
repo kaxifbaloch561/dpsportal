@@ -84,7 +84,7 @@ const Dashboard = () => {
                   else if (action.key === "profile") setShowProfile(true);
                   else setFormType(action.key);
                 }}
-                className="flex items-center gap-2.5 p-3 rounded-2xl bg-card border border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                className="flex items-center gap-2.5 p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
                 style={{ animation: `slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.2 + i * 0.08}s`, opacity: 0 }}
               >
                 <div
@@ -118,14 +118,14 @@ const Dashboard = () => {
               <button
                 key={cls.id}
                 onClick={() => navigate(`/class/${cls.id}`)}
-                className="group relative cursor-pointer overflow-hidden rounded-[28px] border-0 p-0 transition-all duration-500 hover:-translate-y-4"
+                className="group relative cursor-pointer overflow-hidden rounded-[28px] border-0 p-0 transition-all duration-500 hover:-translate-y-5 hover:scale-[1.03] active:scale-[0.98]"
                 style={{
                   animation: `cardEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.4 + i * 0.07}s`,
                   opacity: 0,
                   boxShadow: `0 8px 32px -8px ${theme.shadow}55`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 20px 60px -12px ${theme.shadow}88, 0 0 0 2px rgba(255,255,255,0.15)`;
+                  e.currentTarget.style.boxShadow = `0 24px 64px -12px ${theme.shadow}99, 0 0 0 2px rgba(255,255,255,0.2)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = `0 8px 32px -8px ${theme.shadow}55`;

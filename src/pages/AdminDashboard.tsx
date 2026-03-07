@@ -91,10 +91,10 @@ const AdminDashboard = () => {
                     setActiveTab(tab.key);
                   }
                 }}
-                className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300 ${
+                className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300 active:scale-[0.96] ${
                   isActive
-                    ? "bg-primary text-primary-foreground border-primary shadow-lg scale-[1.02]"
-                    : "bg-card border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:-translate-y-1 hover:shadow-md"
+                    ? "bg-primary text-primary-foreground border-primary shadow-[0_8px_30px_-8px_hsl(var(--primary)/0.5)] scale-[1.02]"
+                    : "bg-card border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:-translate-y-1.5 hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:border-primary/25"
                 }`}
               >
                 {badge > 0 && (
