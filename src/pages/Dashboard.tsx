@@ -212,6 +212,7 @@ const Dashboard = () => {
       <TeacherInbox open={showInbox} onOpenChange={setShowInbox} />
       <TeacherProfile open={showProfile} onOpenChange={setShowProfile} />
       <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />
+      <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
     </PageShell>
   );
 };
