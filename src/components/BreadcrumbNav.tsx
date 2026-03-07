@@ -22,8 +22,8 @@ const BreadcrumbNav = ({ crumbs }: BreadcrumbNavProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex justify-center px-4 pt-3 pb-1">
-      <div className="flex items-center gap-0 bg-card/80 backdrop-blur-xl rounded-2xl p-1.5 border border-border/40 shadow-lg shadow-primary/5 w-fit">
+    <div className="flex justify-center px-2 sm:px-4 pt-3 pb-1 overflow-x-auto scrollbar-hide">
+      <div className="flex items-center gap-0 bg-card/80 backdrop-blur-xl rounded-2xl p-1.5 border border-border/40 shadow-lg shadow-primary/5 w-fit min-w-max">
         {crumbs.map((crumb, i) => {
           const isLast = i === crumbs.length - 1;
           const gradient = stepColors[i % stepColors.length];
