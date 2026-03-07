@@ -149,6 +149,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
   useEffect(() => {
     if (open) {
       setView("chats"); fetchContacts(); fetchUnreadAndLast(); setLoadingReq(true); fetchRequests();
+      markAllDelivered();
       const ch = supabase.channel("teacher-inbox-all")
         .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, () => {
           fetchUnreadAndLast(); if (selectedContact) fetchMessages(selectedContact);
