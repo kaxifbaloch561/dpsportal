@@ -80,6 +80,8 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const [showMembers, setShowMembers] = useState(false);
   const [onlineMembers, setOnlineMembers] = useState<OnlineMember[]>([]);
   const [swipeState, setSwipeState] = useState<{ id: string; x: number } | null>(null);
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
