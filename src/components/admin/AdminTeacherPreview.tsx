@@ -18,6 +18,7 @@ const classThemes = [
 
 const AdminTeacherPreview = () => {
   const navigate = useNavigate();
+  const { data: classesData = [] } = useClassesData();
 
   return (
     <div className="px-6 pb-8">
