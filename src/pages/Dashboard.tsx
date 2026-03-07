@@ -80,17 +80,21 @@ const Dashboard = () => {
       <div className="flex items-center justify-between px-3 sm:px-6 pt-3 sm:pt-4">
         <button
           onClick={() => setShowInbox(true)}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 hover:border-primary/40 transition-all duration-300 active:scale-[0.97]"
+          className="group flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-primary/15 to-primary/5 border border-primary/25 text-primary hover:from-primary/25 hover:to-primary/15 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 active:scale-[0.96]"
         >
-          <Mail size={16} strokeWidth={2.2} />
-          <span className="text-[10px] sm:text-xs font-bold">Inbox</span>
+          <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors">
+            <Mail size={18} strokeWidth={2.2} />
+          </div>
+          <span className="text-xs sm:text-sm font-extrabold tracking-wide">Inbox</span>
         </button>
         <button
           onClick={() => setShowProfile(true)}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 hover:border-primary/40 transition-all duration-300 active:scale-[0.97]"
+          className="group flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-primary/5 to-primary/15 border border-primary/25 text-primary hover:from-primary/15 hover:to-primary/25 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 active:scale-[0.96]"
         >
-          <UserCircle2 size={16} strokeWidth={2.2} />
-          <span className="text-[10px] sm:text-xs font-bold">Profile</span>
+          <span className="text-xs sm:text-sm font-extrabold tracking-wide">Profile</span>
+          <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors">
+            <UserCircle2 size={18} strokeWidth={2.2} />
+          </div>
         </button>
       </div>
 
