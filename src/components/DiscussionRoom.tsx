@@ -25,8 +25,13 @@ import {
   Square,
   Reply,
   ChevronRight,
-  Circle } from
+  Circle,
+  Eye } from
 "lucide-react";
+import {
+  Dialog,
+  DialogContent } from
+"@/components/ui/dialog";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -81,6 +86,8 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const [onlineMembers, setOnlineMembers] = useState<OnlineMember[]>([]);
   const [swipeState, setSwipeState] = useState<{id: string;x: number;} | null>(null);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const [fileActionMenu, setFileActionMenu] = useState<{url: string; name: string; type: string;} | null>(null);
+  const [previewFile, setPreviewFile] = useState<{url: string; name: string; type: string;} | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -303,8 +310,9 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     reader.onloadend = async () => {
       const base64 = reader.result as string;
       let msgType = "file";
-      if (file.type.startsWith("image/")) msgType = "image";else
-      if (file.type.startsWith("audio/")) msgType = "voice";
+      if (file.type.startsWith("image/")) msgType = "image";
+      else if (file.type.startsWith("video/")) msgType = "video";
+      else if (file.type.startsWith("audio/")) msgType = "voice";
 
       setSending(true);
       const payload: any = {
@@ -516,14 +524,30 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
               src={msg.file_url}
               alt={msg.file_name || "Image"}
               className="rounded-xl max-w-full max-h-[300px] object-cover cursor-pointer"
-              onClick={() => window.open(msg.file_url!, "_blank")} />
+              onClick={() => setFileActionMenu({ url: msg.file_url!, name: msg.file_name || "image", type: msg.file_type || "image/png" })} />
             
               {msg.file_name && <p className="text-[10px] opacity-60 mt-1">{msg.file_name}</p>}
             </div>
           }
 
+          {msg.message_type === "video" && msg.file_url &&
+          <div
+            className="cursor-pointer"
+            onClick={() => setFileActionMenu({ url: msg.file_url!, name: msg.file_name || "video", type: msg.file_type || "video/mp4" })}>
+              <video
+              src={msg.file_url}
+              className="rounded-xl max-w-full max-h-[300px]"
+              controls={false}
+              muted
+              playsInline />
+              {msg.file_name && <p className="text-[10px] opacity-60 mt-1">{msg.file_name}</p>}
+            </div>
+          }
+
           {msg.message_type === "file" &&
-          <div className="flex items-center gap-3 p-2 rounded-xl bg-black/5 dark:bg-white/5 min-w-[200px]">
+          <div
+            className="flex items-center gap-3 p-2 rounded-xl bg-black/5 dark:bg-white/5 min-w-[200px] cursor-pointer"
+            onClick={() => msg.file_url && setFileActionMenu({ url: msg.file_url, name: msg.file_name || "file", type: msg.file_type || "application/octet-stream" })}>
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
             isMine ? "bg-white/20" : "bg-primary/10 text-primary"}`
             }>
@@ -533,11 +557,9 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
                 <p className="text-xs font-semibold truncate">{msg.file_name}</p>
                 <p className="text-[10px] opacity-60">{msg.file_type}</p>
               </div>
-              {msg.file_url &&
-            <a href={msg.file_url} download={msg.file_name || "file"} className={`p-1.5 rounded-lg transition-colors ${isMine ? "hover:bg-white/20" : "hover:bg-primary/10"}`}>
-                  <Download size={14} />
-                </a>
-            }
+              <div className={`p-1.5 rounded-lg ${isMine ? "text-white/60" : "text-primary/60"}`}>
+                <Eye size={14} />
+              </div>
             </div>
           }
 
@@ -753,6 +775,86 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* File Action Menu - Preview / Download */}
+      <Dialog open={!!fileActionMenu} onOpenChange={(o) => !o && setFileActionMenu(null)}>
+        <DialogContent className="rounded-3xl max-w-[320px] p-6 gap-4">
+          <h3 className="text-sm font-bold text-foreground text-center truncate px-2">{fileActionMenu?.name}</h3>
+          <div className="flex flex-col gap-2.5">
+            <button
+              onClick={() => {
+                if (fileActionMenu) {
+                  setPreviewFile(fileActionMenu);
+                  setFileActionMenu(null);
+                }
+              }}
+              className="flex items-center gap-3 p-3.5 rounded-2xl bg-primary/10 hover:bg-primary/15 text-primary transition-colors active:scale-[0.97]"
+            >
+              <Eye size={20} />
+              <span className="text-sm font-semibold">Preview</span>
+            </button>
+            <button
+              onClick={() => {
+                if (fileActionMenu) {
+                  const a = document.createElement("a");
+                  a.href = fileActionMenu.url;
+                  a.download = fileActionMenu.name;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  setFileActionMenu(null);
+                  toast.success("Download started");
+                }
+              }}
+              className="flex items-center gap-3 p-3.5 rounded-2xl bg-accent hover:bg-accent/80 text-accent-foreground transition-colors active:scale-[0.97]"
+            >
+              <Download size={20} />
+              <span className="text-sm font-semibold">Download</span>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Preview Dialog */}
+      <Dialog open={!!previewFile} onOpenChange={(o) => !o && setPreviewFile(null)}>
+        <DialogContent className="rounded-3xl max-w-[95vw] sm:max-w-[700px] max-h-[90vh] p-3 sm:p-4 overflow-auto">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xs font-bold text-foreground truncate flex-1 pr-2">{previewFile?.name}</h3>
+            <button
+              onClick={() => {
+                if (previewFile) {
+                  const a = document.createElement("a");
+                  a.href = previewFile.url;
+                  a.download = previewFile.name;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  toast.success("Download started");
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold shrink-0 hover:bg-primary/90 active:scale-[0.97]"
+            >
+              <Download size={14} />
+              Download
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-2xl bg-muted/50 overflow-hidden min-h-[200px]">
+            {previewFile?.type.startsWith("image/") && (
+              <img src={previewFile.url} alt={previewFile.name} className="max-w-full max-h-[70vh] object-contain rounded-xl" />
+            )}
+            {previewFile?.type.startsWith("video/") && (
+              <video src={previewFile.url} controls autoPlay playsInline className="max-w-full max-h-[70vh] rounded-xl" />
+            )}
+            {previewFile && !previewFile.type.startsWith("image/") && !previewFile.type.startsWith("video/") && (
+              <div className="flex flex-col items-center gap-3 py-10 text-muted-foreground">
+                <FileText size={48} className="opacity-40" />
+                <p className="text-sm font-medium">Preview not available for this file type</p>
+                <p className="text-xs">Use the download button to save and open this file</p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>);
 
 };
