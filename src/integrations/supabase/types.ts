@@ -214,6 +214,86 @@ export type Database = {
         }
         Relationships: []
       }
+      discussion_messages: {
+        Row: {
+          created_at: string
+          file_name: string | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          message: string | null
+          message_type: string
+          reply_to_id: string | null
+          reply_to_name: string | null
+          reply_to_text: string | null
+          sender_email: string
+          sender_name: string
+          sender_type: string
+        }
+        Insert: {
+          created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          message?: string | null
+          message_type?: string
+          reply_to_id?: string | null
+          reply_to_name?: string | null
+          reply_to_text?: string | null
+          sender_email: string
+          sender_name: string
+          sender_type: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          message?: string | null
+          message_type?: string
+          reply_to_id?: string | null
+          reply_to_name?: string | null
+          reply_to_text?: string | null
+          sender_email?: string
+          sender_name?: string
+          sender_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discussion_messages_reply_fk"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "discussion_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discussion_presence: {
+        Row: {
+          id: string
+          last_seen: string
+          user_email: string
+          user_name: string
+          user_type: string
+        }
+        Insert: {
+          id?: string
+          last_seen?: string
+          user_email: string
+          user_name: string
+          user_type: string
+        }
+        Update: {
+          id?: string
+          last_seen?: string
+          user_email?: string
+          user_name?: string
+          user_type?: string
+        }
+        Relationships: []
+      }
       subjects: {
         Row: {
           class_id: number
