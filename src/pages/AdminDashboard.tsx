@@ -22,6 +22,7 @@ const tabs = [
   { key: "messaging", label: "Messages", icon: MessageSquare },
   { key: "announcements", label: "Announcements", icon: Megaphone },
   { key: "discussion", label: "Discussion", icon: MessagesSquare },
+  { key: "monitor", label: "Monitor", icon: Eye },
   { key: "teacher", label: "Teacher Panel", icon: Users },
   { key: "accounts", label: "Teacher Accounts", icon: UserPlus },
 ] as const;
