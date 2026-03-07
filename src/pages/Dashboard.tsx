@@ -78,44 +78,41 @@ const Dashboard = () => {
     <PageShell>
       <DashboardHeader subtitle="Select your class to begin" />
 
-      {/* Top bar: Announcement (left), Inbox & Profile (right) */}
-      <div className="px-4 sm:px-6 py-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
-        {/* Left: Announcement button */}
-        <button
-          onClick={() => setShowAnnouncements(true)}
-          className="relative flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
-        >
-          <Megaphone size={18} />
-          <span className="text-xs font-bold">Announcements</span>
-          {announcementCount > 0 && (
-            <span className="min-w-[20px] h-[20px] flex items-center justify-center bg-gradient-to-br from-yellow-400 to-amber-500 text-black text-[10px] font-bold rounded-full px-1 animate-pulse">
-              {announcementCount}
-            </span>
-          )}
-        </button>
-
-        {/* Right: Discussion, Inbox & Profile */}
-        <div className="flex items-center gap-2 justify-center sm:justify-end">
+      {/* Top bar: horizontal scroll on mobile */}
+      <div className="px-3 sm:px-6 py-2 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-2 min-w-max">
+          <button
+            onClick={() => setShowAnnouncements(true)}
+            className="relative flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
+          >
+            <Megaphone size={16} />
+            <span className="text-xs font-bold whitespace-nowrap">Announcements</span>
+            {announcementCount > 0 && (
+              <span className="min-w-[18px] h-[18px] flex items-center justify-center bg-gradient-to-br from-yellow-400 to-amber-500 text-black text-[9px] font-bold rounded-full px-1 animate-pulse">
+                {announcementCount}
+              </span>
+            )}
+          </button>
           <button
             onClick={() => setShowDiscussion(true)}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
           >
             <MessagesSquare size={16} />
-            <span className="text-[10px] sm:text-xs font-bold">Discussion</span>
+            <span className="text-xs font-bold whitespace-nowrap">Discussion</span>
           </button>
           <button
             onClick={() => setShowInbox(true)}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
           >
             <Inbox size={16} />
-            <span className="text-[10px] sm:text-xs font-bold">Inbox</span>
+            <span className="text-xs font-bold whitespace-nowrap">My Inbox</span>
           </button>
           <button
             onClick={() => setShowProfile(true)}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
           >
             <User size={16} />
-            <span className="text-[10px] sm:text-xs font-bold">Profile</span>
+            <span className="text-xs font-bold whitespace-nowrap">Profile</span>
           </button>
         </div>
       </div>
