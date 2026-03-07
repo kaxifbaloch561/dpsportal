@@ -82,7 +82,7 @@ const HowToUseGuide = ({ open, onOpenChange }: Props) => {
           <div className="mt-6 pt-4 border-t border-border text-center">
             <p className="text-xs text-muted-foreground">Developed by</p>
             <p className="text-sm font-bold text-primary mt-0.5">Kaxif Gull</p>
-            <p className="text-xs text-muted-foreground mt-1">DPS SIBI — Learning is Light</p>
+            <p className="text-xs text-muted-foreground mt-1">DPS SIBI</p>
           </div>
         </div>
       </DialogContent>
