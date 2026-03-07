@@ -6,7 +6,7 @@ import DashboardHeader from "@/components/DashboardHeader";
 import { MessageSquare, Megaphone, MessagesSquare, Users, UserPlus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import AdminMessaging from "@/components/admin/AdminMessaging";
+import PrincipalMessaging from "@/components/admin/PrincipalMessaging";
 import AdminAnnouncements from "@/components/admin/AdminAnnouncements";
 import AdminTeacherPreview from "@/components/admin/AdminTeacherPreview";
 import AdminTeacherAccounts from "@/components/admin/AdminTeacherAccounts";
@@ -33,7 +33,7 @@ const PrincipalDashboard = () => {
     const { count } = await supabase
       .from("admin_messages")
       .select("id", { count: "exact", head: true })
-      .eq("sender_type", "teacher")
+      .eq("recipient_email", "principal.access@dps.portal")
       .eq("is_read", false);
     setUnreadMessages(count ?? 0);
   };
@@ -100,7 +100,7 @@ const PrincipalDashboard = () => {
       </div>
 
       <div className="flex-1 overflow-auto">
-        {activeTab === "messaging" && <AdminMessaging />}
+        {activeTab === "messaging" && <PrincipalMessaging />}
         {activeTab === "announcements" && <AdminAnnouncements />}
         {activeTab === "teacher" && <AdminTeacherPreview />}
         {activeTab === "accounts" && <AdminTeacherAccounts isPrincipal />}
