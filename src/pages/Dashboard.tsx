@@ -8,10 +8,11 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import TeacherRequestForm from "@/components/TeacherRequestForm";
 import HowToUseGuide from "@/components/HowToUseGuide";
 import TeacherProfile from "@/components/TeacherProfile";
-import { Sparkles, AlertTriangle, Info, Inbox, User, Megaphone } from "lucide-react";
+import { Sparkles, AlertTriangle, Info, Inbox, User, Megaphone, MessagesSquare } from "lucide-react";
 import TeacherInbox from "@/components/TeacherInbox";
 import AnnouncementPopup from "@/components/AnnouncementPopup";
 import { supabase } from "@/integrations/supabase/client";
+import DiscussionRoom from "@/components/DiscussionRoom";
 
 const classThemes = [
   { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80%,55%))", shadow: "hsl(235,78%,65%)" },
@@ -41,6 +42,7 @@ const Dashboard = () => {
   const [showInbox, setShowInbox] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showAnnouncements, setShowAnnouncements] = useState(false);
+  const [showDiscussion, setShowDiscussion] = useState(false);
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
   const [announcementCount, setAnnouncementCount] = useState(0);
 
@@ -92,8 +94,15 @@ const Dashboard = () => {
           )}
         </button>
 
-        {/* Right: Inbox & Profile */}
+        {/* Right: Discussion, Inbox & Profile */}
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowDiscussion(true)}
+            className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+          >
+            <MessagesSquare size={18} />
+            <span className="text-xs font-bold">Discussion</span>
+          </button>
           <button
             onClick={() => setShowInbox(true)}
             className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
@@ -203,6 +212,7 @@ const Dashboard = () => {
       <TeacherInbox open={showInbox} onOpenChange={setShowInbox} />
       <TeacherProfile open={showProfile} onOpenChange={setShowProfile} />
       <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />
+      <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
     </PageShell>
   );
 };

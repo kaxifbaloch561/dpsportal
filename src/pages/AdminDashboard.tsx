@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
-import { Bell, BookOpen, Users, LogOut, UserPlus, GraduationCap, MessageSquare, Megaphone } from "lucide-react";
+import { Bell, BookOpen, Users, LogOut, UserPlus, GraduationCap, MessageSquare, Megaphone, MessagesSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import AdminNotifications from "@/components/admin/AdminNotifications";
@@ -12,6 +12,7 @@ import AdminTeacherAccounts from "@/components/admin/AdminTeacherAccounts";
 import AdminClassesManager from "@/components/admin/AdminClassesManager";
 import AdminMessaging from "@/components/admin/AdminMessaging";
 import AdminAnnouncements from "@/components/admin/AdminAnnouncements";
+import DiscussionRoom from "@/components/DiscussionRoom";
 
 const tabs = [
   { key: "notifications", label: "Notifications", icon: Bell },
@@ -19,6 +20,7 @@ const tabs = [
   { key: "classes", label: "Classes", icon: GraduationCap },
   { key: "messaging", label: "Messages", icon: MessageSquare },
   { key: "announcements", label: "Announcements", icon: Megaphone },
+  { key: "discussion", label: "Discussion", icon: MessagesSquare },
   { key: "teacher", label: "Teacher Panel", icon: Users },
   { key: "accounts", label: "Teacher Accounts", icon: UserPlus },
 ] as const;
@@ -32,6 +34,7 @@ const AdminDashboard = () => {
   const [unreadNotifs, setUnreadNotifs] = useState(0);
   const [pendingAccounts, setPendingAccounts] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [showDiscussion, setShowDiscussion] = useState(false);
 
   const fetchCounts = async () => {
     const [notifRes, accountRes, msgRes] = await Promise.all([
@@ -86,7 +89,7 @@ const AdminDashboard = () => {
       </div>
 
       <div className="px-6 mb-4">
-        <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
@@ -97,6 +100,8 @@ const AdminDashboard = () => {
                 onClick={() => {
                   if (tab.key === "content") {
                     navigate("/admin/content");
+                  } else if (tab.key === "discussion") {
+                    setShowDiscussion(true);
                   } else {
                     setActiveTab(tab.key);
                   }
@@ -128,6 +133,8 @@ const AdminDashboard = () => {
         {activeTab === "teacher" && <AdminTeacherPreview />}
         {activeTab === "accounts" && <AdminTeacherAccounts />}
       </div>
+
+      <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
     </PageShell>
   );
 };
