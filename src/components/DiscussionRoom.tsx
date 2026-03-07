@@ -229,7 +229,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     }
     const { error } = await (supabase as any).from("discussion_messages").insert(payload);
     if (error) toast.error("Failed to send");
-    else { setNewMessage(""); setReplyTo(null); }
+    else { setNewMessage(""); setReplyTo(null); setTypingStatus(false); if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current); }
     setSending(false);
   };
 
