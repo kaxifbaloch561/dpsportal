@@ -173,13 +173,14 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     return () => clearInterval(interval);
   }, [open, senderEmail]);
 
-  // Fetch online members (admin only)
+  // Fetch online members (admin only) - exclude admin from list
   const fetchOnlineMembers = useCallback(async () => {
     if (!isAdmin) return;
     const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
     const { data } = await (supabase as any).
     from("discussion_presence").
     select("*").
+    neq("user_type", "admin").
     gte("last_seen", fiveMinAgo).
     order("last_seen", { ascending: false });
     if (data) setOnlineMembers(data as OnlineMember[]);
