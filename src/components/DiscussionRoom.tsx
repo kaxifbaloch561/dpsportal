@@ -127,7 +127,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
       await (supabase as any)
         .from("discussion_presence")
         .upsert(
-          { user_email: senderEmail, user_name: senderName, user_type: senderType, last_seen: new Date().toISOString() },
+          { user_email: senderEmail, user_name: senderName, user_type: senderType, last_seen: new Date().toISOString(), is_typing: false },
           { onConflict: "user_email" }
         );
     };
@@ -135,8 +135,43 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     updatePresence();
     const interval = setInterval(updatePresence, 15000);
 
-    return () => clearInterval(interval);
+    // Cleanup: set is_typing false on close
+    return () => {
+      clearInterval(interval);
+      (supabase as any).from("discussion_presence").update({ is_typing: false }).eq("user_email", senderEmail).then(() => {});
+    };
   }, [open, senderEmail, senderName, senderType]);
+
+  // Set typing status
+  const setTypingStatus = useCallback(async (typing: boolean) => {
+    await (supabase as any)
+      .from("discussion_presence")
+      .update({ is_typing: typing })
+      .eq("user_email", senderEmail);
+  }, [senderEmail]);
+
+  const handleTyping = useCallback(() => {
+    setTypingStatus(true);
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => setTypingStatus(false), 2500);
+  }, [setTypingStatus]);
+
+  // Fetch who's typing (poll every 2s)
+  useEffect(() => {
+    if (!open) return;
+    const fetchTyping = async () => {
+      const { data } = await (supabase as any)
+        .from("discussion_presence")
+        .select("user_name, user_email")
+        .eq("is_typing", true)
+        .neq("user_email", senderEmail);
+      if (data) setTypingUsers((data as any[]).map((d: any) => d.user_name));
+      else setTypingUsers([]);
+    };
+    fetchTyping();
+    const interval = setInterval(fetchTyping, 2000);
+    return () => clearInterval(interval);
+  }, [open, senderEmail]);
 
   // Fetch online members (admin only)
   const fetchOnlineMembers = useCallback(async () => {
