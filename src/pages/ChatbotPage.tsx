@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { classesData } from "@/data/classesData";
+import { useClassesData } from "@/hooks/useClassesData";
 import { Send, Bot, User, Sparkles, Zap, BookOpen, HelpCircle, Search, Copy, Check } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 import PageShell from "@/components/PageShell";
