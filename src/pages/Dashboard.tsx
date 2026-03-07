@@ -36,6 +36,7 @@ const quickActions = [
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { data: classesData = [] } = useClassesData();
   const [formType, setFormType] = useState<"feature" | "problem" | "suggestion" | null>(null);
   const [showGuide, setShowGuide] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
