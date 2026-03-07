@@ -45,6 +45,7 @@ const Dashboard = () => {
   const [showDiscussion, setShowDiscussion] = useState(false);
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
   const [announcementCount, setAnnouncementCount] = useState(0);
+  const [unreadInbox, setUnreadInbox] = useState(0);
 
   useEffect(() => {
     const notif = localStorage.getItem("dps_login_notification");
@@ -74,26 +75,50 @@ const Dashboard = () => {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
+  // Fetch unread inbox count
+  useEffect(() => {
+    if (!user?.email) return;
+    const fetchUnread = async () => {
+      const { count } = await supabase
+        .from("admin_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("recipient_email", user.email)
+        .eq("is_read", false);
+      setUnreadInbox(count ?? 0);
+    };
+    fetchUnread();
+    const ch = supabase
+      .channel("dashboard-inbox-count")
+      .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, () => fetchUnread())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [user?.email]);
+
   return (
     <PageShell>
       {/* Fixed top corners: Inbox (left) & Profile (right) */}
       <div className="flex items-center justify-between px-3 sm:px-6 pt-3 sm:pt-4">
         <button
           onClick={() => setShowInbox(true)}
-          className="group flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-primary/15 to-primary/5 border border-primary/25 text-primary hover:from-primary/25 hover:to-primary/15 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 active:scale-[0.96]"
+          className="group relative flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/30 text-primary backdrop-blur-sm hover:from-primary/30 hover:via-primary/20 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.96]"
         >
-          <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors">
-            <Mail size={18} strokeWidth={2.2} />
+          <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/30">
+            <Mail size={19} strokeWidth={2.2} />
+            {unreadInbox > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center border-2 border-card animate-pulse">
+                {unreadInbox > 9 ? "9+" : unreadInbox}
+              </span>
+            )}
           </div>
-          <span className="text-xs sm:text-sm font-extrabold tracking-wide">Inbox</span>
+          <span className="text-xs sm:text-sm font-extrabold tracking-wider uppercase">Inbox</span>
         </button>
         <button
           onClick={() => setShowProfile(true)}
-          className="group flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-primary/5 to-primary/15 border border-primary/25 text-primary hover:from-primary/15 hover:to-primary/25 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 active:scale-[0.96]"
+          className="group relative flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-bl from-primary/20 via-primary/10 to-transparent border border-primary/30 text-primary backdrop-blur-sm hover:from-primary/30 hover:via-primary/20 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.96]"
         >
-          <span className="text-xs sm:text-sm font-extrabold tracking-wide">Profile</span>
-          <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors">
-            <UserCircle2 size={18} strokeWidth={2.2} />
+          <span className="text-xs sm:text-sm font-extrabold tracking-wider uppercase">Profile</span>
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/30">
+            <UserCircle2 size={19} strokeWidth={2.2} />
           </div>
         </button>
       </div>
