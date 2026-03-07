@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
-import { Bell, BookOpen, Users, LogOut, UserPlus, GraduationCap, MessageSquare, Megaphone, MessagesSquare } from "lucide-react";
+import { Bell, BookOpen, Users, LogOut, UserPlus, GraduationCap, MessageSquare, Megaphone, MessagesSquare, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import AdminNotifications from "@/components/admin/AdminNotifications";
