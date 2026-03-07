@@ -25,8 +25,13 @@ import {
   Square,
   Reply,
   ChevronRight,
-  Circle } from
+  Circle,
+  Eye } from
 "lucide-react";
+import {
+  Dialog,
+  DialogContent } from
+"@/components/ui/dialog";
 import { toast } from "sonner";
 import {
   AlertDialog,
