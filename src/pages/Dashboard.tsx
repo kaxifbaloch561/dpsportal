@@ -45,6 +45,7 @@ const Dashboard = () => {
   const [showDiscussion, setShowDiscussion] = useState(false);
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
   const [announcementCount, setAnnouncementCount] = useState(0);
+  const [unreadInbox, setUnreadInbox] = useState(0);
 
   useEffect(() => {
     const notif = localStorage.getItem("dps_login_notification");
