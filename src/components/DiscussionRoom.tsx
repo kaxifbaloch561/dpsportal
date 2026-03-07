@@ -718,7 +718,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
                     ref={inputRef}
                     placeholder="Type a message..."
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={(e) => { setNewMessage(e.target.value); handleTyping(); }}
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendText(); } }}
                     className="rounded-2xl pr-12 h-11 text-sm bg-muted border-0"
                   />
