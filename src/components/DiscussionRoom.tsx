@@ -523,14 +523,30 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
               src={msg.file_url}
               alt={msg.file_name || "Image"}
               className="rounded-xl max-w-full max-h-[300px] object-cover cursor-pointer"
-              onClick={() => window.open(msg.file_url!, "_blank")} />
+              onClick={() => setFileActionMenu({ url: msg.file_url!, name: msg.file_name || "image", type: msg.file_type || "image/png" })} />
             
               {msg.file_name && <p className="text-[10px] opacity-60 mt-1">{msg.file_name}</p>}
             </div>
           }
 
+          {msg.message_type === "video" && msg.file_url &&
+          <div
+            className="cursor-pointer"
+            onClick={() => setFileActionMenu({ url: msg.file_url!, name: msg.file_name || "video", type: msg.file_type || "video/mp4" })}>
+              <video
+              src={msg.file_url}
+              className="rounded-xl max-w-full max-h-[300px]"
+              controls={false}
+              muted
+              playsInline />
+              {msg.file_name && <p className="text-[10px] opacity-60 mt-1">{msg.file_name}</p>}
+            </div>
+          }
+
           {msg.message_type === "file" &&
-          <div className="flex items-center gap-3 p-2 rounded-xl bg-black/5 dark:bg-white/5 min-w-[200px]">
+          <div
+            className="flex items-center gap-3 p-2 rounded-xl bg-black/5 dark:bg-white/5 min-w-[200px] cursor-pointer"
+            onClick={() => msg.file_url && setFileActionMenu({ url: msg.file_url, name: msg.file_name || "file", type: msg.file_type || "application/octet-stream" })}>
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
             isMine ? "bg-white/20" : "bg-primary/10 text-primary"}`
             }>
@@ -540,11 +556,9 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
                 <p className="text-xs font-semibold truncate">{msg.file_name}</p>
                 <p className="text-[10px] opacity-60">{msg.file_type}</p>
               </div>
-              {msg.file_url &&
-            <a href={msg.file_url} download={msg.file_name || "file"} className={`p-1.5 rounded-lg transition-colors ${isMine ? "hover:bg-white/20" : "hover:bg-primary/10"}`}>
-                  <Download size={14} />
-                </a>
-            }
+              <div className={`p-1.5 rounded-lg ${isMine ? "text-white/60" : "text-primary/60"}`}>
+                <Eye size={14} />
+              </div>
             </div>
           }
 
