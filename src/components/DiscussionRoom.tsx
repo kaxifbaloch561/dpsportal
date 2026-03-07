@@ -92,8 +92,8 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const touchStartRef = useRef<{x: number;y: number;id: string;} | null>(null);
 
   const senderEmail = user?.role === "admin" ? "admin" : user?.email || "";
-  const [senderName, setSenderName] = useState(user?.role === "admin" ? "Admin" : "Teacher");
-  const senderType = user?.role === "admin" ? "admin" : "teacher";
+  const [senderName, setSenderName] = useState(user?.role === "admin" ? "Admin" : user?.role === "principal" ? "Principal" : "Teacher");
+  const senderType = user?.role === "admin" ? "admin" : user?.role === "principal" ? "principal" : "teacher";
   const isAdmin = user?.role === "admin";
 
   // Fetch teacher name
