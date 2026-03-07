@@ -38,11 +38,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const trimmedEmail = email.trim().toLowerCase();
 
-    // Check admin credentials first
-    const adminCred = ADMIN_CREDENTIALS[trimmedEmail];
-    if (adminCred) {
-      if (adminCred.password !== password) return { success: false, error: "Incorrect password" };
-      setUser({ email: trimmedEmail, role: adminCred.role });
+    // Check fixed credentials first (admin, principal)
+    const fixedCred = FIXED_CREDENTIALS[trimmedEmail];
+    if (fixedCred) {
+      if (fixedCred.password !== password) return { success: false, error: "Incorrect password" };
+      setUser({ email: trimmedEmail, role: fixedCred.role });
       return { success: true };
     }
 
