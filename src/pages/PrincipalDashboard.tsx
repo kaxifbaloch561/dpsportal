@@ -58,14 +58,14 @@ const PrincipalDashboard = () => {
     <PageShell>
       <DashboardHeader subtitle="Principal Panel" />
 
-      <div className="px-6 py-3 flex items-center justify-end">
+      <div className="px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-end">
         <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
           <LogOut size={16} /> Logout
         </Button>
       </div>
 
-      <div className="px-6 mb-4">
-        <div className="grid grid-cols-5 gap-2">
+      <div className="px-3 sm:px-6 mb-3 sm:mb-4">
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 sm:gap-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key && tab.key !== "discussion";
@@ -80,19 +80,19 @@ const PrincipalDashboard = () => {
                     setActiveTab(tab.key);
                   }
                 }}
-                className={`relative flex flex-col items-center gap-1.5 p-3 rounded-2xl border transition-all duration-300 active:scale-[0.96] ${
+                className={`relative flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl sm:rounded-2xl border transition-all duration-300 active:scale-[0.96] ${
                   isActive
                     ? "bg-primary text-primary-foreground border-primary shadow-[0_8px_30px_-8px_hsl(var(--primary)/0.5)] scale-[1.02]"
                     : "bg-card border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:-translate-y-1.5 hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:border-primary/25"
                 }`}
               >
                 {badge > 0 && (
-                  <span className="absolute -top-2 -right-2 min-w-[22px] h-[22px] flex items-center justify-center bg-destructive text-destructive-foreground text-[11px] font-bold rounded-full px-1.5 animate-pulse shadow-lg">
+                  <span className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 min-w-[18px] h-[18px] sm:min-w-[22px] sm:h-[22px] flex items-center justify-center bg-destructive text-destructive-foreground text-[9px] sm:text-[11px] font-bold rounded-full px-1 animate-pulse shadow-lg">
                     {badge}
                   </span>
                 )}
-                <Icon size={20} />
-                <span className="text-[10px] font-semibold text-center leading-tight">{tab.label}</span>
+                <Icon size={18} />
+                <span className="text-[8px] sm:text-[10px] font-semibold text-center leading-tight">{tab.label}</span>
               </button>
             );
           })}

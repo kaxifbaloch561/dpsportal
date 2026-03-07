@@ -79,11 +79,11 @@ const Dashboard = () => {
       <DashboardHeader subtitle="Select your class to begin" />
 
       {/* Top bar: Announcement (left), Inbox & Profile (right) */}
-      <div className="px-6 py-2 flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
         {/* Left: Announcement button */}
         <button
           onClick={() => setShowAnnouncements(true)}
-          className="relative flex items-center gap-2 px-3 py-2 rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+          className="relative flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
         >
           <Megaphone size={18} />
           <span className="text-xs font-bold">Announcements</span>
@@ -95,27 +95,27 @@ const Dashboard = () => {
         </button>
 
         {/* Right: Discussion, Inbox & Profile */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-center sm:justify-end">
           <button
             onClick={() => setShowDiscussion(true)}
-            className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
           >
-            <MessagesSquare size={18} />
-            <span className="text-xs font-bold">Discussion</span>
+            <MessagesSquare size={16} />
+            <span className="text-[10px] sm:text-xs font-bold">Discussion</span>
           </button>
           <button
             onClick={() => setShowInbox(true)}
-            className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
           >
-            <Inbox size={18} />
-            <span className="text-xs font-bold">My Inbox</span>
+            <Inbox size={16} />
+            <span className="text-[10px] sm:text-xs font-bold">Inbox</span>
           </button>
           <button
             onClick={() => setShowProfile(true)}
-            className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
           >
-            <User size={18} />
-            <span className="text-xs font-bold">My Profile</span>
+            <User size={16} />
+            <span className="text-[10px] sm:text-xs font-bold">Profile</span>
           </button>
         </div>
       </div>
@@ -131,8 +131,8 @@ const Dashboard = () => {
         </div>
       )}
 
-      <div className="px-8 mb-4">
-        <div className="grid grid-cols-3 gap-3">
+      <div className="px-4 sm:px-8 mb-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {quickActions.map((action, i) => {
             const Icon = action.icon;
             return (
@@ -142,28 +142,28 @@ const Dashboard = () => {
                   if (action.key === "guide") setShowGuide(true);
                   else setFormType(action.key);
                 }}
-                className="flex items-center gap-2.5 p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
+                className="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
                 style={{ animation: `slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.2 + i * 0.08}s`, opacity: 0 }}
               >
                 <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0"
                   style={{ background: action.color + "18", color: action.color }}
                 >
-                  <Icon size={18} />
+                  <Icon size={16} />
                 </div>
-                <span className="text-xs font-semibold text-foreground text-left leading-tight">{action.label}</span>
+                <span className="text-[10px] sm:text-xs font-semibold text-foreground text-left leading-tight">{action.label}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="flex-1 px-8 pb-8">
-        <h2 className="text-2xl font-bold text-foreground mb-6 mt-4" style={{ animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
+      <div className="flex-1 px-4 sm:px-8 pb-6 sm:pb-8">
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6 mt-3 sm:mt-4" style={{ animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
           Select Your Class
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
           {classesData.map((cls, i) => {
             const theme = classThemes[i];
             return (

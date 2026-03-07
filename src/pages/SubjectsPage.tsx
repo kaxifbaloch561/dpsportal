@@ -34,9 +34,9 @@ const SubjectsPage = () => {
         { label: cls.name },
       ]} />
 
-      <div className="flex-1 px-8 pb-8">
+      <div className="flex-1 px-4 sm:px-8 pb-6 sm:pb-8">
         <h2
-          className="text-2xl font-bold text-foreground mb-6 mt-4"
+          className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6 mt-3 sm:mt-4"
           style={{
             animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
             opacity: 0,
@@ -45,7 +45,7 @@ const SubjectsPage = () => {
           Choose a Subject
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
           {cls.subjects.map((subject, i) => {
             const style = subjectStyles[subject.id] || { gradient: "", letter: "?" };
             const theme = subjectThemes[subject.id] || defaultTheme;
