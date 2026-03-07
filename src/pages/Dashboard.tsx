@@ -80,17 +80,17 @@ const Dashboard = () => {
       <div className="flex items-center justify-between px-3 sm:px-6 pt-3 sm:pt-4">
         <button
           onClick={() => setShowInbox(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-300 active:scale-[0.97]"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 hover:border-primary/40 transition-all duration-300 active:scale-[0.97]"
         >
-          <Inbox size={15} />
-          <span className="text-[10px] sm:text-xs font-bold">My Inbox</span>
+          <Mail size={16} strokeWidth={2.2} />
+          <span className="text-[10px] sm:text-xs font-bold">Inbox</span>
         </button>
         <button
           onClick={() => setShowProfile(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-300 active:scale-[0.97]"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 hover:border-primary/40 transition-all duration-300 active:scale-[0.97]"
         >
-          <User size={15} />
-          <span className="text-[10px] sm:text-xs font-bold">My Profile</span>
+          <UserCircle2 size={16} strokeWidth={2.2} />
+          <span className="text-[10px] sm:text-xs font-bold">Profile</span>
         </button>
       </div>
 
