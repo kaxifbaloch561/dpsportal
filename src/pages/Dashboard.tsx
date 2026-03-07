@@ -42,6 +42,7 @@ const Dashboard = () => {
   const [showInbox, setShowInbox] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showAnnouncements, setShowAnnouncements] = useState(false);
+  const [showDiscussion, setShowDiscussion] = useState(false);
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
   const [announcementCount, setAnnouncementCount] = useState(0);
 
