@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
-  CheckCheck, Clock, Send, ChevronLeft, ShieldCheck, GraduationCap,
+  Check, CheckCheck, Clock, Send, ChevronLeft, ShieldCheck, GraduationCap,
   Search, User, Plus, Sparkles, AlertTriangle, Lightbulb, Mail,
   MessageSquare, Image, Paperclip, Mic, MicOff, X, FileText, Play, Pause
 } from "lucide-react";
