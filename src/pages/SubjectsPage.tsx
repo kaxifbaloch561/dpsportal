@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { classesData } from "@/data/classesData";
+import { useClassesData } from "@/hooks/useClassesData";
 import { subjectStyles } from "@/components/SubjectBadge";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
