@@ -84,7 +84,7 @@ const Dashboard = () => {
                   else if (action.key === "profile") setShowProfile(true);
                   else setFormType(action.key);
                 }}
-                className="flex items-center gap-2.5 p-3 rounded-2xl bg-card border border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                className="flex items-center gap-2.5 p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
                 style={{ animation: `slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.2 + i * 0.08}s`, opacity: 0 }}
               >
                 <div
