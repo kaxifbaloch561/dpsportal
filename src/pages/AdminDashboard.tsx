@@ -133,6 +133,8 @@ const AdminDashboard = () => {
         {activeTab === "teacher" && <AdminTeacherPreview />}
         {activeTab === "accounts" && <AdminTeacherAccounts />}
       </div>
+
+      <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
     </PageShell>
   );
 };
