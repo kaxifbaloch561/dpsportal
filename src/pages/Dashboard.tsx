@@ -76,11 +76,29 @@ const Dashboard = () => {
 
   return (
     <PageShell>
+      {/* Fixed top corners: Inbox (left) & Profile (right) */}
+      <div className="flex items-center justify-between px-3 sm:px-6 pt-3 sm:pt-4">
+        <button
+          onClick={() => setShowInbox(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-300 active:scale-[0.97]"
+        >
+          <Inbox size={15} />
+          <span className="text-[10px] sm:text-xs font-bold">My Inbox</span>
+        </button>
+        <button
+          onClick={() => setShowProfile(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-300 active:scale-[0.97]"
+        >
+          <User size={15} />
+          <span className="text-[10px] sm:text-xs font-bold">My Profile</span>
+        </button>
+      </div>
+
       <DashboardHeader subtitle="Select your class to begin" />
 
-      {/* Top bar: horizontal scroll on mobile */}
+      {/* Action buttons row: scrollable */}
       <div className="px-3 sm:px-6 py-2 overflow-x-auto scrollbar-hide">
-        <div className="flex items-center gap-2 min-w-max">
+        <div className="flex items-center gap-2 min-w-max justify-center">
           <button
             onClick={() => setShowAnnouncements(true)}
             className="relative flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
@@ -99,20 +117,6 @@ const Dashboard = () => {
           >
             <MessagesSquare size={16} />
             <span className="text-xs font-bold whitespace-nowrap">Discussion</span>
-          </button>
-          <button
-            onClick={() => setShowInbox(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
-          >
-            <Inbox size={16} />
-            <span className="text-xs font-bold whitespace-nowrap">My Inbox</span>
-          </button>
-          <button
-            onClick={() => setShowProfile(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
-          >
-            <User size={16} />
-            <span className="text-xs font-bold whitespace-nowrap">Profile</span>
           </button>
         </div>
       </div>
