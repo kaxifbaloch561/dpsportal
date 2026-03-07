@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { classesData } from "@/data/classesData";
+import { useClassesData } from "@/hooks/useClassesData";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
@@ -53,6 +53,7 @@ interface Exercise {
 const AdminContentManager = () => {
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
+  const { data: classesData = [] } = useClassesData();
   const { toast } = useToast();
 
   const [selectedClass, setSelectedClass] = useState<number | null>(null);

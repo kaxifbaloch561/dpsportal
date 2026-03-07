@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { classesData } from "@/data/classesData";
+import { useClassesData } from "@/hooks/useClassesData";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
@@ -36,6 +36,7 @@ const quickActions = [
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { data: classesData = [] } = useClassesData();
   const [formType, setFormType] = useState<"feature" | "problem" | "suggestion" | null>(null);
   const [showGuide, setShowGuide] = useState(false);
   const [showInbox, setShowInbox] = useState(false);

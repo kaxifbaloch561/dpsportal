@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { classesData } from "@/data/classesData";
+import { useClassesData } from "@/hooks/useClassesData";
 import { Send, Bot, User, Sparkles, Zap, BookOpen, HelpCircle, Search, Copy, Check } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 import PageShell from "@/components/PageShell";
@@ -181,6 +181,7 @@ const subjectGradients: Record<string, { bg: string; glow: string; accent: strin
 
 const ChatbotPage = () => {
   const { classId, subjectId } = useParams();
+  const { data: classesData = [] } = useClassesData();
   const cls = classesData.find((c) => c.id === Number(classId));
   const subject = cls?.subjects.find((s) => s.id === subjectId);
 

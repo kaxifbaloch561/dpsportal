@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { classesData } from "@/data/classesData";
+import { useClassesData } from "@/hooks/useClassesData";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import { Eye } from "lucide-react";
 
@@ -18,6 +18,7 @@ const classThemes = [
 
 const AdminTeacherPreview = () => {
   const navigate = useNavigate();
+  const { data: classesData = [] } = useClassesData();
 
   return (
     <div className="px-6 pb-8">

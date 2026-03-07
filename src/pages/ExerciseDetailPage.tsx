@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { classesData } from "@/data/classesData";
+import { useClassesData } from "@/hooks/useClassesData";
 import { supabase } from "@/integrations/supabase/client";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
@@ -103,6 +103,7 @@ const handleDownloadPdf = (
 
 const ExerciseDetailPage = () => {
   const { classId, subjectId, chapterNumber, exerciseType } = useParams();
+  const { data: classesData = [] } = useClassesData();
   const cls = classesData.find((c) => c.id === Number(classId));
   const subject = cls?.subjects.find((s) => s.id === subjectId);
   const chapNum = Number(chapterNumber);

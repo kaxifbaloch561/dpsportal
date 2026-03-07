@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { classesData } from "@/data/classesData";
+import { useClassesData } from "@/hooks/useClassesData";
 import { subjectStyles } from "@/components/SubjectBadge";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
@@ -21,6 +21,7 @@ const defaultTheme = { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80
 const SubjectsPage = () => {
   const { classId } = useParams();
   const navigate = useNavigate();
+  const { data: classesData = [] } = useClassesData();
   const cls = classesData.find((c) => c.id === Number(classId));
 
   if (!cls) return <div className="p-10 text-center">Class not found</div>;

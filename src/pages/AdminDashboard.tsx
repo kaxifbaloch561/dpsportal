@@ -3,16 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
-import { Bell, BookOpen, Users, LogOut, UserPlus } from "lucide-react";
+import { Bell, BookOpen, Users, LogOut, UserPlus, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminTeacherPreview from "@/components/admin/AdminTeacherPreview";
 import AdminTeacherAccounts from "@/components/admin/AdminTeacherAccounts";
+import AdminClassesManager from "@/components/admin/AdminClassesManager";
 
 const tabs = [
   { key: "notifications", label: "Notifications", icon: Bell },
   { key: "content", label: "Manage Content", icon: BookOpen },
+  { key: "classes", label: "Classes", icon: GraduationCap },
   { key: "teacher", label: "Teacher Panel", icon: Users },
   { key: "accounts", label: "Teacher Accounts", icon: UserPlus },
 ] as const;
@@ -76,7 +78,7 @@ const AdminDashboard = () => {
 
       {/* Tab navigation */}
       <div className="px-6 mb-4">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-5 gap-3">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
@@ -113,6 +115,7 @@ const AdminDashboard = () => {
       {/* Tab content */}
       <div className="flex-1 overflow-auto">
         {activeTab === "notifications" && <AdminNotifications />}
+        {activeTab === "classes" && <AdminClassesManager />}
         {activeTab === "teacher" && <AdminTeacherPreview />}
         {activeTab === "accounts" && <AdminTeacherAccounts />}
       </div>
