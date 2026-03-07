@@ -369,7 +369,7 @@ const TeacherRegistration = ({ onBack }: { onBack: () => void }) => {
         )}
 
         <p className="text-center text-[10px] text-muted-foreground mt-4">
-          Learning is Light — DPS SIBI
+          DPS SIBI
         </p>
       </div>
     </div>
