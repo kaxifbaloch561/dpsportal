@@ -6,7 +6,7 @@ import DashboardHeader from "@/components/DashboardHeader";
 import { MessageSquare, Megaphone, MessagesSquare, Users, UserPlus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import AdminMessaging from "@/components/admin/AdminMessaging";
+import PrincipalMessaging from "@/components/admin/PrincipalMessaging";
 import AdminAnnouncements from "@/components/admin/AdminAnnouncements";
 import AdminTeacherPreview from "@/components/admin/AdminTeacherPreview";
 import AdminTeacherAccounts from "@/components/admin/AdminTeacherAccounts";
