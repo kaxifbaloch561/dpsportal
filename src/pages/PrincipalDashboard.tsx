@@ -33,7 +33,7 @@ const PrincipalDashboard = () => {
     const { count } = await supabase
       .from("admin_messages")
       .select("id", { count: "exact", head: true })
-      .eq("sender_type", "teacher")
+      .eq("recipient_email", "principal.access@dps.portal")
       .eq("is_read", false);
     setUnreadMessages(count ?? 0);
   };
