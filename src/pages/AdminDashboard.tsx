@@ -100,6 +100,8 @@ const AdminDashboard = () => {
                 onClick={() => {
                   if (tab.key === "content") {
                     navigate("/admin/content");
+                  } else if (tab.key === "discussion") {
+                    setShowDiscussion(true);
                   } else {
                     setActiveTab(tab.key);
                   }
