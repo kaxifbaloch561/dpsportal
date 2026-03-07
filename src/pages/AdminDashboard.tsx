@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AdminNotifications from "@/components/admin/AdminNotifications";
 import AdminTeacherPreview from "@/components/admin/AdminTeacherPreview";
 import AdminTeacherAccounts from "@/components/admin/AdminTeacherAccounts";
+import AdminClassesManager from "@/components/admin/AdminClassesManager";
 
 const tabs = [
   { key: "notifications", label: "Notifications", icon: Bell },
