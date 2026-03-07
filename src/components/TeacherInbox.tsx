@@ -18,6 +18,7 @@ interface DirectMessage {
   subject: string;
   message: string;
   is_read: boolean;
+  is_delivered: boolean;
   created_at: string;
   file_url?: string | null;
   file_name?: string | null;
