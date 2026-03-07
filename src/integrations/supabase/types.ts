@@ -273,6 +273,7 @@ export type Database = {
       discussion_presence: {
         Row: {
           id: string
+          is_typing: boolean
           last_seen: string
           user_email: string
           user_name: string
@@ -280,6 +281,7 @@ export type Database = {
         }
         Insert: {
           id?: string
+          is_typing?: boolean
           last_seen?: string
           user_email: string
           user_name: string
@@ -287,6 +289,7 @@ export type Database = {
         }
         Update: {
           id?: string
+          is_typing?: boolean
           last_seen?: string
           user_email?: string
           user_name?: string

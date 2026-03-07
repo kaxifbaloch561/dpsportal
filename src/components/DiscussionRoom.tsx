@@ -80,6 +80,8 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   const [showMembers, setShowMembers] = useState(false);
   const [onlineMembers, setOnlineMembers] = useState<OnlineMember[]>([]);
   const [swipeState, setSwipeState] = useState<{ id: string; x: number } | null>(null);
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -125,7 +127,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
       await (supabase as any)
         .from("discussion_presence")
         .upsert(
-          { user_email: senderEmail, user_name: senderName, user_type: senderType, last_seen: new Date().toISOString() },
+          { user_email: senderEmail, user_name: senderName, user_type: senderType, last_seen: new Date().toISOString(), is_typing: false },
           { onConflict: "user_email" }
         );
     };
@@ -133,8 +135,43 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     updatePresence();
     const interval = setInterval(updatePresence, 15000);
 
-    return () => clearInterval(interval);
+    // Cleanup: set is_typing false on close
+    return () => {
+      clearInterval(interval);
+      (supabase as any).from("discussion_presence").update({ is_typing: false }).eq("user_email", senderEmail).then(() => {});
+    };
   }, [open, senderEmail, senderName, senderType]);
+
+  // Set typing status
+  const setTypingStatus = useCallback(async (typing: boolean) => {
+    await (supabase as any)
+      .from("discussion_presence")
+      .update({ is_typing: typing })
+      .eq("user_email", senderEmail);
+  }, [senderEmail]);
+
+  const handleTyping = useCallback(() => {
+    setTypingStatus(true);
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => setTypingStatus(false), 2500);
+  }, [setTypingStatus]);
+
+  // Fetch who's typing (poll every 2s)
+  useEffect(() => {
+    if (!open) return;
+    const fetchTyping = async () => {
+      const { data } = await (supabase as any)
+        .from("discussion_presence")
+        .select("user_name, user_email")
+        .eq("is_typing", true)
+        .neq("user_email", senderEmail);
+      if (data) setTypingUsers((data as any[]).map((d: any) => d.user_name));
+      else setTypingUsers([]);
+    };
+    fetchTyping();
+    const interval = setInterval(fetchTyping, 2000);
+    return () => clearInterval(interval);
+  }, [open, senderEmail]);
 
   // Fetch online members (admin only)
   const fetchOnlineMembers = useCallback(async () => {
@@ -192,7 +229,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
     }
     const { error } = await (supabase as any).from("discussion_messages").insert(payload);
     if (error) toast.error("Failed to send");
-    else { setNewMessage(""); setReplyTo(null); }
+    else { setNewMessage(""); setReplyTo(null); setTypingStatus(false); if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current); }
     setSending(false);
   };
 
@@ -607,6 +644,24 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
             )}
           </div>
 
+          {/* Typing indicator */}
+          {typingUsers.length > 0 && (
+            <div className="px-4 py-1.5 flex items-center gap-2">
+              <div className="flex gap-1 items-center">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:0ms]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
+              </div>
+              <span className="text-[11px] text-muted-foreground italic">
+                {typingUsers.length === 1
+                  ? `${typingUsers[0]} is typing...`
+                  : typingUsers.length === 2
+                    ? `${typingUsers[0]} and ${typingUsers[1]} are typing...`
+                    : `${typingUsers[0]} and ${typingUsers.length - 1} others are typing...`}
+              </span>
+            </div>
+          )}
+
           {/* Reply preview bar */}
           {replyTo && (
             <div className="px-3 py-2 bg-primary/5 border-t border-primary/10 flex items-center gap-2">
@@ -663,7 +718,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
                     ref={inputRef}
                     placeholder="Type a message..."
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={(e) => { setNewMessage(e.target.value); handleTyping(); }}
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendText(); } }}
                     className="rounded-2xl pr-12 h-11 text-sm bg-muted border-0"
                   />
