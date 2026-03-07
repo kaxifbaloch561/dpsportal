@@ -3,8 +3,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Send, MessageSquare, ChevronLeft, User, Clock, CheckCheck, Search } from "lucide-react";
+import { Send, MessageSquare, ChevronLeft, User, Clock, CheckCheck, Search, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Message {
   id: string;
@@ -33,6 +43,7 @@ const AdminMessaging = () => {
   const [sending, setSending] = useState(false);
   const [search, setSearch] = useState("");
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+  const [deleteTarget, setDeleteTarget] = useState<{ type: "message" | "chat"; id?: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchTeachers = async () => {
@@ -64,7 +75,6 @@ const AdminMessaging = () => {
       .order("created_at", { ascending: true });
     if (data) setMessages(data as Message[]);
 
-    // Mark teacher messages as read
     await supabase
       .from("admin_messages")
       .update({ is_read: true })
@@ -110,6 +120,24 @@ const AdminMessaging = () => {
     setSending(false);
   };
 
+  const handleDeleteMessage = async (msgId: string) => {
+    const { error } = await supabase.from("admin_messages").delete().eq("id", msgId);
+    if (error) toast.error("Failed to delete message");
+    else { toast.success("Message deleted"); if (selectedTeacher) fetchMessages(selectedTeacher); }
+    setDeleteTarget(null);
+  };
+
+  const handleDeleteChat = async () => {
+    if (!selectedTeacher) return;
+    const { error } = await supabase
+      .from("admin_messages")
+      .delete()
+      .or(`and(sender_email.eq.admin,recipient_email.eq.${selectedTeacher}),and(sender_email.eq.${selectedTeacher},recipient_email.eq.admin)`);
+    if (error) toast.error("Failed to delete chat");
+    else { toast.success("Chat deleted"); setMessages([]); }
+    setDeleteTarget(null);
+  };
+
   const filtered = teachers.filter((t) =>
     `${t.first_name} ${t.last_name} ${t.email}`.toLowerCase().includes(search.toLowerCase())
   );
@@ -117,6 +145,13 @@ const AdminMessaging = () => {
   const getTeacherName = (email: string) => {
     const t = teachers.find((t) => t.email === email);
     return t ? `${t.first_name} ${t.last_name}` : email;
+  };
+
+  // Get last message preview per teacher
+  const getLastMessage = (email: string) => {
+    const teacherMsgs = messages.length > 0 && selectedTeacher === email ? messages : [];
+    // We don't have all messages loaded for non-selected teachers, so skip
+    return null;
   };
 
   if (!selectedTeacher) {
@@ -181,10 +216,17 @@ const AdminMessaging = () => {
         <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
           <User size={16} />
         </div>
-        <div>
+        <div className="flex-1">
           <p className="text-sm font-bold text-foreground">{getTeacherName(selectedTeacher)}</p>
           <p className="text-[10px] text-muted-foreground">{selectedTeacher}</p>
         </div>
+        <button
+          onClick={() => setDeleteTarget({ type: "chat" })}
+          className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
+          title="Delete entire chat"
+        >
+          <Trash2 size={16} />
+        </button>
       </div>
 
       {/* Messages */}
@@ -195,12 +237,19 @@ const AdminMessaging = () => {
         {messages.map((msg) => {
           const isAdmin = msg.sender_type === "admin";
           return (
-            <div key={msg.id} className={`flex ${isAdmin ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[80%] rounded-2xl p-3 ${
+            <div key={msg.id} className={`flex ${isAdmin ? "justify-end" : "justify-start"} group`}>
+              <div className={`relative max-w-[80%] rounded-2xl p-3 ${
                 isAdmin
                   ? "bg-primary text-primary-foreground rounded-br-md"
                   : "bg-muted text-foreground rounded-bl-md"
               }`}>
+                <button
+                  onClick={() => setDeleteTarget({ type: "message", id: msg.id })}
+                  className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                  title="Delete message"
+                >
+                  <X size={10} />
+                </button>
                 <p className="text-[10px] font-bold mb-1 opacity-75">{msg.subject}</p>
                 <p className="text-sm">{msg.message}</p>
                 <div className="flex items-center gap-1 mt-1 justify-end">
@@ -238,6 +287,31 @@ const AdminMessaging = () => {
           </Button>
         </div>
       </div>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {deleteTarget?.type === "chat" ? "Delete Entire Chat?" : "Delete Message?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget?.type === "chat"
+                ? `All messages with ${getTeacherName(selectedTeacher)} will be permanently deleted.`
+                : "This message will be permanently deleted."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteTarget?.type === "chat" ? handleDeleteChat() : deleteTarget?.id && handleDeleteMessage(deleteTarget.id)}
+              className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
