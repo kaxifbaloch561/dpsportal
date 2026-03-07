@@ -34,6 +34,7 @@ const AdminDashboard = () => {
   const [unreadNotifs, setUnreadNotifs] = useState(0);
   const [pendingAccounts, setPendingAccounts] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [showDiscussion, setShowDiscussion] = useState(false);
 
   const fetchCounts = async () => {
     const [notifRes, accountRes, msgRes] = await Promise.all([
