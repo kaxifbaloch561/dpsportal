@@ -8,8 +8,10 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import TeacherRequestForm from "@/components/TeacherRequestForm";
 import HowToUseGuide from "@/components/HowToUseGuide";
 import TeacherProfile from "@/components/TeacherProfile";
-import { Sparkles, AlertTriangle, Lightbulb, Info, Inbox, User } from "lucide-react";
+import { Sparkles, AlertTriangle, Lightbulb, Info, Inbox, User, MessageSquare } from "lucide-react";
 import TeacherInbox from "@/components/TeacherInbox";
+import TeacherDirectMessage from "@/components/TeacherDirectMessage";
+import AnnouncementPopup from "@/components/AnnouncementPopup";
 
 const classThemes = [
   { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80%,55%))", shadow: "hsl(235,78%,65%)" },
@@ -30,6 +32,7 @@ const quickActions = [
   { key: "suggestion" as const, icon: Lightbulb, label: "Suggestions", color: "hsl(45,90%,50%)" },
   { key: "guide" as const, icon: Info, label: "How to Use", color: "hsl(160,60%,38%)" },
   { key: "inbox" as const, icon: Inbox, label: "My Inbox", color: "hsl(200,85%,50%)" },
+  { key: "dm" as const, icon: MessageSquare, label: "Chat with Admin", color: "hsl(340,80%,55%)" },
   { key: "profile" as const, icon: User, label: "My Profile", color: "hsl(270,72%,55%)" },
 ];
 
@@ -41,6 +44,7 @@ const Dashboard = () => {
   const [showGuide, setShowGuide] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showDM, setShowDM] = useState(false);
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
 
   useEffect(() => {
@@ -56,24 +60,17 @@ const Dashboard = () => {
       <DashboardHeader subtitle="Select your class to begin" />
       <BreadcrumbNav crumbs={[{ label: "Dashboard" }]} />
 
-      {/* Login notification banner */}
       {loginNotification && (
         <div className="px-8 mb-4" style={{ animation: "slideDown 0.5s ease forwards" }}>
           <div className="relative p-4 rounded-2xl bg-primary/10 border border-primary/20 text-foreground text-sm font-medium">
-            <button
-              onClick={() => setLoginNotification(null)}
-              className="absolute top-2 right-3 text-muted-foreground hover:text-foreground text-lg leading-none"
-            >
-              ×
-            </button>
+            <button onClick={() => setLoginNotification(null)} className="absolute top-2 right-3 text-muted-foreground hover:text-foreground text-lg leading-none">×</button>
             {loginNotification}
           </div>
         </div>
       )}
 
-      {/* Quick action buttons */}
       <div className="px-8 mb-4">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {quickActions.map((action, i) => {
             const Icon = action.icon;
             return (
@@ -83,6 +80,7 @@ const Dashboard = () => {
                   if (action.key === "guide") setShowGuide(true);
                   else if (action.key === "inbox") setShowInbox(true);
                   else if (action.key === "profile") setShowProfile(true);
+                  else if (action.key === "dm") setShowDM(true);
                   else setFormType(action.key);
                 }}
                 className="flex items-center gap-2.5 p-3 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.2)] hover:-translate-y-1.5 hover:border-primary/25 transition-all duration-300 active:scale-[0.97]"
@@ -102,13 +100,7 @@ const Dashboard = () => {
       </div>
 
       <div className="flex-1 px-8 pb-8">
-        <h2
-          className="text-2xl font-bold text-foreground mb-6 mt-4"
-          style={{
-            animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
-            opacity: 0,
-          }}
-        >
+        <h2 className="text-2xl font-bold text-foreground mb-6 mt-4" style={{ animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
           Select Your Class
         </h2>
 
@@ -125,12 +117,8 @@ const Dashboard = () => {
                   opacity: 0,
                   boxShadow: `0 8px 32px -8px ${theme.shadow}55`,
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 24px 64px -12px ${theme.shadow}99, 0 0 0 2px rgba(255,255,255,0.2)`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = `0 8px 32px -8px ${theme.shadow}55`;
-                }}
+                onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 24px 64px -12px ${theme.shadow}99, 0 0 0 2px rgba(255,255,255,0.2)`; }}
+                onMouseLeave={(e) => { e.currentTarget.style.boxShadow = `0 8px 32px -8px ${theme.shadow}55`; }}
               >
                 <div className="absolute inset-0" style={{ background: theme.bg }} />
                 <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/10 group-hover:scale-150 transition-transform duration-700" />
@@ -160,13 +148,12 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Forms & Modals */}
-      {formType && (
-        <TeacherRequestForm type={formType} open={!!formType} onOpenChange={(open) => { if (!open) setFormType(null); }} />
-      )}
+      {formType && <TeacherRequestForm type={formType} open={!!formType} onOpenChange={(open) => { if (!open) setFormType(null); }} />}
       <HowToUseGuide open={showGuide} onOpenChange={setShowGuide} />
       <TeacherInbox open={showInbox} onOpenChange={setShowInbox} />
       <TeacherProfile open={showProfile} onOpenChange={setShowProfile} />
+      <TeacherDirectMessage open={showDM} onOpenChange={setShowDM} />
+      <AnnouncementPopup />
     </PageShell>
   );
 };
