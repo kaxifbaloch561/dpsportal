@@ -219,7 +219,7 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
   };
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase.from("discussion_messages").delete().eq("id", id);
+    const { error } = await (supabase as any).from("discussion_messages").delete().eq("id", id);
     if (error) toast.error("Failed to delete");
     else toast.success("Message deleted");
     setDeleteTarget(null);
