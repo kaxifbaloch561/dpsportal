@@ -78,7 +78,7 @@ const AdminDashboard = () => {
 
       {/* Tab navigation */}
       <div className="px-6 mb-4">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-5 gap-3">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
