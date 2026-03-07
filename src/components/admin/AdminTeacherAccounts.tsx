@@ -140,16 +140,18 @@ const AdminTeacherAccounts = ({ isPrincipal = false }: AdminTeacherAccountsProps
                 <span className="text-muted-foreground">Email:</span>
                 <span className="font-medium text-foreground break-all">{selectedTeacher.email}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Shield size={14} className="text-muted-foreground" />
-                <span className="text-muted-foreground">Password:</span>
-                <span className="font-medium text-foreground">
-                  {showPassword ? selectedTeacher.password : "••••••••"}
-                </span>
-                <button onClick={() => setShowPassword(!showPassword)} className="text-primary">
-                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                </button>
-              </div>
+              {!isPrincipal && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Shield size={14} className="text-muted-foreground" />
+                  <span className="text-muted-foreground">Password:</span>
+                  <span className="font-medium text-foreground">
+                    {showPassword ? selectedTeacher.password : "••••••••"}
+                  </span>
+                  <button onClick={() => setShowPassword(!showPassword)} className="text-primary">
+                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                </div>
+              )}
               <div className="flex items-center gap-2 text-sm">
                 <BookOpen size={14} className="text-muted-foreground" />
                 <span className="text-muted-foreground">Class:</span>
