@@ -131,10 +131,19 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
       .order("created_at", { ascending: true });
     if (data) setMessages(data as DirectMessage[]);
     setLoadingChat(false);
+    // Mark as delivered + read when viewing conversation
     await supabase
-      .from("admin_messages").update({ is_read: true })
+      .from("admin_messages").update({ is_delivered: true, is_read: true } as any)
       .eq("recipient_email", user.email).eq("sender_email", contact.email).eq("is_read", false);
     fetchUnreadAndLast();
+  };
+
+  // Mark all incoming messages as delivered when inbox opens (user is online)
+  const markAllDelivered = async () => {
+    if (!user?.email) return;
+    await supabase
+      .from("admin_messages").update({ is_delivered: true } as any)
+      .eq("recipient_email", user.email).eq("is_delivered", false);
   };
 
   useEffect(() => {
