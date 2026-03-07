@@ -53,6 +53,7 @@ interface Exercise {
 const AdminContentManager = () => {
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
+  const { data: classesData = [] } = useClassesData();
   const { toast } = useToast();
 
   const [selectedClass, setSelectedClass] = useState<number | null>(null);
