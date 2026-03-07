@@ -775,6 +775,86 @@ const DiscussionRoom = ({ open, onOpenChange }: DiscussionRoomProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* File Action Menu - Preview / Download */}
+      <Dialog open={!!fileActionMenu} onOpenChange={(o) => !o && setFileActionMenu(null)}>
+        <DialogContent className="rounded-3xl max-w-[320px] p-6 gap-4">
+          <h3 className="text-sm font-bold text-foreground text-center truncate px-2">{fileActionMenu?.name}</h3>
+          <div className="flex flex-col gap-2.5">
+            <button
+              onClick={() => {
+                if (fileActionMenu) {
+                  setPreviewFile(fileActionMenu);
+                  setFileActionMenu(null);
+                }
+              }}
+              className="flex items-center gap-3 p-3.5 rounded-2xl bg-primary/10 hover:bg-primary/15 text-primary transition-colors active:scale-[0.97]"
+            >
+              <Eye size={20} />
+              <span className="text-sm font-semibold">Preview</span>
+            </button>
+            <button
+              onClick={() => {
+                if (fileActionMenu) {
+                  const a = document.createElement("a");
+                  a.href = fileActionMenu.url;
+                  a.download = fileActionMenu.name;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  setFileActionMenu(null);
+                  toast.success("Download started");
+                }
+              }}
+              className="flex items-center gap-3 p-3.5 rounded-2xl bg-accent hover:bg-accent/80 text-accent-foreground transition-colors active:scale-[0.97]"
+            >
+              <Download size={20} />
+              <span className="text-sm font-semibold">Download</span>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Preview Dialog */}
+      <Dialog open={!!previewFile} onOpenChange={(o) => !o && setPreviewFile(null)}>
+        <DialogContent className="rounded-3xl max-w-[95vw] sm:max-w-[700px] max-h-[90vh] p-3 sm:p-4 overflow-auto">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xs font-bold text-foreground truncate flex-1 pr-2">{previewFile?.name}</h3>
+            <button
+              onClick={() => {
+                if (previewFile) {
+                  const a = document.createElement("a");
+                  a.href = previewFile.url;
+                  a.download = previewFile.name;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  toast.success("Download started");
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold shrink-0 hover:bg-primary/90 active:scale-[0.97]"
+            >
+              <Download size={14} />
+              Download
+            </button>
+          </div>
+          <div className="flex items-center justify-center rounded-2xl bg-muted/50 overflow-hidden min-h-[200px]">
+            {previewFile?.type.startsWith("image/") && (
+              <img src={previewFile.url} alt={previewFile.name} className="max-w-full max-h-[70vh] object-contain rounded-xl" />
+            )}
+            {previewFile?.type.startsWith("video/") && (
+              <video src={previewFile.url} controls autoPlay playsInline className="max-w-full max-h-[70vh] rounded-xl" />
+            )}
+            {previewFile && !previewFile.type.startsWith("image/") && !previewFile.type.startsWith("video/") && (
+              <div className="flex flex-col items-center gap-3 py-10 text-muted-foreground">
+                <FileText size={48} className="opacity-40" />
+                <p className="text-sm font-medium">Preview not available for this file type</p>
+                <p className="text-xs">Use the download button to save and open this file</p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>);
 
 };
