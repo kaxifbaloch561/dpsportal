@@ -247,7 +247,7 @@ const Dashboard = () => {
       </div>
 
       {formType && <TeacherRequestForm type={formType} open={!!formType} onOpenChange={(open) => { if (!open) setFormType(null); }} />}
-      <HowToUseGuide open={showGuide} onOpenChange={setShowGuide} />
+      
       <TeacherInbox open={showInbox} onOpenChange={setShowInbox} />
       <TeacherProfile open={showProfile} onOpenChange={setShowProfile} />
       <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />
