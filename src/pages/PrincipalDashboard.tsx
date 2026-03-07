@@ -100,7 +100,7 @@ const PrincipalDashboard = () => {
       </div>
 
       <div className="flex-1 overflow-auto">
-        {activeTab === "messaging" && <AdminMessaging />}
+        {activeTab === "messaging" && <PrincipalMessaging />}
         {activeTab === "announcements" && <AdminAnnouncements />}
         {activeTab === "teacher" && <AdminTeacherPreview />}
         {activeTab === "accounts" && <AdminTeacherAccounts isPrincipal />}
