@@ -1,0 +1,1 @@
+ALTER TABLE public.discussion_presence ADD COLUMN IF NOT EXISTS is_typing BOOLEAN NOT NULL DEFAULT false;
