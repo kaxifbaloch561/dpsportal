@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminContentManager from "./pages/AdminContentManager";
+import PrincipalDashboard from "./pages/PrincipalDashboard";
 import SubjectsPage from "./pages/SubjectsPage";
 import SubjectOptionsPage from "./pages/SubjectOptionsPage";
 import ChaptersPage from "./pages/ChaptersPage";
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/principal" element={<PrincipalDashboard />} />
             <Route path="/admin/content" element={<AdminContentManager />} />
             <Route path="/class/:classId" element={<SubjectsPage />} />
             <Route path="/class/:classId/subject/:subjectId" element={<SubjectOptionsPage />} />

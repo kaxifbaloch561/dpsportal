@@ -28,7 +28,11 @@ const statusColors: Record<string, string> = {
   removed: "bg-gray-100 text-gray-800 border-gray-200",
 };
 
-const AdminTeacherAccounts = () => {
+interface AdminTeacherAccountsProps {
+  isPrincipal?: boolean;
+}
+
+const AdminTeacherAccounts = ({ isPrincipal = false }: AdminTeacherAccountsProps) => {
   const [teachers, setTeachers] = useState<TeacherAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTeacher, setSelectedTeacher] = useState<TeacherAccount | null>(null);
@@ -136,16 +140,18 @@ const AdminTeacherAccounts = () => {
                 <span className="text-muted-foreground">Email:</span>
                 <span className="font-medium text-foreground break-all">{selectedTeacher.email}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Shield size={14} className="text-muted-foreground" />
-                <span className="text-muted-foreground">Password:</span>
-                <span className="font-medium text-foreground">
-                  {showPassword ? selectedTeacher.password : "••••••••"}
-                </span>
-                <button onClick={() => setShowPassword(!showPassword)} className="text-primary">
-                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                </button>
-              </div>
+              {!isPrincipal && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Shield size={14} className="text-muted-foreground" />
+                  <span className="text-muted-foreground">Password:</span>
+                  <span className="font-medium text-foreground">
+                    {showPassword ? selectedTeacher.password : "••••••••"}
+                  </span>
+                  <button onClick={() => setShowPassword(!showPassword)} className="text-primary">
+                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                </div>
+              )}
               <div className="flex items-center gap-2 text-sm">
                 <BookOpen size={14} className="text-muted-foreground" />
                 <span className="text-muted-foreground">Class:</span>
@@ -165,36 +171,38 @@ const AdminTeacherAccounts = () => {
           </div>
 
           {/* Actions */}
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
-            {selectedTeacher.status === "pending" && (
-              <>
+          {!isPrincipal && (
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+              {selectedTeacher.status === "pending" && (
+                <>
+                  <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
+                    <Check size={14} /> Approve
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => updateStatus(selectedTeacher.id, "rejected")} className="rounded-full">
+                    <X size={14} /> Reject
+                  </Button>
+                </>
+              )}
+              {selectedTeacher.status === "approved" && (
+                <Button size="sm" variant="outline" onClick={() => updateStatus(selectedTeacher.id, "paused")} className="rounded-full text-orange-600 border-orange-300">
+                  <Pause size={14} /> Pause Account
+                </Button>
+              )}
+              {selectedTeacher.status === "paused" && (
+                <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
+                  <Check size={14} /> Reactivate
+                </Button>
+              )}
+              {selectedTeacher.status === "rejected" && (
                 <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
                   <Check size={14} /> Approve
                 </Button>
-                <Button size="sm" variant="destructive" onClick={() => updateStatus(selectedTeacher.id, "rejected")} className="rounded-full">
-                  <X size={14} /> Reject
-                </Button>
-              </>
-            )}
-            {selectedTeacher.status === "approved" && (
-              <Button size="sm" variant="outline" onClick={() => updateStatus(selectedTeacher.id, "paused")} className="rounded-full text-orange-600 border-orange-300">
-                <Pause size={14} /> Pause Account
+              )}
+              <Button size="sm" variant="destructive" onClick={() => removeTeacher(selectedTeacher.id)} className="rounded-full">
+                <Trash2 size={14} /> Remove Permanently
               </Button>
-            )}
-            {selectedTeacher.status === "paused" && (
-              <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
-                <Check size={14} /> Reactivate
-              </Button>
-            )}
-            {selectedTeacher.status === "rejected" && (
-              <Button size="sm" onClick={() => updateStatus(selectedTeacher.id, "approved")} className="rounded-full bg-green-600 hover:bg-green-700">
-                <Check size={14} /> Approve
-              </Button>
-            )}
-            <Button size="sm" variant="destructive" onClick={() => removeTeacher(selectedTeacher.id)} className="rounded-full">
-              <Trash2 size={14} /> Remove Permanently
-            </Button>
-          </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -206,9 +214,11 @@ const AdminTeacherAccounts = () => {
         <h3 className="text-lg font-bold text-foreground">Teacher Accounts</h3>
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground">{teachers.length} total</span>
-          <Button size="sm" className="rounded-full" onClick={() => setShowCreate(true)}>
-            <UserPlus size={14} /> Create Account
-          </Button>
+          {!isPrincipal && (
+            <Button size="sm" className="rounded-full" onClick={() => setShowCreate(true)}>
+              <UserPlus size={14} /> Create Account
+            </Button>
+          )}
         </div>
       </div>
 

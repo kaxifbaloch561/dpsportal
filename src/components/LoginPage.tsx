@@ -4,7 +4,7 @@ import schoolLogo from "@/assets/school-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginPageProps {
-  onLoginSuccess: (role: "admin" | "teacher") => void;
+  onLoginSuccess: (role: "admin" | "principal" | "teacher") => void;
   onCreateAccount: () => void;
 }
 
@@ -23,7 +23,8 @@ const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
     const result = await login(email, password);
     setLoading(false);
     if (result.success) {
-      const role = email.trim().toLowerCase() === "adminkaxif@dps" ? "admin" : "teacher";
+      const trimmed = email.trim().toLowerCase();
+      const role = trimmed === "adminkaxif@dps" ? "admin" : trimmed === "principal.access@dps.portal" ? "principal" : "teacher";
       onLoginSuccess(role);
     } else {
       setError(result.error || "Login failed");

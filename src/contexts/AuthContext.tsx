@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type UserRole = "admin" | "teacher" | null;
+export type UserRole = "admin" | "principal" | "teacher" | null;
 
 interface AuthUser {
   email: string;
@@ -13,11 +13,13 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isAdmin: boolean;
+  isPrincipal: boolean;
   isTeacher: boolean;
 }
 
-const ADMIN_CREDENTIALS: Record<string, { password: string; role: UserRole }> = {
+const FIXED_CREDENTIALS: Record<string, { password: string; role: UserRole }> = {
   "adminkaxif@dps": { password: "adminkaxif@dps", role: "admin" },
+  "principal.access@dps.portal": { password: "Principal.access@dps.portal", role: "principal" },
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,11 +38,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const trimmedEmail = email.trim().toLowerCase();
 
-    // Check admin credentials first
-    const adminCred = ADMIN_CREDENTIALS[trimmedEmail];
-    if (adminCred) {
-      if (adminCred.password !== password) return { success: false, error: "Incorrect password" };
-      setUser({ email: trimmedEmail, role: adminCred.role });
+    // Check fixed credentials first (admin, principal)
+    const fixedCred = FIXED_CREDENTIALS[trimmedEmail];
+    if (fixedCred) {
+      if (fixedCred.password !== password) return { success: false, error: "Incorrect password" };
+      setUser({ email: trimmedEmail, role: fixedCred.role });
       return { success: true };
     }
 
@@ -86,6 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         isAdmin: user?.role === "admin",
+        isPrincipal: user?.role === "principal",
         isTeacher: user?.role === "teacher",
       }}
     >

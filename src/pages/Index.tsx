@@ -12,16 +12,22 @@ const Index = () => {
   const [phase, setPhase] = useState<AppPhase>("splash");
   const navigate = useNavigate();
 
+  const getRoute = (role: string | null) => {
+    if (role === "admin") return "/admin";
+    if (role === "principal") return "/principal";
+    return "/dashboard";
+  };
+
   const handleSplashFinished = useCallback(() => {
     if (user) {
-      navigate(user.role === "admin" ? "/admin" : "/dashboard");
+      navigate(getRoute(user.role));
     } else {
       setPhase("login");
     }
   }, [user, navigate]);
 
-  const handleLoginSuccess = useCallback((role: "admin" | "teacher") => {
-    navigate(role === "admin" ? "/admin" : "/dashboard");
+  const handleLoginSuccess = useCallback((role: "admin" | "principal" | "teacher") => {
+    navigate(getRoute(role));
   }, [navigate]);
 
   if (phase === "splash") {
