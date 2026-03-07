@@ -21,6 +21,7 @@ const defaultTheme = { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80
 const SubjectsPage = () => {
   const { classId } = useParams();
   const navigate = useNavigate();
+  const { data: classesData = [] } = useClassesData();
   const cls = classesData.find((c) => c.id === Number(classId));
 
   if (!cls) return <div className="p-10 text-center">Class not found</div>;

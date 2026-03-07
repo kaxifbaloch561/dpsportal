@@ -12,6 +12,7 @@ import FormattedChapterContent from "@/components/chapter/FormattedChapterConten
 const ChapterViewPage = () => {
   const { classId, subjectId, chapterNumber } = useParams();
   const navigate = useNavigate();
+  const { data: classesData = [] } = useClassesData();
   const cls = classesData.find((c) => c.id === Number(classId));
   const subject = cls?.subjects.find((s) => s.id === subjectId);
 

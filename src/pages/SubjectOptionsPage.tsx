@@ -12,6 +12,7 @@ const SubjectOptionsPage = () => {
   const { classId, subjectId } = useParams();
   const navigate = useNavigate();
   const [paperOpen, setPaperOpen] = useState(false);
+  const { data: classesData = [] } = useClassesData();
   const cls = classesData.find((c) => c.id === Number(classId));
   const subject = cls?.subjects.find((s) => s.id === subjectId);
 
