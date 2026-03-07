@@ -94,8 +94,15 @@ const Dashboard = () => {
           )}
         </button>
 
-        {/* Right: Inbox & Profile */}
+        {/* Right: Discussion, Inbox & Profile */}
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowDiscussion(true)}
+            className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
+          >
+            <MessagesSquare size={18} />
+            <span className="text-xs font-bold">Discussion</span>
+          </button>
           <button
             onClick={() => setShowInbox(true)}
             className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97]"
