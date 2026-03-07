@@ -155,8 +155,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="flex-1 px-4 sm:px-8 pb-6 sm:pb-8">
-        <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6 mt-3 sm:mt-4" style={{ animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
+      <div className="flex-1 px-3 sm:px-8 pb-4 sm:pb-8">
+        <h2 className="text-lg sm:text-2xl font-bold text-foreground mb-3 sm:mb-6 mt-2 sm:mt-4" style={{ animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
           Select Your Class
         </h2>
 
