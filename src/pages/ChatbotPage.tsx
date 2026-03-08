@@ -423,7 +423,7 @@ const ChatbotPage = () => {
       ]} />
 
       {/* Chat area - fills remaining space between header/breadcrumb and footer */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
+      <div className="flex-1 flex flex-col overflow-hidden relative" style={{ minHeight: 0 }}>
         {/* Ambient blobs - desktop only */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
           <div
@@ -439,8 +439,8 @@ const ChatbotPage = () => {
         {/* Scrollable chat messages */}
         <div
           ref={chatContainerRef}
-          className="flex-1 overflow-y-auto overscroll-contain px-2.5 sm:px-6 py-2 sm:py-4 relative z-10 scroll-smooth"
-          style={{ WebkitOverflowScrolling: "touch" }}
+          className="flex-1 overflow-y-auto overscroll-contain px-2.5 sm:px-6 py-2 sm:py-4 relative z-10"
+          style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y", willChange: "scroll-position" }}
         >
           <div className="max-w-2xl mx-auto space-y-2.5 sm:space-y-4">
             {messages.length === 0 && (
