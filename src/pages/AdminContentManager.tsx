@@ -18,6 +18,7 @@ import {
   Plus, Trash2, Edit3, Save, BookOpen, ClipboardList, Loader2,
   ChevronRight, ArrowLeft, X
 } from "lucide-react";
+import { plainTextToHtml } from "@/utils/plainTextToHtml";
 
 const EXERCISE_TYPES = [
   { value: "fill_in_the_blanks", label: "Fill in the Blanks" },
@@ -166,13 +167,15 @@ const AdminContentManager = () => {
       return;
     }
     setSavingChapter(true);
+    // Auto-convert plain text to professional HTML
+    const finalContent = plainTextToHtml(chapterForm.content.trim());
     if (editingChapter) {
       const { error } = await supabase
         .from("chapters")
         .update({
           chapter_number: Number(chapterForm.number),
           chapter_title: chapterForm.title.trim(),
-          content: chapterForm.content.trim(),
+          content: finalContent,
         })
         .eq("id", editingChapter.id);
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -183,7 +186,7 @@ const AdminContentManager = () => {
         subject_id: selectedSubject!,
         chapter_number: Number(chapterForm.number),
         chapter_title: chapterForm.title.trim(),
-        content: chapterForm.content.trim(),
+        content: finalContent,
       });
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
       else toast({ title: "Chapter added!" });
