@@ -186,7 +186,7 @@ const AdminContentManager = () => {
         subject_id: selectedSubject!,
         chapter_number: Number(chapterForm.number),
         chapter_title: chapterForm.title.trim(),
-        content: chapterForm.content.trim(),
+        content: finalContent,
       });
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
       else toast({ title: "Chapter added!" });
