@@ -445,7 +445,11 @@ export type Database = {
         }
         Returns: {
           answer: string
+          chapter_number: number
+          chapter_title: string
+          exercise_type: string
           question: string
+          question_number: number
         }[]
       }
     }

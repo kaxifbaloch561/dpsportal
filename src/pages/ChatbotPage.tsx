@@ -480,8 +480,35 @@ const ChatbotPage = () => {
                     <button
                       key={idx}
                       onClick={() => handleSelectSuggestion(qa)}
-                      className="w-full text-left px-3 py-2 hover:bg-accent/40 transition-colors duration-100 border-b border-border/15 last:border-b-0 group active:bg-accent/60"
+                      className="w-full text-left px-3 py-2 sm:py-2.5 hover:bg-accent/40 transition-colors duration-100 border-b border-border/15 last:border-b-0 group active:bg-accent/60"
                     >
+                      <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 mb-1">
+                        {qa.chapter_number > 0 && (
+                          <span 
+                            className="px-1.5 py-0.5 rounded-md text-[8px] sm:text-[9px] font-bold text-white"
+                            style={{ background: theme.bg }}
+                          >
+                            Ch {qa.chapter_number}
+                          </span>
+                        )}
+                        {qa.exercise_type && qa.exercise_type !== 'Q&A' && (
+                          <span 
+                            className="px-1.5 py-0.5 rounded-md text-[8px] sm:text-[9px] font-semibold border"
+                            style={{ 
+                              borderColor: `${theme.glow}30`,
+                              color: theme.glow,
+                              background: `${theme.glow}08`
+                            }}
+                          >
+                            {qa.exercise_type}
+                          </span>
+                        )}
+                        {qa.question_number > 0 && (
+                          <span className="text-[8px] sm:text-[9px] font-medium text-muted-foreground">
+                            Q{qa.question_number}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[11px] sm:text-[13px] font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                         {qa.question}
                       </p>
