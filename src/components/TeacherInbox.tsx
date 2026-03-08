@@ -63,6 +63,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const selectedContactRef = useRef<Contact | null>(null);
 
   // Voice recording
   const [isRecording, setIsRecording] = useState(false);
