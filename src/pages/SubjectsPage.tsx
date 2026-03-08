@@ -22,8 +22,16 @@ const defaultTheme = { bg: "linear-gradient(145deg, hsl(235,78%,62%), hsl(250,80
 const SubjectsPage = () => {
   const { classId } = useParams();
   const navigate = useNavigate();
-  const { data: classesData = [] } = useClassesData();
+  const { data: classesData = [], isLoading } = useClassesData();
   const cls = classesData.find((c) => c.id === Number(classId));
+
+  if (isLoading) return (
+    <PageShell>
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    </PageShell>
+  );
 
   if (!cls) return <div className="p-10 text-center">Class not found</div>;
 
