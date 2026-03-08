@@ -386,12 +386,23 @@ const ChatbotPage = () => {
         if (searchTerms) {
           const { data: ftsData } = await supabase
             .from("chapter_qa")
-            .select("question, answer")
+            .select(`
+              question, 
+              answer,
+              chapters!inner(chapter_number, chapter_title)
+            `)
             .eq("class_id", classNum)
             .eq("subject_id", subjectId!)
             .textSearch("search_vector", searchTerms, { type: "plain" })
             .limit(3);
-          results = ftsData || [];
+          results = (ftsData || []).map((item: any) => ({
+            question: item.question,
+            answer: item.answer,
+            chapter_number: item.chapters?.chapter_number || 0,
+            chapter_title: item.chapters?.chapter_title || 'General',
+            exercise_type: 'Q&A',
+            question_number: 0
+          }));
         }
       }
       if (results.length > 0) {
