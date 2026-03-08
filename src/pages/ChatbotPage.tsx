@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { useParams } from "react-router-dom";
 import { useClassesData } from "@/hooks/useClassesData";
 import { Send, Bot, User, Sparkles, Zap, BookOpen, HelpCircle, Search, Copy, Check } from "lucide-react";
@@ -8,15 +8,37 @@ import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import { supabase } from "@/integrations/supabase/client";
 
-/* ── Formatted answer renderer ── */
-const FormattedMessage = ({ content, glow }: { content: string; glow: string }) => {
+/* ── Types ── */
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+interface QASuggestion {
+  question: string;
+  answer: string;
+}
+
+/* ── Theme map ── */
+const subjectGradients: Record<string, { bg: string; glow: string; accent: string }> = {
+  math: { bg: "linear-gradient(135deg, hsl(235,78%,55%), hsl(280,70%,60%))", glow: "hsl(260,74%,58%)", accent: "hsl(280,70%,92%)" },
+  science: { bg: "linear-gradient(135deg, hsl(160,70%,40%), hsl(190,80%,50%))", glow: "hsl(175,75%,45%)", accent: "hsl(180,70%,92%)" },
+  english: { bg: "linear-gradient(135deg, hsl(340,75%,55%), hsl(20,90%,60%))", glow: "hsl(0,82%,58%)", accent: "hsl(350,70%,93%)" },
+  hindi: { bg: "linear-gradient(135deg, hsl(30,90%,55%), hsl(45,95%,55%))", glow: "hsl(38,92%,55%)", accent: "hsl(40,90%,93%)" },
+  "social-studies": { bg: "linear-gradient(135deg, hsl(200,75%,50%), hsl(235,78%,60%))", glow: "hsl(218,77%,55%)", accent: "hsl(220,75%,93%)" },
+  computer: { bg: "linear-gradient(135deg, hsl(270,70%,55%), hsl(310,65%,55%))", glow: "hsl(290,68%,55%)", accent: "hsl(285,65%,93%)" },
+  default: { bg: "linear-gradient(135deg, hsl(235,78%,55%), hsl(14,100%,65%))", glow: "hsl(235,78%,60%)", accent: "hsl(235,78%,93%)" },
+};
+
+/* ── Formatted answer renderer (memoized) ── */
+const FormattedMessage = memo(({ content, glow }: { content: string; glow: string }) => {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(content);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
-  };
+  }, [content]);
 
   const sections = content.split(/\n\n---\n\n/);
 
@@ -30,7 +52,7 @@ const FormattedMessage = ({ content, glow }: { content: string; glow: string }) 
       if (/^\*\*(.+)\*\*$/.test(trimmed)) {
         const match = trimmed.match(/^\*\*(.+)\*\*$/);
         elements.push(
-          <h4 key={idx} className="font-bold text-foreground mt-3 mb-1 text-[0.875rem] sm:text-[0.94rem]">
+          <h4 key={idx} className="font-bold text-foreground mt-3 mb-1.5 text-[0.875rem] sm:text-[0.94rem] tracking-tight">
             {match![1]}
           </h4>
         );
@@ -46,9 +68,7 @@ const FormattedMessage = ({ content, glow }: { content: string; glow: string }) 
             const rest = headingMatch[2].substring(colonIdx + 1).trim();
             elements.push(
               <div key={idx} className="mt-3 mb-1">
-                <span className="font-bold text-foreground" style={{ color: glow }}>
-                  {headingMatch[1]}
-                </span>{" "}
+                <span className="font-bold text-foreground" style={{ color: glow }}>{headingMatch[1]}</span>{" "}
                 <span className="font-bold text-foreground">{title}:</span>
                 {rest && <span className="text-muted-foreground"> {rest}</span>}
               </div>
@@ -76,9 +96,7 @@ const FormattedMessage = ({ content, glow }: { content: string; glow: string }) 
             const restPart = body.substring(colonIdx + 1).trim();
             elements.push(
               <div key={idx} className="flex gap-2 sm:gap-2.5 pl-1 sm:pl-2 py-0.5">
-                <span className="font-bold shrink-0 min-w-[1.2rem] sm:min-w-[1.5rem] text-right" style={{ color: glow }}>
-                  {label}
-                </span>
+                <span className="font-bold shrink-0 min-w-[1.2rem] sm:min-w-[1.5rem] text-right" style={{ color: glow }}>{label}</span>
                 <span className="text-foreground leading-[1.7] sm:leading-[1.8]">
                   <strong>{boldPart}:</strong> {restPart}
                 </span>
@@ -87,9 +105,7 @@ const FormattedMessage = ({ content, glow }: { content: string; glow: string }) 
           } else {
             elements.push(
               <div key={idx} className="flex gap-2 sm:gap-2.5 pl-1 sm:pl-2 py-0.5">
-                <span className="font-bold shrink-0 min-w-[1.2rem] sm:min-w-[1.5rem] text-right" style={{ color: glow }}>
-                  {label}
-                </span>
+                <span className="font-bold shrink-0 min-w-[1.2rem] sm:min-w-[1.5rem] text-right" style={{ color: glow }}>{label}</span>
                 <span className="text-foreground leading-[1.7] sm:leading-[1.8]">{body}</span>
               </div>
             );
@@ -125,7 +141,6 @@ const FormattedMessage = ({ content, glow }: { content: string; glow: string }) 
         <p key={idx} className="leading-[1.7] sm:leading-[1.8] text-foreground py-0.5">{trimmed}</p>
       );
     });
-
     return elements;
   };
 
@@ -133,43 +148,176 @@ const FormattedMessage = ({ content, glow }: { content: string; glow: string }) 
     <div className="relative group">
       <button
         onClick={handleCopy}
-        className="absolute top-0 right-0 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-accent/50"
+        className="absolute -top-1 -right-1 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-accent/60 bg-card/80 backdrop-blur-sm border border-border/30 shadow-sm"
         title="Copy answer"
       >
-        {copied ? <Check size={13} className="text-green-500" /> : <Copy size={13} className="text-muted-foreground" />}
+        {copied ? <Check size={12} className="text-green-500" /> : <Copy size={12} className="text-muted-foreground" />}
       </button>
-      <div className="space-y-0.5 text-[0.85rem] sm:text-[0.925rem]">
+      <div className="space-y-0.5 text-[0.84rem] sm:text-[0.92rem]">
         {sections.map((section, sIdx) => (
           <div key={sIdx}>
-            {sIdx > 0 && <hr className="my-3 border-border/40" />}
+            {sIdx > 0 && <hr className="my-3 border-border/30" />}
             {renderSection(section)}
           </div>
         ))}
       </div>
     </div>
   );
-};
+});
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
+FormattedMessage.displayName = "FormattedMessage";
 
-interface QASuggestion {
-  question: string;
-  answer: string;
-}
+/* ── Single chat bubble (memoized) ── */
+const ChatBubble = memo(({ msg, theme, index }: { msg: Message; theme: typeof subjectGradients.default; index: number }) => {
+  const isUser = msg.role === "user";
 
-const subjectGradients: Record<string, { bg: string; glow: string; accent: string }> = {
-  math: { bg: "linear-gradient(135deg, hsl(235, 78%, 55%), hsl(280, 70%, 60%))", glow: "hsl(260, 74%, 58%)", accent: "hsl(280, 70%, 92%)" },
-  science: { bg: "linear-gradient(135deg, hsl(160, 70%, 40%), hsl(190, 80%, 50%))", glow: "hsl(175, 75%, 45%)", accent: "hsl(180, 70%, 92%)" },
-  english: { bg: "linear-gradient(135deg, hsl(340, 75%, 55%), hsl(20, 90%, 60%))", glow: "hsl(0, 82%, 58%)", accent: "hsl(350, 70%, 93%)" },
-  hindi: { bg: "linear-gradient(135deg, hsl(30, 90%, 55%), hsl(45, 95%, 55%))", glow: "hsl(38, 92%, 55%)", accent: "hsl(40, 90%, 93%)" },
-  "social-studies": { bg: "linear-gradient(135deg, hsl(200, 75%, 50%), hsl(235, 78%, 60%))", glow: "hsl(218, 77%, 55%)", accent: "hsl(220, 75%, 93%)" },
-  computer: { bg: "linear-gradient(135deg, hsl(270, 70%, 55%), hsl(310, 65%, 55%))", glow: "hsl(290, 68%, 55%)", accent: "hsl(285, 65%, 93%)" },
-  default: { bg: "linear-gradient(135deg, hsl(235, 78%, 55%), hsl(14, 100%, 65%))", glow: "hsl(235, 78%, 60%)", accent: "hsl(235, 78%, 93%)" },
-};
+  return (
+    <div
+      className={`flex gap-2.5 sm:gap-3 ${isUser ? "justify-end" : "justify-start"}`}
+      style={{ animation: `${isUser ? "slideUp" : "popIn"} 0.22s ease-out forwards` }}
+    >
+      {!isUser && (
+        <div className="relative shrink-0 mt-1">
+          <div
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shadow-lg"
+            style={{ background: theme.bg, boxShadow: `0 4px 14px -4px ${theme.glow}44` }}
+          >
+            <Bot size={14} className="sm:w-4 sm:h-4 text-white" />
+          </div>
+        </div>
+      )}
 
+      <div
+        className={`max-w-[82%] sm:max-w-[78%] px-3.5 sm:px-5 py-3 sm:py-3.5 text-[13px] sm:text-[13.5px] ${
+          isUser
+            ? "rounded-2xl rounded-br-md text-white whitespace-pre-wrap leading-relaxed"
+            : "bg-card/95 backdrop-blur-sm text-foreground rounded-2xl rounded-bl-md border border-border/30"
+        }`}
+        style={
+          isUser
+            ? { background: theme.bg, boxShadow: `0 4px 20px -6px ${theme.glow}35` }
+            : { boxShadow: "0 2px 10px -4px hsl(0 0% 0% / 0.05)" }
+        }
+      >
+        {!isUser ? <FormattedMessage content={msg.content} glow={theme.glow} /> : msg.content}
+      </div>
+
+      {isUser && (
+        <div className="shrink-0 mt-1">
+          <div
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center border-2"
+            style={{ background: theme.accent, borderColor: `${theme.glow}25` }}
+          >
+            <User size={14} className="sm:w-4 sm:h-4" style={{ color: theme.glow }} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+});
+
+ChatBubble.displayName = "ChatBubble";
+
+/* ── Typing indicator ── */
+const TypingIndicator = memo(({ theme }: { theme: typeof subjectGradients.default }) => (
+  <div className="flex gap-2.5 sm:gap-3 justify-start" style={{ animation: "popIn 0.2s ease-out forwards" }}>
+    <div
+      className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 shadow-lg mt-1"
+      style={{ background: theme.bg, boxShadow: `0 4px 14px -4px ${theme.glow}44` }}
+    >
+      <Bot size={14} className="sm:w-4 sm:h-4 text-white" />
+    </div>
+    <div
+      className="bg-card/95 backdrop-blur-sm border border-border/30 rounded-2xl rounded-bl-md px-4 sm:px-5 py-3 sm:py-3.5"
+      style={{ boxShadow: "0 2px 10px -4px hsl(0 0% 0% / 0.05)" }}
+    >
+      <div className="flex items-center gap-2.5">
+        <div className="flex gap-1">
+          {[0, 1, 2].map((d) => (
+            <span
+              key={d}
+              className="w-[7px] h-[7px] rounded-full"
+              style={{
+                background: theme.glow,
+                opacity: 0.7,
+                animation: `float 0.8s ease-in-out infinite ${d * 0.12}s`,
+              }}
+            />
+          ))}
+        </div>
+        <span className="text-[11px] text-muted-foreground font-medium">Searching...</span>
+      </div>
+    </div>
+  </div>
+));
+
+TypingIndicator.displayName = "TypingIndicator";
+
+/* ── Empty state ── */
+const EmptyState = memo(({ theme, subjectName, onSuggestionClick }: {
+  theme: typeof subjectGradients.default;
+  subjectName: string;
+  onSuggestionClick: (text: string) => void;
+}) => {
+  const quickSuggestions = [
+    { icon: BookOpen, text: `Explain a key concept in ${subjectName}` },
+    { icon: HelpCircle, text: "Summarize the latest chapter" },
+    { icon: Zap, text: "Help me with practice questions" },
+  ];
+
+  return (
+    <div className="flex flex-col items-center justify-center text-center py-6 sm:py-16" style={{ animation: "cardEntrance 0.25s ease-out forwards" }}>
+      {/* Logo with glow */}
+      <div className="relative mb-4 sm:mb-6" style={{ animation: "float 4s ease-in-out infinite" }}>
+        <div className="absolute inset-0 rounded-full blur-3xl opacity-15" style={{ background: theme.bg, transform: "scale(2)" }} />
+        <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-3xl flex items-center justify-center overflow-hidden bg-card/80 backdrop-blur-sm border border-border/30 shadow-xl">
+          <img src={schoolLogo} alt="DPS" loading="eager" decoding="async" className="w-20 h-20 sm:w-28 sm:h-28 object-contain" />
+        </div>
+        <div className="absolute -top-1.5 -right-1.5">
+          <div className="w-6 h-6 rounded-lg flex items-center justify-center shadow-md" style={{ background: theme.accent }}>
+            <Sparkles size={11} style={{ color: theme.glow }} />
+          </div>
+        </div>
+      </div>
+
+      <h2 className="text-sm sm:text-base font-bold text-foreground mb-0.5">
+        {subjectName} Assistant
+      </h2>
+      <p className="text-xs text-muted-foreground max-w-xs mb-5 sm:mb-7 px-4">
+        Get chapter-wise Q&A from the curriculum — type a question or pick a suggestion below.
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full max-w-lg px-3 sm:px-0">
+        {quickSuggestions.map((s, idx) => {
+          const Icon = s.icon;
+          return (
+            <button
+              key={idx}
+              onClick={() => onSuggestionClick(s.text)}
+              className="group relative flex items-center sm:flex-col gap-3 sm:gap-2 p-3 sm:p-4 rounded-2xl border border-border/50 bg-card/70 backdrop-blur-sm text-left sm:text-center hover:border-primary/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] overflow-hidden"
+              style={{ animation: `cardEntrance 0.2s ease-out ${0.08 + idx * 0.05}s both` }}
+            >
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{ background: `radial-gradient(circle at 50% 0%, ${theme.glow}08, transparent 70%)` }}
+              />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center relative z-10 shrink-0" style={{ background: theme.accent }}>
+                <Icon size={15} style={{ color: theme.glow }} />
+              </div>
+              <span className="text-[11px] font-medium text-muted-foreground group-hover:text-foreground transition-colors relative z-10 leading-snug">
+                {s.text}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+});
+
+EmptyState.displayName = "EmptyState";
+
+/* ── Main chatbot page ── */
 const ChatbotPage = () => {
   const { classId, subjectId } = useParams();
   const { data: classesData = [] } = useClassesData();
@@ -186,12 +334,12 @@ const ChatbotPage = () => {
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
+  const theme = subjectGradients[subject?.id || "default"] || subjectGradients.default;
+  const classNum = Number(classId);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  const theme = subjectGradients[subject?.id || "default"] || subjectGradients.default;
-  const classNum = Number(classId);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -228,15 +376,13 @@ const ChatbotPage = () => {
     }
   }, [classNum, subjectId]);
 
-  const handleInputChange = (value: string) => {
+  const handleInputChange = useCallback((value: string) => {
     setInput(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => searchQuestions(value), 150);
-  };
+    debounceRef.current = setTimeout(() => searchQuestions(value), 180);
+  }, [searchQuestions]);
 
-  if (!cls || !subject) return <div className="p-10 text-center">Not found</div>;
-
-  const handleSelectSuggestion = (qa: QASuggestion) => {
+  const handleSelectSuggestion = useCallback((qa: QASuggestion) => {
     setShowSuggestions(false);
     setInput("");
     setMessages((prev) => [
@@ -244,9 +390,9 @@ const ChatbotPage = () => {
       { role: "user", content: qa.question },
       { role: "assistant", content: qa.answer },
     ]);
-  };
+  }, []);
 
-  const handleSend = async () => {
+  const handleSend = useCallback(async () => {
     const text = input.trim();
     if (!text || isLoading) return;
     setShowSuggestions(false);
@@ -263,7 +409,7 @@ const ChatbotPage = () => {
       });
       let results: QASuggestion[] = rpcResults || [];
       if (results.length === 0) {
-        const keywords = text.toLowerCase().replace(/[^\\w\\s]/g, "").split(/\s+/).filter((w) => w.length > 2);
+        const keywords = text.toLowerCase().replace(/[^\w\s]/g, "").split(/\s+/).filter((w) => w.length > 2);
         const searchTerms = keywords.join(" & ");
         if (searchTerms) {
           const { data: ftsData } = await supabase
@@ -294,13 +440,9 @@ const ChatbotPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [input, isLoading, classNum, subjectId]);
 
-  const quickSuggestions = [
-    { icon: BookOpen, text: `Explain a key concept in ${subject.name}` },
-    { icon: HelpCircle, text: "Summarize the latest chapter" },
-    { icon: Zap, text: "Help me with practice questions" },
-  ];
+  if (!cls || !subject) return <div className="p-10 text-center text-muted-foreground">Not found</div>;
 
   return (
     <PageShell>
@@ -313,193 +455,60 @@ const ChatbotPage = () => {
       ]} />
 
       <div className="flex-1 flex flex-col overflow-hidden relative">
-        {/* Ambient background blobs - hidden on mobile */}
+        {/* Ambient blobs - desktop only */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
           <div
-            className="absolute w-[500px] h-[500px] rounded-full opacity-[0.04] blur-[100px] -top-40 -right-40"
-            style={{ background: theme.bg, animation: "floatBlob 20s ease-in-out infinite" }}
+            className="absolute w-[450px] h-[450px] rounded-full opacity-[0.035] blur-[100px] -top-40 -right-40"
+            style={{ background: theme.bg }}
           />
           <div
-            className="absolute w-[400px] h-[400px] rounded-full opacity-[0.03] blur-[80px] -bottom-20 -left-20"
-            style={{ background: theme.bg, animation: "floatBlob 25s ease-in-out infinite reverse" }}
+            className="absolute w-[350px] h-[350px] rounded-full opacity-[0.025] blur-[80px] -bottom-20 -left-20"
+            style={{ background: theme.bg }}
           />
         </div>
 
-        {/* Chat area */}
-        <div className="flex-1 overflow-y-auto px-3 sm:px-8 py-3 sm:py-4 scroll-smooth relative z-10">
-          <div className="max-w-3xl mx-auto space-y-3 sm:space-y-5">
+        {/* Chat messages */}
+        <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-3 sm:py-4 scroll-smooth relative z-10">
+          <div className="max-w-2xl mx-auto space-y-3 sm:space-y-4">
             {messages.length === 0 && (
-              <div
-                className="flex flex-col items-center justify-center text-center py-8 sm:py-20"
-                style={{ animation: "cardEntrance 0.3s ease-out forwards" }}
-              >
-                <div className="relative" style={{ animation: "float 3s ease-in-out infinite" }}>
-                  <div
-                    className="absolute inset-0 rounded-[24px] sm:rounded-[32px] blur-2xl opacity-30"
-                    style={{ background: theme.bg, transform: "scale(1.5)" }}
-                  />
-                  <div className="relative w-48 h-48 sm:w-96 sm:h-96 rounded-[24px] sm:rounded-[32px] flex items-center justify-center overflow-hidden">
-                    <img src={schoolLogo} alt="School Logo" loading="eager" decoding="async" className="w-40 h-40 sm:w-80 sm:h-80 object-contain relative z-10" />
-                    <div
-                      className="absolute inset-0 opacity-40"
-                      style={{
-                        background: "linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%)",
-                        animation: "shimmer 3s ease-in-out infinite",
-                      }}
-                    />
-                  </div>
-                  <div className="absolute -inset-3 sm:-inset-4 rounded-[30px] sm:rounded-[38px]" style={{ border: `2px solid ${theme.glow}22`, animation: "borderGlow 3s ease-in-out infinite" }} />
-                  <div className="absolute -inset-6 sm:-inset-8 rounded-[36px] sm:rounded-[44px] hidden sm:block" style={{ border: `1px solid ${theme.glow}11`, animation: "borderGlow 3s ease-in-out infinite 1s" }} />
-                  <div className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3" style={{ animation: "float 2s ease-in-out infinite 0.2s" }}>
-                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center" style={{ background: theme.accent }}>
-                      <Sparkles size={12} className="sm:w-[14px] sm:h-[14px]" style={{ color: theme.glow }} />
-                    </div>
-                  </div>
-                  <div className="absolute -bottom-1.5 -left-3 sm:-bottom-2 sm:-left-4" style={{ animation: "float 2.5s ease-in-out infinite 0.7s" }}>
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center" style={{ background: theme.accent }}>
-                      <Zap size={10} className="sm:w-[12px] sm:h-[12px]" style={{ color: theme.glow }} />
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-sm sm:text-base font-semibold text-foreground mb-1 mt-2 sm:mt-0">
-                  {subject.name} — Teacher Assistant
-                </p>
-                <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mb-5 sm:mb-8 px-4">
-                  Your teaching companion for {subject.name}. Get chapter-wise Q&A from the curriculum!
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 w-full max-w-xl px-2 sm:px-0">
-                  {quickSuggestions.map((s, idx) => {
-                    const Icon = s.icon;
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => handleInputChange(s.text)}
-                        className="group relative flex flex-row sm:flex-col items-center gap-2.5 sm:gap-2.5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm text-left sm:text-center hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden active:scale-[0.98]"
-                        style={{ animation: `cardEntrance 0.25s ease-out ${0.1 + idx * 0.06}s both` }}
-                      >
-                        <div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                          style={{ background: `radial-gradient(circle at 50% 0%, ${theme.glow}12, transparent 70%)` }}
-                        />
-                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center relative z-10 shrink-0" style={{ background: theme.accent }}>
-                          <Icon size={16} className="sm:w-[18px] sm:h-[18px]" style={{ color: theme.glow }} />
-                        </div>
-                        <span className="text-[11px] sm:text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors relative z-10 leading-snug">
-                          {s.text}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              <EmptyState theme={theme} subjectName={subject.name} onSuggestionClick={handleInputChange} />
             )}
 
             {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex gap-2 sm:gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                style={{ animation: `${msg.role === "user" ? "slideUp" : "popIn"} 0.25s ease-out forwards` }}
-              >
-                {msg.role === "assistant" && (
-                  <div className="relative shrink-0 mt-1">
-                    <div
-                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-[14px] flex items-center justify-center shadow-lg"
-                      style={{ background: theme.bg, boxShadow: `0 4px 16px -4px ${theme.glow}44` }}
-                    >
-                      <Bot size={15} className="sm:w-[18px] sm:h-[18px] text-white" />
-                    </div>
-                  </div>
-                )}
-                <div
-                  className={`max-w-[85%] sm:max-w-[82%] rounded-2xl sm:rounded-[20px] px-3.5 sm:px-5 py-3 sm:py-4 text-[13px] sm:text-sm ${
-                    msg.role === "user"
-                      ? "rounded-br-lg text-white whitespace-pre-wrap leading-relaxed"
-                      : "bg-card/90 backdrop-blur-sm text-foreground rounded-bl-lg border border-border/40"
-                  }`}
-                  style={
-                    msg.role === "user"
-                      ? { background: theme.bg, boxShadow: `0 6px 24px -6px ${theme.glow}40` }
-                      : { boxShadow: `0 2px 12px -4px hsl(0 0% 0% / 0.06)` }
-                  }
-                >
-                  {msg.role === "assistant" ? (
-                    <FormattedMessage content={msg.content} glow={theme.glow} />
-                  ) : (
-                    msg.content
-                  )}
-                </div>
-                {msg.role === "user" && (
-                  <div className="shrink-0 mt-1">
-                    <div
-                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-[14px] flex items-center justify-center border-2"
-                      style={{ background: theme.accent, borderColor: `${theme.glow}30` }}
-                    >
-                      <User size={15} className="sm:w-[18px] sm:h-[18px]" style={{ color: theme.glow }} />
-                    </div>
-                  </div>
-                )}
-              </div>
+              <ChatBubble key={i} msg={msg} theme={theme} index={i} />
             ))}
 
-            {isLoading && (
-              <div className="flex gap-2 sm:gap-3 justify-start" style={{ animation: "popIn 0.2s ease-out forwards" }}>
-                <div
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-[14px] flex items-center justify-center shrink-0 shadow-lg mt-1"
-                  style={{ background: theme.bg, boxShadow: `0 4px 16px -4px ${theme.glow}44` }}
-                >
-                  <Bot size={15} className="sm:w-[18px] sm:h-[18px] text-white" />
-                </div>
-                <div
-                  className="bg-card/90 backdrop-blur-sm border border-border/40 rounded-2xl sm:rounded-[20px] rounded-bl-lg px-3.5 sm:px-5 py-3 sm:py-4"
-                  style={{ boxShadow: `0 2px 12px -4px hsl(0 0% 0% / 0.06)` }}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      {[0, 1, 2].map((d) => (
-                        <span
-                          key={d}
-                          className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full"
-                          style={{ background: theme.bg, animation: `float 1s ease-in-out infinite ${d * 0.15}s` }}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-[11px] sm:text-xs text-muted-foreground ml-1 font-medium">Searching...</span>
-                  </div>
-                </div>
-              </div>
-            )}
+            {isLoading && <TypingIndicator theme={theme} />}
             <div ref={bottomRef} />
           </div>
         </div>
 
-        {/* Input Bar */}
-        <div className="relative z-10 px-3 sm:px-8 pb-3 sm:pb-5 pt-1.5 sm:pt-2">
-          <div className="max-w-3xl mx-auto relative" ref={suggestionsRef}>
-            {/* Autocomplete suggestions dropdown */}
+        {/* Input bar */}
+        <div className="relative z-10 px-3 sm:px-6 pb-3 sm:pb-4 pt-1.5">
+          <div className="max-w-2xl mx-auto relative" ref={suggestionsRef}>
+            {/* Autocomplete dropdown */}
             {showSuggestions && suggestions.length > 0 && (
               <div
-                className="absolute bottom-full mb-2 left-0 right-0 bg-card/95 backdrop-blur-xl border border-border/60 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden z-50"
-                style={{ animation: "cardEntrance 0.15s ease-out forwards", boxShadow: `0 -8px 40px -12px ${theme.glow}15` }}
+                className="absolute bottom-full mb-2 left-0 right-0 bg-card/98 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl overflow-hidden z-50"
+                style={{ animation: "cardEntrance 0.12s ease-out forwards", boxShadow: `0 -6px 32px -8px ${theme.glow}10` }}
               >
-                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 border-b border-border/40">
-                  <Search size={13} style={{ color: theme.glow }} />
-                  <span className="text-[11px] sm:text-xs font-semibold text-muted-foreground">
-                    {suggestions.length} matching question{suggestions.length > 1 ? "s" : ""} found
+                <div className="flex items-center gap-2 px-3.5 py-2 border-b border-border/30">
+                  <Search size={12} style={{ color: theme.glow }} />
+                  <span className="text-[11px] font-semibold text-muted-foreground">
+                    {suggestions.length} match{suggestions.length > 1 ? "es" : ""} found
                   </span>
                 </div>
-                <div className="max-h-48 sm:max-h-64 overflow-y-auto">
+                <div className="max-h-44 sm:max-h-56 overflow-y-auto overscroll-contain">
                   {suggestions.map((qa, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleSelectSuggestion(qa)}
-                      className="w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 hover:bg-accent/50 transition-colors duration-150 border-b border-border/20 last:border-b-0 group active:bg-accent/70"
+                      className="w-full text-left px-3.5 py-2.5 hover:bg-accent/40 transition-colors duration-100 border-b border-border/15 last:border-b-0 group active:bg-accent/60"
                     >
-                      <p className="text-xs sm:text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                      <p className="text-xs sm:text-[13px] font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                         {qa.question}
                       </p>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                      <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">
                         {qa.answer.substring(0, 80)}...
                       </p>
                     </button>
@@ -510,17 +519,18 @@ const ChatbotPage = () => {
 
             <form
               onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-              className="relative flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-2xl sm:rounded-[22px] border bg-card/80 backdrop-blur-xl transition-all duration-400"
+              className="relative flex items-center gap-2 p-1.5 sm:p-2 rounded-2xl border bg-card/85 backdrop-blur-xl transition-all duration-300"
               style={{
-                borderColor: isFocused ? `${theme.glow}40` : "hsl(var(--border) / 0.6)",
+                borderColor: isFocused ? `${theme.glow}35` : "hsl(var(--border) / 0.5)",
                 boxShadow: isFocused
-                  ? `0 8px 40px -12px ${theme.glow}25, 0 0 0 1px ${theme.glow}15`
-                  : "0 4px 20px -8px hsl(0 0% 0% / 0.06)",
+                  ? `0 6px 32px -8px ${theme.glow}20, 0 0 0 1px ${theme.glow}10`
+                  : "0 2px 16px -6px hsl(0 0% 0% / 0.05)",
               }}
             >
+              {/* Top accent line */}
               <div
-                className="absolute top-0 left-4 sm:left-6 right-4 sm:right-6 h-[2px] rounded-full transition-opacity duration-400"
-                style={{ background: theme.bg, opacity: isFocused ? 1 : 0 }}
+                className="absolute top-0 left-5 right-5 h-[1.5px] rounded-full transition-opacity duration-300"
+                style={{ background: theme.bg, opacity: isFocused ? 0.8 : 0 }}
               />
               <input
                 value={input}
@@ -533,17 +543,17 @@ const ChatbotPage = () => {
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-[16px] text-white flex items-center justify-center transition-all duration-300 disabled:opacity-30 disabled:scale-95 hover:scale-105 active:scale-95 shrink-0"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl text-white flex items-center justify-center transition-all duration-200 disabled:opacity-25 disabled:scale-95 hover:scale-105 active:scale-95 shrink-0"
                 style={{
-                  background: !isLoading && input.trim() ? theme.bg : `${theme.glow}40`,
-                  boxShadow: !isLoading && input.trim() ? `0 6px 20px -4px ${theme.glow}50` : "none",
+                  background: !isLoading && input.trim() ? theme.bg : `${theme.glow}30`,
+                  boxShadow: !isLoading && input.trim() ? `0 4px 16px -4px ${theme.glow}40` : "none",
                 }}
               >
-                <Send size={16} className="sm:w-[18px] sm:h-[18px]" />
+                <Send size={15} />
               </button>
             </form>
-            <p className="text-center text-[9px] sm:text-[10px] text-muted-foreground/50 mt-1.5 sm:mt-2 font-medium">
-              Teacher's {subject.name} Reference
+            <p className="text-center text-[9px] text-muted-foreground/40 mt-1.5 font-medium">
+              {subject.name} Curriculum Reference
             </p>
           </div>
         </div>
