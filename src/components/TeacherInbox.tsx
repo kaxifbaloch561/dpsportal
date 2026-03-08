@@ -304,7 +304,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="rounded-[24px] max-w-[420px] w-[95vw] max-h-[92vh] sm:max-h-[85vh] flex flex-col p-0 overflow-hidden border-0 gap-0" style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.35)" }}>
+        <DialogContent aria-label="no-default-close" className="rounded-[24px] max-w-[420px] w-[95vw] max-h-[92vh] sm:max-h-[85vh] flex flex-col p-0 overflow-hidden border-0 gap-0" style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.35)" }}>
 
         {/* Hidden file inputs */}
         <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx" onChange={(e) => handleFileSelect(e, "document")} />
@@ -313,36 +313,48 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
         {/* ════════ CHATS LIST ════════ */}
         {view === "chats" && (
           <>
-            <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(260,70%,50%))" }}>
-              <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle at 25% 45%, white 1px, transparent 1px), radial-gradient(circle at 75% 25%, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-              <div className="relative px-5 pt-5 pb-3.5">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center">
-                      <Send size={14} strokeWidth={2.5} className="text-primary-foreground rotate-[-30deg]" />
+            <div className="relative overflow-hidden" style={{ background: "linear-gradient(145deg, hsl(var(--primary)), hsl(255,75%,48%), hsl(280,65%,45%))" }}>
+              <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl" />
+              <div className="relative px-5 pt-5 pb-4">
+                <div className="flex items-center justify-between mb-3.5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-lg shadow-black/10">
+                      <Send size={15} strokeWidth={2.5} className="text-white rotate-[-30deg]" />
                     </div>
-                    <h2 className="text-lg font-extrabold text-primary-foreground tracking-tight">Inbox</h2>
+                    <div>
+                      <h2 className="text-lg font-extrabold text-white tracking-tight leading-none">Inbox</h2>
+                      <p className="text-[9px] text-white/50 font-medium mt-0.5">Messages & Requests</p>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => { setSearch(""); setView("new-chat"); }}
-                    className="w-8 h-8 rounded-xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/25 transition-all active:scale-95"
-                  >
-                    <Plus size={16} strokeWidth={2.5} />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => { setSearch(""); setView("new-chat"); }}
+                      className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/25 transition-all active:scale-95 border border-white/10 shadow-lg shadow-black/10"
+                    >
+                      <Plus size={16} strokeWidth={2.5} />
+                    </button>
+                    <button
+                      onClick={() => onOpenChange(false)}
+                      className="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all active:scale-95 border border-white/10"
+                    >
+                      <X size={15} strokeWidth={2.5} />
+                    </button>
+                  </div>
                 </div>
                 {/* Tabs */}
-                <div className="flex bg-primary-foreground/10 backdrop-blur-sm rounded-xl p-0.5">
+                <div className="flex bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/5">
                   <button
                     onClick={() => setView("chats")}
-                    className="flex-1 py-1.5 text-[11px] font-bold rounded-[10px] bg-primary-foreground text-primary text-center transition-all shadow-sm"
+                    className="flex-1 py-2 text-[11px] font-bold rounded-xl bg-white text-primary text-center transition-all shadow-md"
                   >
                     Chats {totalUnread > 0 && <span className="ml-1 bg-destructive text-destructive-foreground text-[8px] px-1.5 py-0.5 rounded-full">{totalUnread}</span>}
                   </button>
                   <button
                     onClick={() => setView("requests")}
-                    className="flex-1 py-1.5 text-[11px] font-bold rounded-[10px] text-primary-foreground/70 hover:text-primary-foreground text-center transition-all"
+                    className="flex-1 py-2 text-[11px] font-bold rounded-xl text-white/60 hover:text-white text-center transition-all"
                   >
-                    Requests {repliedCount > 0 && <span className="ml-1 opacity-60">({repliedCount})</span>}
+                    Requests {repliedCount > 0 && <span className="ml-1 opacity-50">({repliedCount})</span>}
                   </button>
                 </div>
               </div>
