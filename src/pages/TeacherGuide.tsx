@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, UserPlus, PenLine, Camera, BookOpen, Send, Clock, CheckCircle2, XCircle, Bell, Shield, Sparkles, Info, ImageIcon } from "lucide-react";
+import { ArrowLeft, UserPlus, PenLine, BookOpen, Send, Clock, CheckCircle2, XCircle, Bell, Shield, Sparkles, Info, ImageIcon } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 
 const steps = [
   {
     icon: UserPlus,
-    gradient: "linear-gradient(135deg, hsl(235,78%,58%), hsl(260,70%,60%))",
+    color: "hsl(235,78%,58%)",
     titleEn: "Go to Create Account",
     titleUr: "اکاؤنٹ بنائیں پر جائیں",
     pointsEn: [
@@ -19,7 +19,7 @@ const steps = [
   },
   {
     icon: PenLine,
-    gradient: "linear-gradient(135deg, hsl(340,80%,55%), hsl(320,70%,58%))",
+    color: "hsl(340,80%,55%)",
     titleEn: "Fill in Your Details",
     titleUr: "اپنی معلومات بھریں",
     pointsEn: [
@@ -39,7 +39,7 @@ const steps = [
   },
   {
     icon: ImageIcon,
-    gradient: "linear-gradient(135deg, hsl(270,72%,55%), hsl(290,65%,55%))",
+    color: "hsl(270,72%,55%)",
     titleEn: "Choose Your Profile Picture",
     titleUr: "اپنی پروفائل تصویر لگائیں",
     pointsEn: [
@@ -57,7 +57,7 @@ const steps = [
   },
   {
     icon: BookOpen,
-    gradient: "linear-gradient(135deg, hsl(160,60%,38%), hsl(170,55%,42%))",
+    color: "hsl(160,60%,38%)",
     titleEn: "Select Your Subjects",
     titleUr: "اپنے مضامین منتخب کریں",
     pointsEn: [
@@ -75,7 +75,7 @@ const steps = [
   },
   {
     icon: Send,
-    gradient: "linear-gradient(135deg, hsl(200,85%,50%), hsl(210,80%,55%))",
+    color: "hsl(200,85%,50%)",
     titleEn: "Registration Complete!",
     titleUr: "رجسٹریشن مکمل!",
     pointsEn: [
@@ -91,7 +91,7 @@ const steps = [
   },
   {
     icon: Clock,
-    gradient: "linear-gradient(135deg, hsl(45,95%,45%), hsl(35,90%,48%))",
+    color: "hsl(45,95%,45%)",
     titleEn: "Wait for Admin Approval",
     titleUr: "ایڈمن کی منظوری کا انتظار کریں",
     pointsEn: [
@@ -109,8 +109,7 @@ const statusCards = [
   {
     icon: CheckCircle2,
     emoji: "✅",
-    gradient: "linear-gradient(135deg, hsl(145,72%,46%), hsl(155,65%,42%))",
-    bg: "hsl(145,50%,96%)",
+    color: "hsl(145,72%,40%)",
     titleEn: "Approved — You Can Log In!",
     titleUr: "منظور — آپ لاگ ان کر سکتے ہیں!",
     descEn: "Log in with your email and password. Full access to dashboard, subjects & discussion room.",
@@ -119,8 +118,7 @@ const statusCards = [
   {
     icon: XCircle,
     emoji: "❌",
-    gradient: "linear-gradient(135deg, hsl(0,75%,55%), hsl(10,70%,52%))",
-    bg: "hsl(0,50%,96%)",
+    color: "hsl(0,75%,50%)",
     titleEn: "Rejected — Not Approved",
     titleUr: "مسترد — منظور نہیں ہوا",
     descEn: "A notification will explain the reason when you try to log in. Contact admin or re-register.",
@@ -129,8 +127,7 @@ const statusCards = [
   {
     icon: Bell,
     emoji: "⏸️",
-    gradient: "linear-gradient(135deg, hsl(35,90%,50%), hsl(25,85%,48%))",
-    bg: "hsl(35,60%,96%)",
+    color: "hsl(35,90%,48%)",
     titleEn: "Paused — Temporarily Suspended",
     titleUr: "معطل — عارضی طور پر بند",
     descEn: "Your access is temporarily restricted. Contact the admin for details.",
@@ -164,121 +161,113 @@ const TeacherGuide = () => {
     <div
       className="min-h-screen"
       style={{
-        background: "linear-gradient(160deg, hsl(230,25%,12%) 0%, hsl(235,30%,18%) 40%, hsl(240,20%,14%) 100%)",
+        background: "linear-gradient(-45deg, hsl(235, 60%, 68%), hsl(235, 65%, 58%), hsl(240, 50%, 72%), hsl(235, 70%, 62%))",
+        backgroundSize: "400% 400%",
+        animation: "gradientBG 15s ease infinite",
       }}
     >
-      {/* Subtle glow orbs */}
-      <div className="fixed top-[10%] left-[5%] w-[300px] h-[300px] rounded-full blur-[100px] opacity-20" style={{ background: "hsl(235,78%,58%)" }} />
-      <div className="fixed bottom-[10%] right-[5%] w-[250px] h-[250px] rounded-full blur-[100px] opacity-15" style={{ background: "hsl(340,80%,55%)" }} />
+      {/* Floating blobs */}
+      <div className="fixed top-[-100px] left-[10%] w-[350px] h-[350px] bg-blob-blue rounded-full blur-[40px] opacity-40 hidden sm:block" style={{ animation: "floatBlob 8s ease-in-out infinite" }} />
+      <div className="fixed bottom-[-100px] right-[20%] w-[400px] h-[400px] bg-blob-pink blur-[40px] opacity-40 hidden sm:block" style={{ borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%", animation: "floatBlob 12s ease-in-out infinite reverse" }} />
 
       <div className="relative z-10 max-w-xl mx-auto px-4 py-6 sm:py-10">
         {/* Back button */}
         <button
           onClick={() => navigate("/")}
-          className="inline-flex items-center gap-2 text-white/60 hover:text-white text-xs font-medium mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold mb-5 transition-all backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-white/80 hover:text-white hover:bg-white/10"
         >
-          <ArrowLeft size={14} /> Back to Login
+          <ArrowLeft size={15} /> Back to Login
         </button>
 
         {/* Hero Header */}
         <div
-          className="relative rounded-3xl p-6 sm:p-8 mb-8 overflow-hidden"
+          className="bg-card/95 backdrop-blur-xl rounded-[32px] p-6 sm:p-8 mb-6 text-center relative overflow-hidden"
           style={{
-            background: "linear-gradient(135deg, hsl(235,50%,22%) 0%, hsl(240,40%,18%) 100%)",
-            border: "1px solid hsl(235,40%,30%)",
+            boxShadow: "0 30px 60px rgba(0,0,0,0.12), inset 0 0 0 1.5px rgba(255,255,255,0.5)",
             animation: "containerSpring 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
           }}
         >
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-          <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full blur-3xl opacity-30" style={{ background: "hsl(235,78%,58%)" }} />
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+          <div className="absolute -top-20 -right-20 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
 
-          <div className="relative text-center">
-            <img
-              src={schoolLogo}
-              alt="DPS SIBI"
-              className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 drop-shadow-lg"
-              style={{ animation: "slideDown 0.6s ease forwards 0.2s", opacity: 0 }}
-            />
-            <div style={{ animation: "slideUp 0.6s ease forwards 0.3s", opacity: 0 }}>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase mb-3"
-                style={{ background: "hsl(235,78%,58%,0.15)", color: "hsl(235,78%,72%)", border: "1px solid hsl(235,78%,58%,0.2)" }}>
-                <Sparkles size={10} /> Step-by-Step Guide
-              </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-white leading-tight mb-1.5">
-                How to Create a Teacher Account
-              </h1>
-              <p className="font-urdu text-base sm:text-lg font-bold leading-relaxed" dir="rtl" style={{ color: "hsl(235,78%,78%)" }}>
-                ٹیچر اکاؤنٹ کیسے بنائیں
-              </p>
-              <p className="text-[11px] mt-3" style={{ color: "hsl(235,20%,55%)" }}>
-                Divisional Public School, SIBI
-              </p>
+          <img
+            src={schoolLogo}
+            alt="DPS SIBI"
+            className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 drop-shadow-md"
+            style={{ animation: "slideDown 0.6s ease forwards 0.2s", opacity: 0 }}
+          />
+          <div style={{ animation: "slideUp 0.6s ease forwards 0.3s", opacity: 0 }}>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold tracking-wider uppercase mb-3 border border-primary/15">
+              <Sparkles size={10} /> Step-by-Step Guide
             </div>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-foreground leading-tight mb-1">
+              How to Create a Teacher Account
+            </h1>
+            <p className="font-urdu text-base sm:text-lg font-bold text-primary/80 leading-relaxed" dir="rtl">
+              ٹیچر اکاؤنٹ کیسے بنائیں
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-2">Divisional Public School, SIBI</p>
           </div>
         </div>
 
-        {/* Steps */}
-        <div className="relative mb-10">
-          {/* Vertical timeline line */}
-          <div className="absolute left-5 sm:left-6 top-8 bottom-8 w-px" style={{ background: "linear-gradient(180deg, hsl(235,78%,58%,0.3), hsl(340,80%,55%,0.3), hsl(160,60%,38%,0.3), transparent)" }} />
+        {/* Steps Timeline */}
+        <div className="relative mb-8">
+          {/* Vertical timeline */}
+          <div className="absolute left-[18px] sm:left-[22px] top-6 bottom-6 w-0.5 bg-gradient-to-b from-primary/30 via-primary/15 to-transparent rounded-full" />
 
-          <div className="space-y-5">
+          <div className="space-y-4">
             {steps.map((step, i) => {
               const Icon = step.icon;
               return (
                 <div
                   key={i}
-                  className="relative pl-14 sm:pl-16"
-                  style={{
-                    animation: `slideUp 0.5s ease forwards ${0.35 + i * 0.07}s`,
-                    opacity: 0,
-                  }}
+                  className="relative pl-12 sm:pl-14"
+                  style={{ animation: `slideUp 0.5s ease forwards ${0.3 + i * 0.07}s`, opacity: 0 }}
                 >
-                  {/* Step circle on timeline */}
+                  {/* Timeline circle */}
                   <div
-                    className="absolute left-1.5 sm:left-2.5 top-0 w-7 h-7 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shadow-lg z-10"
-                    style={{ background: step.gradient }}
+                    className="absolute left-0 sm:left-1 top-4 w-9 h-9 rounded-full flex items-center justify-center shadow-lg z-10 border-[3px] border-card"
+                    style={{ background: step.color }}
                   >
                     <span className="text-[10px] font-black text-white">{i + 1}</span>
                   </div>
 
                   {/* Card */}
                   <div
-                    className="rounded-2xl p-4 sm:p-5 relative overflow-hidden"
+                    className="bg-card/95 backdrop-blur-xl rounded-[22px] p-4 sm:p-5 relative overflow-hidden group"
                     style={{
-                      background: "hsl(235,30%,16%)",
-                      border: "1px solid hsl(235,25%,24%)",
+                      boxShadow: "0 8px 28px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.45)",
                     }}
                   >
-                    <div className="absolute top-0 inset-x-0 h-px" style={{ background: `linear-gradient(90deg, transparent, hsl(0,0%,100%,0.06), transparent)` }} />
+                    <div className="absolute top-0 left-5 right-5 h-[2px] rounded-full" style={{ background: `linear-gradient(90deg, transparent, ${step.color}30, transparent)` }} />
 
-                    {/* Title row */}
+                    {/* Title */}
                     <div className="flex items-center gap-2.5 mb-3">
-                      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: step.gradient }}>
-                        <Icon size={15} className="text-white" />
+                      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md" style={{ background: step.color }}>
+                        <Icon size={14} className="text-white" />
                       </div>
                       <div>
-                        <h3 className="text-[13px] sm:text-sm font-bold text-white leading-tight">{step.titleEn}</h3>
-                        <p className="font-urdu text-xs font-semibold text-right" dir="rtl" style={{ color: "hsl(235,60%,72%)" }}>{step.titleUr}</p>
+                        <h3 className="text-[13px] sm:text-sm font-bold text-foreground leading-tight">{step.titleEn}</h3>
+                        <p className="font-urdu text-xs font-semibold text-primary/70" dir="rtl">{step.titleUr}</p>
                       </div>
                     </div>
 
-                    {/* English bullet points */}
+                    {/* English points */}
                     <ul className="space-y-1.5 mb-3">
                       {step.pointsEn.map((p, j) => (
-                        <li key={j} className="flex items-start gap-2 text-xs leading-relaxed" style={{ color: "hsl(235,15%,65%)" }}>
-                          <span className="w-1 h-1 rounded-full shrink-0 mt-1.5" style={{ background: "hsl(235,78%,58%)" }} />
+                        <li key={j} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
+                          <span className="w-1.5 h-1.5 rounded-full shrink-0 mt-1.5" style={{ background: step.color, opacity: 0.6 }} />
                           {p}
                         </li>
                       ))}
                     </ul>
 
-                    {/* Urdu section */}
-                    <div className="rounded-xl p-3" style={{ background: "hsl(235,25%,13%)", border: "1px solid hsl(235,20%,20%)" }}>
-                      <ul className="space-y-1.5" dir="rtl">
+                    {/* Urdu points */}
+                    <div className="rounded-xl p-3 bg-muted/50 border border-border/40">
+                      <ul className="space-y-1" dir="rtl">
                         {step.pointsUr.map((p, j) => (
-                          <li key={j} className="flex items-start gap-2 font-urdu text-xs leading-[2] text-right" style={{ color: "hsl(235,20%,58%)" }}>
-                            <span className="w-1 h-1 rounded-full shrink-0 mt-3" style={{ background: "hsl(235,60%,50%)" }} />
+                          <li key={j} className="flex items-start gap-2 font-urdu text-xs text-foreground/60 leading-[2] text-right">
+                            <span className="w-1.5 h-1.5 rounded-full shrink-0 mt-3 bg-primary/30" />
                             {p}
                           </li>
                         ))}
@@ -291,25 +280,23 @@ const TeacherGuide = () => {
           </div>
         </div>
 
-        {/* Account Status Section */}
+        {/* Account Status */}
         <div
-          className="rounded-3xl p-5 sm:p-7 mb-8 relative overflow-hidden"
+          className="bg-card/95 backdrop-blur-xl rounded-[28px] p-5 sm:p-7 mb-6 relative overflow-hidden"
           style={{
-            background: "hsl(235,30%,16%)",
-            border: "1px solid hsl(235,25%,24%)",
-            animation: `slideUp 0.5s ease forwards ${0.35 + steps.length * 0.07 + 0.05}s`,
+            boxShadow: "0 20px 50px rgba(0,0,0,0.08), inset 0 0 0 1.5px rgba(255,255,255,0.45)",
+            animation: `slideUp 0.5s ease forwards ${0.3 + steps.length * 0.07 + 0.05}s`,
             opacity: 0,
           }}
         >
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
 
           <div className="text-center mb-5">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase mb-2"
-              style={{ background: "hsl(200,85%,50%,0.12)", color: "hsl(200,85%,65%)", border: "1px solid hsl(200,85%,50%,0.15)" }}>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold tracking-wider uppercase mb-2 border border-primary/10">
               <Shield size={10} /> After Registration
             </div>
-            <h2 className="text-base sm:text-lg font-extrabold text-white">What Happens Next?</h2>
-            <p className="font-urdu text-sm font-bold mt-0.5" dir="rtl" style={{ color: "hsl(235,60%,72%)" }}>رجسٹریشن کے بعد کیا ہوگا؟</p>
+            <h2 className="text-base sm:text-lg font-extrabold text-foreground">What Happens Next?</h2>
+            <p className="font-urdu text-sm font-bold text-primary/60 mt-0.5" dir="rtl">رجسٹریشن کے بعد کیا ہوگا؟</p>
           </div>
 
           <div className="space-y-3">
@@ -318,17 +305,16 @@ const TeacherGuide = () => {
               return (
                 <div
                   key={i}
-                  className="rounded-2xl p-4 flex items-start gap-3"
-                  style={{ background: "hsl(235,25%,13%)", border: "1px solid hsl(235,20%,20%)" }}
+                  className="rounded-2xl p-4 bg-muted/40 border border-border/40 flex items-start gap-3"
                 >
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-md" style={{ background: card.gradient }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-md" style={{ background: card.color }}>
                     <Icon size={16} className="text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs sm:text-[13px] font-bold text-white mb-0.5">{card.emoji} {card.titleEn}</h4>
-                    <p className="font-urdu text-[11px] font-semibold text-right mb-2" dir="rtl" style={{ color: "hsl(235,60%,72%)" }}>{card.titleUr}</p>
-                    <p className="text-[11px] leading-relaxed mb-1" style={{ color: "hsl(235,15%,60%)" }}>{card.descEn}</p>
-                    <p className="font-urdu text-[11px] leading-[1.8] text-right" dir="rtl" style={{ color: "hsl(235,20%,52%)" }}>{card.descUr}</p>
+                    <h4 className="text-xs sm:text-[13px] font-bold text-foreground mb-0.5">{card.emoji} {card.titleEn}</h4>
+                    <p className="font-urdu text-[11px] font-semibold text-primary/60 mb-2" dir="rtl">{card.titleUr}</p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-1">{card.descEn}</p>
+                    <p className="font-urdu text-[11px] text-foreground/50 leading-[1.8] text-right" dir="rtl">{card.descUr}</p>
                   </div>
                 </div>
               );
@@ -338,40 +324,34 @@ const TeacherGuide = () => {
 
         {/* Important Notes */}
         <div
-          className="rounded-3xl p-5 sm:p-7 mb-8 relative overflow-hidden"
+          className="bg-card/95 backdrop-blur-xl rounded-[28px] p-5 sm:p-7 mb-6 relative overflow-hidden"
           style={{
-            background: "hsl(235,30%,16%)",
-            border: "1px solid hsl(235,25%,24%)",
-            animation: `slideUp 0.5s ease forwards ${0.35 + steps.length * 0.07 + 0.12}s`,
+            boxShadow: "0 20px 50px rgba(0,0,0,0.08), inset 0 0 0 1.5px rgba(255,255,255,0.45)",
+            animation: `slideUp 0.5s ease forwards ${0.3 + steps.length * 0.07 + 0.12}s`,
             opacity: 0,
           }}
         >
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "hsl(45,95%,45%,0.15)" }}>
-              <Info size={14} style={{ color: "hsl(45,95%,55%)" }} />
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center">
+              <Info size={14} className="text-amber-600" />
             </div>
             <div>
-              <h2 className="text-sm font-extrabold text-white">Important Notes</h2>
-              <p className="font-urdu text-xs font-bold" dir="rtl" style={{ color: "hsl(235,60%,72%)" }}>اہم ہدایات</p>
+              <h2 className="text-sm font-extrabold text-foreground">Important Notes</h2>
+              <p className="font-urdu text-xs font-bold text-primary/60" dir="rtl">اہم ہدایات</p>
             </div>
           </div>
 
           <div className="space-y-2.5">
             {notes.map((note, i) => (
-              <div
-                key={i}
-                className="rounded-xl p-3 flex items-start gap-2.5"
-                style={{ background: "hsl(235,25%,13%)", border: "1px solid hsl(235,20%,20%)" }}
-              >
-                <span className="text-[11px] font-black shrink-0 w-5 h-5 rounded-md flex items-center justify-center mt-px"
-                  style={{ background: "hsl(235,78%,58%,0.12)", color: "hsl(235,78%,68%)" }}>
+              <div key={i} className="rounded-xl p-3 bg-muted/40 border border-border/40 flex items-start gap-2.5">
+                <span className="text-[10px] font-black shrink-0 w-5 h-5 rounded-lg bg-primary/10 text-primary flex items-center justify-center mt-px">
                   {i + 1}
                 </span>
                 <div className="flex-1">
-                  <p className="text-[11px] sm:text-xs text-white/70 leading-relaxed">{note.en}</p>
-                  <p className="font-urdu text-[11px] leading-[1.8] text-right mt-1" dir="rtl" style={{ color: "hsl(235,20%,50%)" }}>{note.ur}</p>
+                  <p className="text-[11px] sm:text-xs text-foreground/80 leading-relaxed">{note.en}</p>
+                  <p className="font-urdu text-[11px] text-foreground/50 leading-[1.8] text-right mt-1" dir="rtl">{note.ur}</p>
                 </div>
               </div>
             ))}
@@ -380,31 +360,26 @@ const TeacherGuide = () => {
 
         {/* CTA */}
         <div
-          className="text-center pb-10"
-          style={{ animation: `slideUp 0.5s ease forwards ${0.35 + steps.length * 0.07 + 0.18}s`, opacity: 0 }}
+          className="text-center pb-8"
+          style={{ animation: `slideUp 0.5s ease forwards ${0.3 + steps.length * 0.07 + 0.18}s`, opacity: 0 }}
         >
           <button
             onClick={() => navigate("/")}
-            className="relative inline-flex items-center gap-2 px-7 py-3 rounded-2xl text-white font-bold text-sm transition-all hover:-translate-y-0.5 overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg, hsl(235,78%,58%), hsl(260,70%,55%))",
-              boxShadow: "0 8px 32px hsl(235,78%,58%,0.3), inset 0 1px 0 hsl(0,0%,100%,0.1)",
-            }}
+            className="relative inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-white text-foreground font-bold text-sm shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+            style={{ boxShadow: "0 20px 40px rgba(0,0,0,0.15)" }}
           >
             <UserPlus size={15} />
             Go to Registration
             <span
-              className="absolute top-0 w-1/3 h-full"
+              className="absolute top-0 w-1/2 h-full"
               style={{
-                background: "linear-gradient(to right, transparent, hsl(0,0%,100%,0.15), transparent)",
+                background: "linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.6), rgba(255,255,255,0))",
                 transform: "skewX(-25deg)",
                 animation: "shine 4s infinite",
               }}
             />
           </button>
-          <p className="font-urdu text-xs mt-3 font-semibold" dir="rtl" style={{ color: "hsl(235,20%,45%)" }}>
-            رجسٹریشن پیج پر جائیں
-          </p>
+          <p className="font-urdu text-sm text-white/70 mt-3 font-semibold" dir="rtl">رجسٹریشن پیج پر جائیں</p>
         </div>
       </div>
     </div>
