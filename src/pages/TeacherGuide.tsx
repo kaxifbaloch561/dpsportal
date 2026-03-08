@@ -24,8 +24,8 @@ const steps = [
     color: "hsl(270,72%,55%)",
     titleEn: "Choose Your Avatar (Step 2)",
     titleUr: "اپنا اوتار منتخب کریں (مرحلہ 2)",
-    descEn: "Select a profile picture from 10 pre-made Pakistani-style avatars (with hijabs, glasses, professional attire) or upload your own photo. Then tap \"Next\".",
-    descUr: "10 پاکستانی طرز کے بنے بنائے اوتاروں میں سے ایک منتخب کریں (حجاب، عینک، پیشہ ورانہ لباس والے) یا اپنی تصویر اپ لوڈ کریں۔ پھر \"Next\" دبائیں۔",
+    descEn: "Pick a profile picture: select one from the ready-made avatars, take a photo with your camera, or upload an image from your gallery. Then tap \"Next\".",
+    descUr: "اپنی پروفائل تصویر لگائیں: بنے بنائے اوتاروں میں سے ایک منتخب کریں، کیمرے سے تصویر لیں، یا اپنی گیلری سے تصویر اپ لوڈ کریں۔ پھر \"Next\" دبائیں۔",
   },
   {
     icon: BookOpen,
