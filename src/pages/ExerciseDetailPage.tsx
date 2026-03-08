@@ -156,22 +156,22 @@ const ExerciseDetailPage = () => {
         { label: typeLabel },
       ]} />
 
-      <div className="flex-1 px-4 sm:px-8 pb-8 overflow-y-auto">
+      <div className="flex-1 px-3 sm:px-8 pb-6 sm:pb-8 overflow-y-auto">
         {/* Hero Header */}
         <div
-          className="mt-4 mb-8"
+          className="mt-3 sm:mt-4 mb-5 sm:mb-8"
           style={{ animation: "slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards", opacity: 0 }}
         >
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-4">
-              <div className={`flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${typeGradient} text-white shadow-lg`}>
-                <TypeIcon className="w-7 h-7" />
+          <div className="flex items-center justify-between flex-wrap gap-3 sm:gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className={`flex items-center justify-center w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${typeGradient} text-white shadow-lg`}>
+                <TypeIcon className="w-5 h-5 sm:w-7 sm:h-7" />
               </div>
               <div>
-                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
+                <h2 className="text-lg sm:text-2xl font-extrabold text-foreground tracking-tight">
                   {typeLabel}
                 </h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
                   Chapter {chapNum} • {exercises?.length || 0} Questions
                 </p>
               </div>
@@ -180,10 +180,11 @@ const ExerciseDetailPage = () => {
             {exercises && exercises.length > 0 && (
               <button
                 onClick={() => handleDownloadPdf(exercises, typeLabel, cls?.name || "", subject?.name || "", chapNum)}
-                className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-bold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300"
+                className="flex items-center gap-1.5 sm:gap-2.5 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-xs sm:text-sm font-bold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-95"
               >
-                <Download className="w-4 h-4" />
-                Download PDF
+                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Download PDF</span>
+                <span className="sm:hidden">PDF</span>
               </button>
             )}
           </div>
@@ -198,7 +199,7 @@ const ExerciseDetailPage = () => {
             No exercises available.
           </div>
         ) : (
-          <div className="max-w-3xl space-y-5">
+          <div className="max-w-3xl space-y-3 sm:space-y-5">
             {exercises.map((item, idx) => (
               <div
                 key={item.id}
@@ -240,14 +241,14 @@ const ExerciseCard = ({
   const copyText = `Q.${index} ${item.question}\n\nAns: ${item.answer || item.correct_option || ""}`;
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Question Header */}
-      <div className="px-5 sm:px-7 pt-5 pb-4">
-        <div className="flex gap-3.5 items-start">
-          <span className={`flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br ${typeGradient} text-white text-sm font-black shadow-lg mt-0.5`}>
+      <div className="px-3.5 sm:px-7 pt-4 sm:pt-5 pb-3 sm:pb-4">
+        <div className="flex gap-2.5 sm:gap-3.5 items-start">
+          <span className={`flex-shrink-0 inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br ${typeGradient} text-white text-xs sm:text-sm font-black shadow-lg mt-0.5`}>
             {index}
           </span>
-          <p className="flex-1 font-bold text-foreground text-[1rem] leading-[1.75] pt-1">
+          <p className="flex-1 font-bold text-foreground text-[0.875rem] sm:text-[1rem] leading-[1.65] sm:leading-[1.75] pt-0.5 sm:pt-1">
             {item.question}
           </p>
           <CopyButton text={copyText} />
@@ -256,8 +257,8 @@ const ExerciseCard = ({
 
       {/* MCQ Options */}
       {isMCQ && options.length > 0 && (
-        <div className="px-5 sm:px-7 pb-4">
-          <div className="ml-[52px] space-y-2">
+        <div className="px-3.5 sm:px-7 pb-3 sm:pb-4">
+          <div className="ml-[42px] sm:ml-[52px] space-y-1.5 sm:space-y-2">
             {options.map((opt: string, i: number) => {
               const letter = String.fromCharCode(97 + i);
               const isCorrect = item.correct_option &&
@@ -296,7 +297,7 @@ const ExerciseCard = ({
 
       {/* Answer Section */}
       {item.answer && (
-        <div className="mx-5 sm:mx-7 mb-5 ml-[52px] sm:ml-[68px]">
+        <div className="mx-3.5 sm:mx-7 mb-4 sm:mb-5 ml-[42px] sm:ml-[68px]">
           <div className="pt-4 border-t border-border/40">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-1 h-4 rounded-full bg-gradient-to-b from-primary to-accent" />
@@ -313,7 +314,7 @@ const ExerciseCard = ({
 
       {/* MCQ Correct Answer fallback */}
       {isMCQ && item.correct_option && !item.answer && (
-        <div className="mx-5 sm:mx-7 mb-5 ml-[52px] sm:ml-[68px]">
+        <div className="mx-3.5 sm:mx-7 mb-4 sm:mb-5 ml-[42px] sm:ml-[68px]">
           <div className="pt-4 border-t border-border/40">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-1 h-4 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600" />
