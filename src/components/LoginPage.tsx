@@ -11,6 +11,7 @@ interface LoginPageProps {
 
 const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
   const { login } = useAuth();
+  const navTo = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
