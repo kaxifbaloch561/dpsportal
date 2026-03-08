@@ -46,7 +46,7 @@ const ChapterViewPage = () => {
         { label: chapter ? `Ch ${chapter.chapter_number}` : "..." },
       ]} />
 
-      <div className="flex-1 px-4 md:px-8 pb-8 overflow-y-auto">
+      <div className="flex-1 px-2.5 sm:px-8 pb-6 sm:pb-8 overflow-y-auto">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -64,25 +64,26 @@ const ChapterViewPage = () => {
             }}
           >
             {/* Chapter Title Header */}
-            <div className="flex items-center justify-between mt-4 mb-6">
-              <div className="flex items-center gap-4">
-                <span className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground text-lg font-black flex items-center justify-center shadow-lg">
+            <div className="flex items-center justify-between mt-3 sm:mt-4 mb-4 sm:mb-6 gap-3">
+              <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
+                <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground text-sm sm:text-lg font-black flex items-center justify-center shadow-lg shrink-0">
                   {chapter.chapter_number}
                 </span>
-                <h2 className="text-2xl font-bold text-foreground">{chapter.chapter_title}</h2>
+                <h2 className="text-base sm:text-2xl font-bold text-foreground truncate">{chapter.chapter_title}</h2>
               </div>
               <Button
                 onClick={() =>
                   navigate(`/class/${classId}/subject/${subjectId}/chapter/${chapter.chapter_number}/exercise`)
                 }
-                className="gap-2 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg"
+                className="gap-1.5 sm:gap-2 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg text-xs sm:text-sm px-3 sm:px-4 h-9 sm:h-10 shrink-0"
               >
-                <ClipboardList className="w-4 h-4" />
-                Exercise
+                <ClipboardList className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Exercise</span>
+                <span className="sm:hidden">Ex.</span>
               </Button>
             </div>
 
-            {/* Chapter Content — each topic renders as its own card */}
+            {/* Chapter Content */}
             <FormattedChapterContent content={chapter.content} />
           </div>
         )}

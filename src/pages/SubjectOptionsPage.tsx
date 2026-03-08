@@ -52,23 +52,23 @@ const SubjectOptionsPage = () => {
         { label: subject.name },
       ]} />
 
-      <div className="flex-1 px-8 pb-8 flex flex-col items-center justify-center">
+      <div className="flex-1 px-3 sm:px-8 pb-6 sm:pb-8 flex flex-col items-center justify-center">
         <div
-          className="flex items-center gap-4 mb-2"
+          className="flex items-center gap-3 sm:gap-4 mb-2"
           style={{
             animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s",
             opacity: 0,
           }}
         >
           <SubjectBadge subjectId={subject.id} size="sm" />
-          <h2 className="text-2xl font-bold text-foreground">{subject.name}</h2>
+          <h2 className="text-lg sm:text-2xl font-bold text-foreground">{subject.name}</h2>
         </div>
-        <p className="text-muted-foreground text-sm mb-10" style={{ animation: "slideUp 0.8s ease forwards 0.4s", opacity: 0 }}>
+        <p className="text-muted-foreground text-xs sm:text-sm mb-6 sm:mb-10" style={{ animation: "slideUp 0.8s ease forwards 0.4s", opacity: 0 }}>
           What would you like to do?
         </p>
 
         <div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-3xl"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 w-full max-w-3xl"
           style={{
             animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s",
             opacity: 0,
@@ -78,18 +78,20 @@ const SubjectOptionsPage = () => {
             <button
               key={opt.label}
               onClick={() => opt.onClick ? opt.onClick() : opt.path && navigate(opt.path)}
-              className="group bg-card border border-border rounded-3xl p-8 flex flex-col items-center gap-4 shadow-sm transition-all duration-300 relative overflow-hidden hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
+              className="group bg-card border border-border rounded-2xl sm:rounded-3xl p-4 sm:p-8 flex flex-row sm:flex-col items-center gap-3 sm:gap-4 shadow-sm transition-all duration-300 relative overflow-hidden hover:shadow-2xl hover:-translate-y-2 cursor-pointer active:scale-[0.98]"
             >
               <div
-                className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${opt.gradient} text-white flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-lg`}
+                className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br ${opt.gradient} text-white flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-lg shrink-0`}
               >
-                {opt.icon}
+                <span className="[&>svg]:w-5 [&>svg]:h-5 sm:[&>svg]:w-7 sm:[&>svg]:h-7">{opt.icon}</span>
               </div>
-              <span className="text-base font-bold text-foreground">{opt.label}</span>
-              <span className="text-xs text-muted-foreground text-center">
-                {opt.description}
-              </span>
-              <div className={`absolute inset-0 bg-gradient-to-br ${opt.gradient} opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300 rounded-3xl`} />
+              <div className="flex flex-col sm:items-center text-left sm:text-center">
+                <span className="text-sm sm:text-base font-bold text-foreground">{opt.label}</span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
+                  {opt.description}
+                </span>
+              </div>
+              <div className={`absolute inset-0 bg-gradient-to-br ${opt.gradient} opacity-0 group-hover:opacity-[0.05] transition-opacity duration-300 rounded-2xl sm:rounded-3xl`} />
             </button>
           ))}
         </div>

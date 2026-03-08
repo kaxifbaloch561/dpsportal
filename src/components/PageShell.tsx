@@ -8,7 +8,7 @@ interface PageShellProps {
 const PageShell = ({ children }: PageShellProps) => {
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-2 sm:p-5"
+      className="min-h-[100dvh] flex items-center justify-center p-1.5 sm:p-5"
       style={{
         background:
           "linear-gradient(-45deg, hsl(235, 60%, 68%), hsl(235, 65%, 58%), hsl(240, 50%, 72%), hsl(235, 70%, 62%))",
@@ -39,7 +39,7 @@ const PageShell = ({ children }: PageShellProps) => {
       <div
         className="w-full max-w-[1400px] min-h-[100dvh] sm:min-h-[85vh] bg-card/95 backdrop-blur-xl relative overflow-hidden flex flex-col"
         style={{
-          borderRadius: "clamp(16px, 4vw, 40px)",
+          borderRadius: "clamp(12px, 3vw, 40px)",
           boxShadow:
             "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
           animation:
@@ -48,7 +48,7 @@ const PageShell = ({ children }: PageShellProps) => {
       >
         {children}
         <AdminBackButton />
-        <footer className="text-center text-[11px] text-muted-foreground/60 font-medium py-3 mt-auto">
+        <footer className="text-center text-[10px] sm:text-[11px] text-muted-foreground/60 font-medium py-2.5 sm:py-3 mt-auto">
           DPS PORTAL — Developed by Kaxif Gull ❤️
         </footer>
       </div>
