@@ -48,8 +48,36 @@ const PageShell = ({ children }: PageShellProps) => {
       >
         {children}
         <AdminBackButton />
-        <footer className="text-center text-[10px] sm:text-[11px] text-muted-foreground/60 font-medium py-2.5 sm:py-3 mt-auto">
-          DPS PORTAL — Developed by Kaxif Gull ❤️
+        <footer className="relative mt-auto overflow-hidden py-3 sm:py-4">
+          {/* Gradient line */}
+          <div
+            className="mx-auto mb-2 h-[1px] w-2/3 sm:w-1/2"
+            style={{
+              background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.4), hsl(var(--secondary) / 0.4), hsl(var(--primary) / 0.4), transparent)",
+              animation: "shimmerLine 3s ease-in-out infinite",
+            }}
+          />
+          <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] font-semibold tracking-wide">
+            <span className="text-muted-foreground/50 uppercase">DPS Portal</span>
+            <span className="text-muted-foreground/30">—</span>
+            <span className="text-muted-foreground/50">Developed by</span>
+            <span
+              className="bg-clip-text text-transparent font-bold"
+              style={{
+                backgroundImage: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--primary)))",
+                backgroundSize: "200% auto",
+                animation: "gradientText 3s linear infinite",
+              }}
+            >
+              Kaxif Gull
+            </span>
+            <span
+              className="inline-block text-destructive"
+              style={{ animation: "heartbeat 1.5s ease-in-out infinite" }}
+            >
+              ❤️
+            </span>
+          </div>
         </footer>
       </div>
     </div>
