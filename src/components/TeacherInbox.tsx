@@ -63,6 +63,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const selectedContactRef = useRef<Contact | null>(null);
 
   // Voice recording
   const [isRecording, setIsRecording] = useState(false);
@@ -146,13 +147,18 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
       .eq("recipient_email", user.email).eq("is_delivered", false);
   };
 
+  // Keep ref in sync with selectedContact
+  useEffect(() => { selectedContactRef.current = selectedContact; }, [selectedContact]);
+
   useEffect(() => {
     if (open) {
       setView("chats"); fetchContacts(); fetchUnreadAndLast(); setLoadingReq(true); fetchRequests();
       markAllDelivered();
       const ch = supabase.channel("teacher-inbox-all")
         .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, () => {
-          fetchUnreadAndLast(); if (selectedContact) fetchMessages(selectedContact);
+          fetchUnreadAndLast();
+          const cur = selectedContactRef.current;
+          if (cur) fetchMessages(cur);
         })
         .on("postgres_changes", { event: "UPDATE", schema: "public", table: "teacher_requests" }, () => fetchRequests())
         .subscribe();
@@ -304,7 +310,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent aria-label="no-default-close" className="rounded-[24px] max-w-[420px] w-[95vw] max-h-[92vh] sm:max-h-[85vh] flex flex-col p-0 overflow-hidden border-0 gap-0" style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.35)" }}>
+        <DialogContent aria-label="no-default-close" className="rounded-[24px] max-w-[480px] w-[96vw] h-[88vh] sm:h-[80vh] max-h-[88vh] sm:max-h-[80vh] flex flex-col p-0 overflow-hidden border-0 gap-0" style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.35)" }}>
 
         {/* Hidden file inputs */}
         <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx" onChange={(e) => handleFileSelect(e, "document")} />
