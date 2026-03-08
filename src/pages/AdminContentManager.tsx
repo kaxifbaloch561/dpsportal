@@ -18,6 +18,7 @@ import {
   Plus, Trash2, Edit3, Save, BookOpen, ClipboardList, Loader2,
   ChevronRight, ArrowLeft, X
 } from "lucide-react";
+import { plainTextToHtml } from "@/utils/plainTextToHtml";
 
 const EXERCISE_TYPES = [
   { value: "fill_in_the_blanks", label: "Fill in the Blanks" },
