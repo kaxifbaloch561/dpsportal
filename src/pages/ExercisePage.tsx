@@ -97,21 +97,21 @@ const ExercisePage = () => {
         { label: `Ch ${chapNum} Exercise` },
       ]} />
 
-      <div className="flex-1 px-4 sm:px-8 pb-8 overflow-y-auto">
+      <div className="flex-1 px-3 sm:px-8 pb-6 sm:pb-8 overflow-y-auto">
         {/* Hero Header */}
         <div
-          className="mt-4 mb-8"
+          className="mt-3 sm:mt-4 mb-5 sm:mb-8"
           style={{ animation: "slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards", opacity: 0 }}
         >
-          <div className="flex items-center gap-4 mb-2">
-            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/25">
-              <BookOpen className="w-7 h-7 text-primary-foreground" />
+          <div className="flex items-center gap-3 sm:gap-4 mb-2">
+            <div className="flex items-center justify-center w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/25">
+              <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 text-primary-foreground" />
             </div>
             <div>
-              <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
+              <h2 className="text-lg sm:text-2xl font-extrabold text-foreground tracking-tight">
                 Chapter {chapNum} — Exercise
               </h2>
-              <p className="text-sm text-muted-foreground mt-0.5">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
                 Practice questions to test your understanding
               </p>
             </div>
@@ -119,14 +119,14 @@ const ExercisePage = () => {
 
           {/* Stats Bar */}
           {exerciseCounts && availableTypes.length > 0 && (
-            <div className="flex gap-4 mt-5">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-border/60">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Categories</span>
-                <span className="text-sm font-extrabold text-primary">{availableTypes.length}</span>
+            <div className="flex gap-2 sm:gap-4 mt-3 sm:mt-5">
+              <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-card border border-border/60">
+                <span className="text-[9px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider">Categories</span>
+                <span className="text-xs sm:text-sm font-extrabold text-primary">{availableTypes.length}</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-border/60">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Questions</span>
-                <span className="text-sm font-extrabold text-primary">{totalQuestions}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-card border border-border/60">
+                <span className="text-[9px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider">Questions</span>
+                <span className="text-xs sm:text-sm font-extrabold text-primary">{totalQuestions}</span>
               </div>
             </div>
           )}
@@ -137,11 +137,11 @@ const ExercisePage = () => {
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : availableTypes.length === 0 ? (
-          <div className="text-center text-muted-foreground py-20 bg-card/50 rounded-2xl border border-border/40">
+          <div className="text-center text-muted-foreground py-20 bg-card/50 rounded-2xl border border-border/40 text-sm">
             No exercises available yet for this chapter.
           </div>
         ) : (
-          <div className="max-w-3xl grid gap-4">
+          <div className="max-w-3xl grid gap-2.5 sm:gap-4">
             {availableTypes.map((type, index) => {
               const config = EXERCISE_TYPES_CONFIG[type];
               if (!config) return null;
@@ -154,34 +154,31 @@ const ExercisePage = () => {
                   onClick={() =>
                     navigate(`/class/${classId}/subject/${subjectId}/chapter/${chapterNumber}/exercise/${type}`)
                   }
-                  className="group relative flex items-center gap-5 py-5 px-6 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm text-left transition-all duration-300 ease-out hover:border-primary/40 hover:shadow-[0_12px_40px_-12px_hsl(var(--primary)/0.2)] hover:-translate-y-1"
+                  className="group relative flex items-center gap-3 sm:gap-5 py-3.5 sm:py-5 px-3.5 sm:px-6 rounded-xl sm:rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm text-left transition-all duration-300 ease-out hover:border-primary/40 hover:shadow-[0_12px_40px_-12px_hsl(var(--primary)/0.2)] hover:-translate-y-1 active:scale-[0.99]"
                   style={{
                     animation: `slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.08 * index + 0.2}s`,
                     opacity: 0,
                   }}
                 >
-                  {/* Icon */}
-                  <div className={`flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br ${config.gradient} text-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl shrink-0`}>
-                    <Icon className="w-5 h-5" />
+                  <div className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br ${config.gradient} text-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl shrink-0`}>
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
 
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors duration-200">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <h3 className="text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors duration-200 truncate">
                         {config.label}
                       </h3>
-                      <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 rounded-full bg-primary/10 text-primary text-[11px] font-extrabold border border-primary/15">
+                      <span className="inline-flex items-center justify-center min-w-[22px] sm:min-w-[28px] h-5 sm:h-6 px-1.5 sm:px-2 rounded-full bg-primary/10 text-primary text-[10px] sm:text-[11px] font-extrabold border border-primary/15 shrink-0">
                         {count}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 leading-relaxed truncate sm:whitespace-normal">
                       {config.description}
                     </p>
                   </div>
 
-                  {/* Arrow */}
-                  <ChevronRight className="w-5 h-5 text-muted-foreground/30 transition-all duration-300 group-hover:text-primary group-hover:translate-x-1 shrink-0" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground/30 transition-all duration-300 group-hover:text-primary group-hover:translate-x-1 shrink-0" />
                 </button>
               );
             })}
