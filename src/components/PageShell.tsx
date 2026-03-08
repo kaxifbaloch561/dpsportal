@@ -72,7 +72,7 @@ const PageShell = ({ children }: PageShellProps) => {
               Kaxif Gull
             </span>
             <span
-              className="inline-block text-red-400"
+              className="inline-block text-destructive"
               style={{ animation: "heartbeat 1.5s ease-in-out infinite" }}
             >
               ❤️
