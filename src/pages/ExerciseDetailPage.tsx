@@ -241,14 +241,14 @@ const ExerciseCard = ({
   const copyText = `Q.${index} ${item.question}\n\nAns: ${item.answer || item.correct_option || ""}`;
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Question Header */}
-      <div className="px-5 sm:px-7 pt-5 pb-4">
-        <div className="flex gap-3.5 items-start">
-          <span className={`flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br ${typeGradient} text-white text-sm font-black shadow-lg mt-0.5`}>
+      <div className="px-3.5 sm:px-7 pt-4 sm:pt-5 pb-3 sm:pb-4">
+        <div className="flex gap-2.5 sm:gap-3.5 items-start">
+          <span className={`flex-shrink-0 inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br ${typeGradient} text-white text-xs sm:text-sm font-black shadow-lg mt-0.5`}>
             {index}
           </span>
-          <p className="flex-1 font-bold text-foreground text-[1rem] leading-[1.75] pt-1">
+          <p className="flex-1 font-bold text-foreground text-[0.875rem] sm:text-[1rem] leading-[1.65] sm:leading-[1.75] pt-0.5 sm:pt-1">
             {item.question}
           </p>
           <CopyButton text={copyText} />
