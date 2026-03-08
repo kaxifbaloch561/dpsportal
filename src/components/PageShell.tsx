@@ -37,13 +37,14 @@ const PageShell = ({ children }: PageShellProps) => {
       />
 
       <div
-        className="w-full max-w-[1400px] h-[100dvh] sm:h-[85vh] bg-card/95 backdrop-blur-xl relative flex flex-col"
+        className="w-full max-w-[1400px] min-h-[100dvh] sm:min-h-[85vh] bg-card/95 backdrop-blur-xl relative flex flex-col overflow-hidden"
         style={{
           borderRadius: "clamp(12px, 3vw, 40px)",
           boxShadow:
             "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
           animation:
             "containerSpring 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards",
+          maxHeight: "100dvh",
         }}
       >
         {children}
