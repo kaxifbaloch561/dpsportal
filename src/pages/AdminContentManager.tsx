@@ -167,13 +167,15 @@ const AdminContentManager = () => {
       return;
     }
     setSavingChapter(true);
+    // Auto-convert plain text to professional HTML
+    const finalContent = plainTextToHtml(chapterForm.content.trim());
     if (editingChapter) {
       const { error } = await supabase
         .from("chapters")
         .update({
           chapter_number: Number(chapterForm.number),
           chapter_title: chapterForm.title.trim(),
-          content: chapterForm.content.trim(),
+          content: finalContent,
         })
         .eq("id", editingChapter.id);
       if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
