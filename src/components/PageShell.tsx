@@ -37,7 +37,7 @@ const PageShell = ({ children }: PageShellProps) => {
       />
 
       <div
-        className="w-full max-w-[1400px] min-h-[100dvh] sm:min-h-[85vh] bg-card/95 backdrop-blur-xl relative overflow-hidden flex flex-col"
+        className="w-full max-w-[1400px] h-[100dvh] sm:h-[85vh] bg-card/95 backdrop-blur-xl relative flex flex-col"
         style={{
           borderRadius: "clamp(12px, 3vw, 40px)",
           boxShadow:
