@@ -423,7 +423,7 @@ const ChatbotPage = () => {
       ]} />
 
       {/* Chat area - fills remaining space between header/breadcrumb and footer */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
+      <div className="flex-1 flex flex-col overflow-hidden relative" style={{ minHeight: 0 }}>
         {/* Ambient blobs - desktop only */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
           <div
