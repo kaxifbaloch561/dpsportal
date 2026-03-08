@@ -8,7 +8,7 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import TeacherRequestForm from "@/components/TeacherRequestForm";
 
 import TeacherProfile from "@/components/TeacherProfile";
-import { Sparkles, AlertTriangle, Info, Mail, UserCircle2, Megaphone, MessagesSquare } from "lucide-react";
+import { Sparkles, AlertTriangle, Info, Send, Fingerprint, Megaphone, MessagesSquare } from "lucide-react";
 import TeacherInbox from "@/components/TeacherInbox";
 import AnnouncementPopup from "@/components/AnnouncementPopup";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,25 +109,25 @@ const Dashboard = () => {
       <div className="flex items-center justify-between px-3 sm:px-6 pt-3 sm:pt-4">
         <button
           onClick={() => setShowInbox(true)}
-          className="group relative flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/30 text-primary backdrop-blur-sm hover:from-primary/30 hover:via-primary/20 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.96]"
+          className="group relative flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl bg-card/80 backdrop-blur-md border border-border/50 text-foreground hover:border-primary/40 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.2)] hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
         >
-          <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/30">
-            <Mail size={19} strokeWidth={2.2} />
+          <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground shadow-md shadow-primary/20 group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300">
+            <Send size={13} strokeWidth={2.5} className="rotate-[-30deg]" />
             {unreadInbox > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center border-2 border-card animate-pulse">
+              <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-0.5 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center border-[1.5px] border-card animate-pulse">
                 {unreadInbox > 9 ? "9+" : unreadInbox}
               </span>
             )}
           </div>
-          <span className="text-xs sm:text-sm font-extrabold tracking-wider uppercase">Inbox</span>
+          <span className="text-[10px] sm:text-xs font-bold tracking-wide uppercase text-muted-foreground group-hover:text-foreground transition-colors">Inbox</span>
         </button>
         <button
           onClick={() => setShowProfile(true)}
-          className="group relative flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-bl from-primary/20 via-primary/10 to-transparent border border-primary/30 text-primary backdrop-blur-sm hover:from-primary/30 hover:via-primary/20 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.96]"
+          className="group relative flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl bg-card/80 backdrop-blur-md border border-border/50 text-foreground hover:border-primary/40 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.2)] hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
         >
-          <span className="text-xs sm:text-sm font-extrabold tracking-wider uppercase">Profile</span>
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/30">
-            <UserCircle2 size={19} strokeWidth={2.2} />
+          <span className="text-[10px] sm:text-xs font-bold tracking-wide uppercase text-muted-foreground group-hover:text-foreground transition-colors">Profile</span>
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-violet-500/20 group-hover:shadow-lg group-hover:shadow-violet-500/30 transition-all duration-300">
+            <Fingerprint size={14} strokeWidth={2.5} />
           </div>
         </button>
       </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Mail, BookOpen, Shield, LogOut, Eye, EyeOff, X, KeyRound, Check } from "lucide-react";
+import { User, Mail, BookOpen, Shield, LogOut, Eye, EyeOff, X, KeyRound, Check, Fingerprint } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -106,66 +106,80 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div
-        className="w-full max-w-md bg-card rounded-[32px] p-6 relative overflow-hidden max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-sm bg-card/95 backdrop-blur-xl rounded-[24px] p-5 relative overflow-hidden max-h-[90vh] overflow-y-auto border border-border/50"
         style={{
-          boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.3)",
+          boxShadow: "0 32px 64px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.08)",
           animation: "containerSpring 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
         }}
       >
+        {/* Decorative top gradient bar */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-primary to-accent" />
+
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-accent transition-colors"
+          className="absolute top-3.5 right-3.5 w-7 h-7 rounded-lg bg-muted/80 flex items-center justify-center hover:bg-accent transition-colors"
         >
-          <X size={16} />
+          <X size={14} />
         </button>
 
         {teacher ? (
-          <div className="space-y-5">
+          <div className="space-y-4">
             {/* Avatar & Name */}
-            <div className="flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full border-4 border-primary/20 overflow-hidden bg-muted flex items-center justify-center mb-3">
-                {teacher.avatar_url ? (
-                  <img src={teacher.avatar_url} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <User size={40} className="text-muted-foreground" />
-                )}
+            <div className="flex flex-col items-center pt-1">
+              <div className="relative mb-3">
+                <div className="w-20 h-20 rounded-2xl border-2 border-primary/20 overflow-hidden bg-muted flex items-center justify-center shadow-lg shadow-primary/10">
+                  {teacher.avatar_url ? (
+                    <img src={teacher.avatar_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <Fingerprint size={32} className="text-muted-foreground/40" />
+                  )}
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-sm">
+                  <Check size={12} className="text-white" strokeWidth={3} />
+                </div>
               </div>
-              <h2 className="text-lg font-bold text-foreground">
+              <h2 className="text-base font-extrabold text-foreground tracking-tight">
                 {teacher.first_name} {teacher.middle_name || ""} {teacher.last_name}
               </h2>
-              <p className="text-xs text-muted-foreground">{teacher.class_teacher || "Teacher"}</p>
+              <p className="text-[11px] text-muted-foreground font-medium mt-0.5">{teacher.class_teacher || "Teacher"}</p>
             </div>
 
             {/* Details */}
-            <div className="space-y-3 bg-muted/50 rounded-2xl p-4">
+            <div className="space-y-2.5 bg-muted/40 rounded-2xl p-3.5 border border-border/30">
               <div className="flex items-center gap-3 text-sm">
-                <Mail size={16} className="text-primary shrink-0" />
-                <div>
-                  <p className="text-[10px] text-muted-foreground">Email</p>
-                  <p className="font-medium text-foreground break-all">{teacher.email}</p>
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Mail size={14} className="text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Email</p>
+                  <p className="text-xs font-semibold text-foreground break-all">{teacher.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <Shield size={16} className="text-primary shrink-0" />
-                <div className="flex-1">
-                  <p className="text-[10px] text-muted-foreground">Password</p>
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Shield size={14} className="text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Password</p>
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-foreground">
+                    <p className="text-xs font-semibold text-foreground">
                       {showPassword ? teacher.password : "••••••••"}
                     </p>
-                    <button onClick={() => setShowPassword(!showPassword)} className="text-primary">
-                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                    <button onClick={() => setShowPassword(!showPassword)} className="text-primary hover:text-primary/70 transition-colors">
+                      {showPassword ? <EyeOff size={13} /> : <Eye size={13} />}
                     </button>
                   </div>
                 </div>
               </div>
               <div className="flex items-start gap-3 text-sm">
-                <BookOpen size={16} className="text-primary shrink-0 mt-0.5" />
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <BookOpen size={14} className="text-primary" />
+                </div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground">Subjects</p>
+                  <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Subjects</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {(teacher.subjects || []).map((sub) => (
-                      <span key={sub} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                      <span key={sub} className="px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[10px] font-bold border border-primary/15">
                         {sub}
                       </span>
                     ))}
@@ -178,49 +192,49 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
             {!changingPassword ? (
               <Button
                 variant="outline"
-                className="w-full rounded-full"
+                className="w-full rounded-xl text-xs h-9"
                 onClick={() => setChangingPassword(true)}
               >
-                <KeyRound size={16} /> Change Password
+                <KeyRound size={14} /> Change Password
               </Button>
             ) : (
-              <div className="space-y-3 bg-muted/50 rounded-2xl p-4" style={{ animation: "slideUp 0.3s ease forwards" }}>
-                <p className="text-sm font-bold text-foreground flex items-center gap-2">
-                  <KeyRound size={16} className="text-primary" /> Change Password
+              <div className="space-y-2.5 bg-muted/40 rounded-2xl p-3.5 border border-border/30" style={{ animation: "slideUp 0.3s ease forwards" }}>
+                <p className="text-xs font-bold text-foreground flex items-center gap-2">
+                  <KeyRound size={14} className="text-primary" /> Change Password
                 </p>
                 <Input
                   type="password"
                   placeholder="Current Password"
                   value={currentPass}
                   onChange={(e) => setCurrentPass(e.target.value)}
-                  className="rounded-xl"
+                  className="rounded-xl h-9 text-xs"
                 />
                 <Input
                   type="password"
                   placeholder="New Password (min 6 characters)"
                   value={newPass}
                   onChange={(e) => setNewPass(e.target.value)}
-                  className="rounded-xl"
+                  className="rounded-xl h-9 text-xs"
                 />
                 <Input
                   type="password"
                   placeholder="Confirm New Password"
                   value={confirmPass}
                   onChange={(e) => setConfirmPass(e.target.value)}
-                  className="rounded-xl"
+                  className="rounded-xl h-9 text-xs"
                 />
                 <div className="flex gap-2">
                   <Button
                     onClick={handleChangePassword}
                     disabled={saving}
-                    className="flex-1 rounded-full"
+                    className="flex-1 rounded-xl h-9 text-xs"
                   >
-                    <Check size={14} /> {saving ? "Saving..." : "Update Password"}
+                    <Check size={13} /> {saving ? "Saving..." : "Update"}
                   </Button>
                   <Button
                     variant="ghost"
                     onClick={() => { setChangingPassword(false); setCurrentPass(""); setNewPass(""); setConfirmPass(""); }}
-                    className="rounded-full"
+                    className="rounded-xl h-9 text-xs"
                   >
                     Cancel
                   </Button>
@@ -232,17 +246,17 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
             <Button
               onClick={handleLogout}
               variant="destructive"
-              className="w-full rounded-full"
+              className="w-full rounded-xl h-9 text-xs"
             >
-              <LogOut size={16} /> Logout
+              <LogOut size={14} /> Logout
             </Button>
           </div>
         ) : (
           <div className="text-center py-8">
-            <User size={48} className="mx-auto text-muted-foreground/30 mb-3" />
-            <p className="text-muted-foreground text-sm">Profile not available</p>
-            <Button onClick={handleLogout} variant="outline" className="mt-4 rounded-full">
-              <LogOut size={16} /> Logout
+            <Fingerprint size={40} className="mx-auto text-muted-foreground/20 mb-3" />
+            <p className="text-muted-foreground text-xs">Profile not available</p>
+            <Button onClick={handleLogout} variant="outline" className="mt-4 rounded-xl text-xs h-9">
+              <LogOut size={14} /> Logout
             </Button>
           </div>
         )}

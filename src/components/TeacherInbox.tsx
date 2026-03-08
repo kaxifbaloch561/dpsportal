@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Check, CheckCheck, Clock, Send, ChevronLeft, ShieldCheck, GraduationCap,
-  Search, User, Plus, Sparkles, AlertTriangle, Lightbulb, Mail,
+  Search, User, Plus, Sparkles, AlertTriangle, Lightbulb,
   MessageSquare, Image, Paperclip, Mic, MicOff, X, FileText, Play, Pause
 } from "lucide-react";
 import { toast } from "sonner";
@@ -304,7 +304,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-[28px] max-w-[440px] w-[95vw] max-h-[92vh] sm:max-h-[85vh] flex flex-col p-0 overflow-hidden border-0 gap-0" style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.35)" }}>
+        <DialogContent className="rounded-[24px] max-w-[420px] w-[95vw] max-h-[92vh] sm:max-h-[85vh] flex flex-col p-0 overflow-hidden border-0 gap-0" style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.35)" }}>
 
         {/* Hidden file inputs */}
         <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx" onChange={(e) => handleFileSelect(e, "document")} />
@@ -313,31 +313,36 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
         {/* ════════ CHATS LIST ════════ */}
         {view === "chats" && (
           <>
-            <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(260,70%,55%))" }}>
-              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize: "30px 30px" }} />
-              <div className="relative px-5 pt-6 pb-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-extrabold text-primary-foreground tracking-tight">Inbox</h2>
+            <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(260,70%,50%))" }}>
+              <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle at 25% 45%, white 1px, transparent 1px), radial-gradient(circle at 75% 25%, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+              <div className="relative px-5 pt-5 pb-3.5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center">
+                      <Send size={14} strokeWidth={2.5} className="text-primary-foreground rotate-[-30deg]" />
+                    </div>
+                    <h2 className="text-lg font-extrabold text-primary-foreground tracking-tight">Inbox</h2>
+                  </div>
                   <button
                     onClick={() => { setSearch(""); setView("new-chat"); }}
-                    className="w-10 h-10 rounded-2xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/25 transition-all active:scale-95"
+                    className="w-8 h-8 rounded-xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/25 transition-all active:scale-95"
                   >
-                    <Plus size={20} strokeWidth={2.5} />
+                    <Plus size={16} strokeWidth={2.5} />
                   </button>
                 </div>
                 {/* Tabs */}
-                <div className="flex bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-1">
+                <div className="flex bg-primary-foreground/10 backdrop-blur-sm rounded-xl p-0.5">
                   <button
                     onClick={() => setView("chats")}
-                    className="flex-1 py-2 text-xs font-bold rounded-xl bg-primary-foreground text-primary text-center transition-all shadow-sm"
+                    className="flex-1 py-1.5 text-[11px] font-bold rounded-[10px] bg-primary-foreground text-primary text-center transition-all shadow-sm"
                   >
-                    💬 Chats {totalUnread > 0 && <span className="ml-1 bg-destructive text-destructive-foreground text-[9px] px-1.5 py-0.5 rounded-full">{totalUnread}</span>}
+                    Chats {totalUnread > 0 && <span className="ml-1 bg-destructive text-destructive-foreground text-[8px] px-1.5 py-0.5 rounded-full">{totalUnread}</span>}
                   </button>
                   <button
                     onClick={() => setView("requests")}
-                    className="flex-1 py-2 text-xs font-bold rounded-xl text-primary-foreground/70 hover:text-primary-foreground text-center transition-all"
+                    className="flex-1 py-1.5 text-[11px] font-bold rounded-[10px] text-primary-foreground/70 hover:text-primary-foreground text-center transition-all"
                   >
-                    📋 Requests {repliedCount > 0 && <span className="ml-1 opacity-60">({repliedCount})</span>}
+                    Requests {repliedCount > 0 && <span className="ml-1 opacity-60">({repliedCount})</span>}
                   </button>
                 </div>
               </div>
@@ -604,7 +609,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                 <div className="flex items-center justify-center py-20"><div className="w-9 h-9 rounded-full border-[3px] border-primary/30 border-t-primary animate-spin" /></div>
               ) : filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20">
-                  <Mail size={36} className="text-muted-foreground/25 mb-2" />
+                  <MessageSquare size={36} className="text-muted-foreground/25 mb-2" />
                   <p className="text-sm text-muted-foreground">No requests found</p>
                 </div>
               ) : filtered.map((req) => {
