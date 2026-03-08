@@ -19,6 +19,7 @@ import ExerciseDetailPage from "./pages/ExerciseDetailPage";
 import ChatbotPage from "./pages/ChatbotPage";
 import NotFound from "./pages/NotFound";
 import HowToUsePage from "./pages/HowToUsePage";
+import TeacherGuide from "./pages/TeacherGuide";
 
 const queryClient = new QueryClient();
 
