@@ -297,7 +297,7 @@ const ExerciseCard = ({
 
       {/* Answer Section */}
       {item.answer && (
-        <div className="mx-5 sm:mx-7 mb-5 ml-[52px] sm:ml-[68px]">
+        <div className="mx-3.5 sm:mx-7 mb-4 sm:mb-5 ml-[42px] sm:ml-[68px]">
           <div className="pt-4 border-t border-border/40">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-1 h-4 rounded-full bg-gradient-to-b from-primary to-accent" />
