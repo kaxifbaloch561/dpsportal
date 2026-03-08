@@ -439,8 +439,8 @@ const ChatbotPage = () => {
         {/* Scrollable chat messages */}
         <div
           ref={chatContainerRef}
-          className="flex-1 overflow-y-auto overscroll-contain px-2.5 sm:px-6 py-2 sm:py-4 relative z-10 scroll-smooth"
-          style={{ WebkitOverflowScrolling: "touch" }}
+          className="flex-1 overflow-y-auto overscroll-contain px-2.5 sm:px-6 py-2 sm:py-4 relative z-10"
+          style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y", willChange: "scroll-position" }}
         >
           <div className="max-w-2xl mx-auto space-y-2.5 sm:space-y-4">
             {messages.length === 0 && (
