@@ -252,22 +252,75 @@ const isHtmlContent = (content: string) => {
   );
 };
 
-const HtmlChapterContent = ({ content }: { content: string }) => (
-  <div className="py-4">
-    <div
-      className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-2xl overflow-hidden shadow-sm p-5 md:p-7"
-      style={{
-        animation: "slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
-        opacity: 0,
-      }}
-    >
-      <div
-        className="chapter-html-content prose prose-sm max-w-none"
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
+/** Split HTML content at <h2> boundaries into individual section cards */
+function splitHtmlIntoSections(html: string): { title: string | null; titleNum: string | null; body: string }[] {
+  // Split on <h2> tags while capturing the tag content
+  const parts = html.split(/(?=<h2[^>]*>)/i);
+  const sections: { title: string | null; titleNum: string | null; body: string }[] = [];
+
+  for (const part of parts) {
+    const trimmed = part.trim();
+    if (!trimmed) continue;
+
+    // Extract h2 title if present
+    const h2Match = trimmed.match(/^<h2[^>]*>(.*?)<\/h2>/i);
+    if (h2Match) {
+      const titleText = h2Match[1].replace(/<[^>]+>/g, '').trim();
+      const numMatch = titleText.match(/^(\d+)\.\s+(.+)/);
+      const body = trimmed.replace(/^<h2[^>]*>.*?<\/h2>/i, '').trim();
+      sections.push({
+        title: numMatch ? numMatch[2] : titleText,
+        titleNum: numMatch ? numMatch[1] : null,
+        body,
+      });
+    } else {
+      // Intro / learning outcomes section (before first h2)
+      sections.push({ title: null, titleNum: null, body: trimmed });
+    }
+  }
+
+  return sections;
+}
+
+const HtmlChapterContent = ({ content }: { content: string }) => {
+  const sections = splitHtmlIntoSections(content);
+
+  return (
+    <div className="py-4 space-y-5">
+      {sections.map((section, idx) => (
+        <div
+          key={idx}
+          className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+          style={{
+            animation: `slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${idx * 0.06}s forwards`,
+            opacity: 0,
+          }}
+        >
+          {section.title && (
+            <div className="px-5 md:px-7 pt-5 pb-3 border-b border-border/40 bg-gradient-to-r from-primary/[0.04] to-transparent">
+              <div className="flex items-center gap-3.5">
+                {section.titleNum && (
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground text-sm font-black shadow-lg shadow-primary/25 shrink-0">
+                    {section.titleNum}
+                  </span>
+                )}
+                <h2 className="text-lg md:text-xl font-extrabold text-foreground tracking-tight leading-snug">
+                  {section.title}
+                </h2>
+              </div>
+            </div>
+          )}
+          <div className="px-5 md:px-7 py-5">
+            <div
+              className="chapter-html-content prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: section.body }}
+            />
+          </div>
+        </div>
+      ))}
     </div>
-  </div>
-);
+  );
+};
 
 const FormattedChapterContent = ({ content }: { content: string }) => {
   // If content is HTML (from rich editor), render it directly
