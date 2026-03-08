@@ -126,12 +126,13 @@
 }
 
 /* HTML content rendering in chapter view */
+
+/* H1 is rendered in intro card — keep subtle */
 .chapter-html-content h1 {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
-  color: hsl(var(--foreground));
   text-align: center;
   letter-spacing: -0.02em;
   background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
@@ -140,41 +141,46 @@
   background-clip: text;
 }
 
+/* H2 inside cards is hidden (rendered as card header instead) */
 .chapter-html-content h2 {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 800;
-  margin-top: 2rem;
-  margin-bottom: 0.75rem;
+  margin-top: 1.75rem;
+  margin-bottom: 0.6rem;
   color: hsl(var(--foreground));
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid hsl(var(--primary) / 0.15);
+  border-bottom: 2px solid hsl(var(--primary) / 0.12);
   letter-spacing: -0.01em;
 }
 
 .chapter-html-content h3 {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
   color: hsl(var(--foreground));
-  padding-left: 0.75rem;
+  padding-left: 0.85rem;
   border-left: 3px solid hsl(var(--primary) / 0.5);
+  position: relative;
 }
 
 .chapter-html-content h4 {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   margin-top: 1.25rem;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
   color: hsl(var(--primary));
+  padding-left: 0.6rem;
+  border-left: 2px solid hsl(var(--primary) / 0.25);
 }
 
 .chapter-html-content p {
-  font-size: 0.875rem;
-  line-height: 1.95;
+  font-size: 0.85rem;
+  line-height: 2;
   color: hsl(var(--muted-foreground));
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.65rem;
   text-align: justify;
+  word-spacing: 0.02em;
 }
 
 .chapter-html-content strong {
@@ -185,9 +191,10 @@
 .chapter-html-content ul,
 .chapter-html-content ol {
   padding-left: 1.5rem;
-  margin-bottom: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.85rem;
   color: hsl(var(--muted-foreground));
-  font-size: 0.875rem;
+  font-size: 0.85rem;
 }
 
 .chapter-html-content ul {
@@ -197,7 +204,9 @@
 
 .chapter-html-content ul > li {
   position: relative;
-  padding-left: 1.25rem;
+  padding-left: 1.4rem;
+  margin-bottom: 0.4rem;
+  line-height: 1.9;
 }
 
 .chapter-html-content ul > li::before {
@@ -209,24 +218,49 @@
   height: 6px;
   border-radius: 50%;
   background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.3);
 }
 
 .chapter-html-content ol {
-  list-style: decimal;
-  padding-left: 1.75rem;
+  list-style: none;
+  padding-left: 0;
+  counter-reset: ol-counter;
 }
 
-.chapter-html-content li {
-  margin-bottom: 0.35rem;
-  line-height: 1.85;
+.chapter-html-content ol > li {
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 0.4rem;
+  line-height: 1.9;
+  counter-increment: ol-counter;
+}
+
+.chapter-html-content ol > li::before {
+  content: counter(ol-counter);
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px solid hsl(var(--primary) / 0.15);
+  color: hsl(var(--primary));
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chapter-html-content blockquote {
   border-left: 3px solid hsl(var(--primary) / 0.4);
-  padding-left: 1rem;
+  padding: 0.75rem 1rem;
   margin: 0.75rem 0;
   color: hsl(var(--muted-foreground));
   font-style: italic;
+  background: hsl(var(--primary) / 0.03);
+  border-radius: 0 10px 10px 0;
 }
 
 .chapter-html-content img {
@@ -249,11 +283,11 @@
   border-collapse: separate;
   border-spacing: 0;
   margin: 1.25rem 0;
-  font-size: 0.825rem;
-  border-radius: 12px;
+  font-size: 0.8rem;
+  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid hsl(var(--border));
-  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.04);
+  border: 1px solid hsl(var(--border) / 0.7);
+  box-shadow: 0 4px 16px hsl(var(--foreground) / 0.04);
 }
 
 .chapter-html-content thead {
@@ -263,10 +297,10 @@
 .chapter-html-content thead th {
   color: hsl(var(--primary-foreground));
   font-weight: 700;
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1rem;
   text-align: left;
-  font-size: 0.8rem;
-  letter-spacing: 0.02em;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   border-bottom: none;
 }
@@ -276,7 +310,7 @@
 }
 
 .chapter-html-content tbody tr:nth-child(even) {
-  background-color: hsl(var(--muted) / 0.4);
+  background-color: hsl(var(--muted) / 0.35);
 }
 
 .chapter-html-content tbody tr:hover {
@@ -284,10 +318,10 @@
 }
 
 .chapter-html-content tbody td {
-  padding: 0.6rem 1rem;
-  border-bottom: 1px solid hsl(var(--border) / 0.6);
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
   color: hsl(var(--muted-foreground));
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .chapter-html-content tbody tr:last-child td {
@@ -295,6 +329,19 @@
 }
 
 .chapter-html-content em {
-  color: hsl(var(--muted-foreground) / 0.8);
+  color: hsl(var(--muted-foreground) / 0.75);
   font-size: 0.8rem;
+}
+
+/* First paragraph after heading — slight emphasis */
+.chapter-html-content h2 + p,
+.chapter-html-content h3 + p {
+  margin-top: 0.25rem;
+}
+
+/* Nested list indentation */
+.chapter-html-content li > ul,
+.chapter-html-content li > ol {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }
