@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Eye, EyeOff, BookOpen, UserPlus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff, BookOpen, UserPlus, HelpCircle } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -10,6 +11,7 @@ interface LoginPageProps {
 
 const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
   const { login } = useAuth();
+  const navTo = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -132,13 +134,20 @@ const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
         </form>
 
         {/* Create Account Link */}
-        <div className="mt-4 sm:mt-5 text-center" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.9s", opacity: 0 }}>
+        <div className="mt-4 sm:mt-5 flex flex-col items-center gap-2" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.9s", opacity: 0 }}>
           <button
             onClick={onCreateAccount}
             className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-primary hover:underline transition-all"
           >
             <UserPlus size={16} />
             Create Teacher Account
+          </button>
+          <button
+            onClick={() => navTo("/teacher-guide")}
+            className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors"
+          >
+            <HelpCircle size={13} />
+            How to create an account?
           </button>
         </div>
       </div>
