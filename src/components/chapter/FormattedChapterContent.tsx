@@ -1,5 +1,6 @@
 import React from "react";
 import { preprocessContent } from "@/utils/chapterContentParser";
+import { plainTextToHtml } from "@/utils/plainTextToHtml";
 
 const parseInlineBold = (text: string): React.ReactNode[] => {
   const parts = text.split(/\*\*(.*?)\*\*/g);
