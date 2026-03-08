@@ -147,13 +147,18 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
       .eq("recipient_email", user.email).eq("is_delivered", false);
   };
 
+  // Keep ref in sync with selectedContact
+  useEffect(() => { selectedContactRef.current = selectedContact; }, [selectedContact]);
+
   useEffect(() => {
     if (open) {
       setView("chats"); fetchContacts(); fetchUnreadAndLast(); setLoadingReq(true); fetchRequests();
       markAllDelivered();
       const ch = supabase.channel("teacher-inbox-all")
         .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, () => {
-          fetchUnreadAndLast(); if (selectedContact) fetchMessages(selectedContact);
+          fetchUnreadAndLast();
+          const cur = selectedContactRef.current;
+          if (cur) fetchMessages(cur);
         })
         .on("postgres_changes", { event: "UPDATE", schema: "public", table: "teacher_requests" }, () => fetchRequests())
         .subscribe();
