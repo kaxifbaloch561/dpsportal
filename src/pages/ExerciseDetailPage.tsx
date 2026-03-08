@@ -199,7 +199,7 @@ const ExerciseDetailPage = () => {
             No exercises available.
           </div>
         ) : (
-          <div className="max-w-3xl space-y-5">
+          <div className="max-w-3xl space-y-3 sm:space-y-5">
             {exercises.map((item, idx) => (
               <div
                 key={item.id}
