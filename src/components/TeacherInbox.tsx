@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Check, CheckCheck, Clock, Send, ChevronLeft, ShieldCheck, GraduationCap,
-  Search, User, Plus, Sparkles, AlertTriangle, Lightbulb, Mail,
+  Search, User, Plus, Sparkles, AlertTriangle, Lightbulb,
   MessageSquare, Image, Paperclip, Mic, MicOff, X, FileText, Play, Pause
 } from "lucide-react";
 import { toast } from "sonner";
