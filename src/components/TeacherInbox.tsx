@@ -609,7 +609,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                 <div className="flex items-center justify-center py-20"><div className="w-9 h-9 rounded-full border-[3px] border-primary/30 border-t-primary animate-spin" /></div>
               ) : filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20">
-                  <Mail size={36} className="text-muted-foreground/25 mb-2" />
+                  <MessageSquare size={36} className="text-muted-foreground/25 mb-2" />
                   <p className="text-sm text-muted-foreground">No requests found</p>
                 </div>
               ) : filtered.map((req) => {
