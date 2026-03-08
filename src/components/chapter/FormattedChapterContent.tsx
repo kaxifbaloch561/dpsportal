@@ -324,12 +324,18 @@ const HtmlChapterContent = ({ content }: { content: string }) => {
 };
 
 const FormattedChapterContent = ({ content }: { content: string }) => {
-  // If content is HTML (from rich editor), render it directly
+  // If content is already HTML (from rich editor), render it directly
   if (isHtmlContent(content)) {
     return <HtmlChapterContent content={content} />;
   }
 
-  // Otherwise, use the plain-text parser
+  // Auto-convert plain text to professional HTML, then render via the HTML path
+  const convertedHtml = plainTextToHtml(content);
+  if (isHtmlContent(convertedHtml)) {
+    return <HtmlChapterContent content={convertedHtml} />;
+  }
+
+  // Fallback: use the legacy plain-text parser (should rarely reach here)
   const processed = preprocessContent(content);
   const sections = processed.split(/\n---\n/);
   const cards = groupSectionsIntoCards(sections);
