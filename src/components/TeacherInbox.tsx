@@ -310,7 +310,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent aria-label="no-default-close" className="rounded-[24px] max-w-[420px] w-[95vw] max-h-[92vh] sm:max-h-[85vh] flex flex-col p-0 overflow-hidden border-0 gap-0" style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.35)" }}>
+        <DialogContent aria-label="no-default-close" className="rounded-[24px] max-w-[480px] w-[96vw] h-[88vh] sm:h-[80vh] max-h-[88vh] sm:max-h-[80vh] flex flex-col p-0 overflow-hidden border-0 gap-0" style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.35)" }}>
 
         {/* Hidden file inputs */}
         <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx" onChange={(e) => handleFileSelect(e, "document")} />
