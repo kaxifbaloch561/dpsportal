@@ -17,6 +17,10 @@ interface Message {
 interface QASuggestion {
   question: string;
   answer: string;
+  chapter_number: number;
+  chapter_title: string;
+  exercise_type: string;
+  question_number: number;
 }
 
 /* ── Theme map ── */
