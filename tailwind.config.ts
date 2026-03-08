@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Poppins", "sans-serif"],
+        urdu: ['"Noto Nastaliq Urdu"', "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
