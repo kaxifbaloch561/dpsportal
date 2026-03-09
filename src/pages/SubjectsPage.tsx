@@ -43,7 +43,7 @@ const SubjectsPage = () => {
         { label: cls.name },
       ]} />
 
-      <div className="flex-1 px-4 sm:px-8 pb-8 sm:pb-8 pt-2">
+      <div className="flex-1 px-4 sm:px-8 pb-8 sm:pb-8 pt-2 overflow-y-auto">
         <div
           className="flex items-center gap-3 mb-4 sm:mb-5 mt-3 sm:mt-4"
           style={{ animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}
