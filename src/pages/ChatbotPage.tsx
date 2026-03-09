@@ -336,7 +336,7 @@ const ChatbotPage = () => {
   }, []);
 
   const searchQuestions = useCallback(async (query: string) => {
-    if (query.trim().length < 2) {
+    if (query.trim().length < 1) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
@@ -346,7 +346,7 @@ const ChatbotPage = () => {
         p_class_id: classNum,
         p_subject_id: subjectId!,
         p_query: query.trim(),
-        p_limit: 8,
+        p_limit: 10,
       });
       if (data && data.length > 0) {
         setSuggestions(data);
