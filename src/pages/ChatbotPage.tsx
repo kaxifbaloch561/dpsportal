@@ -363,7 +363,7 @@ const ChatbotPage = () => {
   const handleInputChange = useCallback((value: string) => {
     setInput(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => searchQuestions(value), 180);
+    debounceRef.current = setTimeout(() => searchQuestions(value), 150);
   }, [searchQuestions]);
 
   const handleSelectSuggestion = useCallback((qa: QASuggestion) => {
