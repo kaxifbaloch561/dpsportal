@@ -336,7 +336,7 @@ const ChatbotPage = () => {
   }, []);
 
   const searchQuestions = useCallback(async (query: string) => {
-    if (query.trim().length < 2) {
+    if (query.trim().length < 1) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
@@ -346,7 +346,7 @@ const ChatbotPage = () => {
         p_class_id: classNum,
         p_subject_id: subjectId!,
         p_query: query.trim(),
-        p_limit: 8,
+        p_limit: 10,
       });
       if (data && data.length > 0) {
         setSuggestions(data);
@@ -363,7 +363,7 @@ const ChatbotPage = () => {
   const handleInputChange = useCallback((value: string) => {
     setInput(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => searchQuestions(value), 180);
+    debounceRef.current = setTimeout(() => searchQuestions(value), 150);
   }, [searchQuestions]);
 
   const handleSelectSuggestion = useCallback((qa: QASuggestion) => {
@@ -391,39 +391,18 @@ const ChatbotPage = () => {
         p_query: text,
         p_limit: 5,
       });
-      let results: QASuggestion[] = rpcResults || [];
-      if (results.length === 0) {
-        const keywords = text.toLowerCase().replace(/[^\w\s]/g, "").split(/\s+/).filter((w) => w.length > 2);
-        const searchTerms = keywords.join(" & ");
-        if (searchTerms) {
-          const { data: ftsData } = await supabase
-            .from("chapter_qa")
-            .select(`
-              question, 
-              answer,
-              chapters!inner(chapter_number, chapter_title)
-            `)
-            .eq("class_id", classNum)
-            .eq("subject_id", subjectId!)
-            .textSearch("search_vector", searchTerms, { type: "plain" })
-            .limit(3);
-          results = (ftsData || []).map((item: any) => ({
-            question: item.question,
-            answer: item.answer,
-            chapter_number: item.chapters?.chapter_number || 0,
-            chapter_title: item.chapters?.chapter_title || 'General',
-            exercise_type: 'Q&A',
-            question_number: 0
-          }));
-        }
-      }
+      const results: QASuggestion[] = rpcResults || [];
       if (results.length > 0) {
-        const answer = results.map((r) => r.answer).join("\n\n---\n\n");
+        const answer = results.map((r) => {
+          const chLabel = `Ch.${r.chapter_number}`;
+          const typeLabel = formatExerciseType(r.exercise_type);
+          return `**${chLabel} — ${typeLabel} — Q.${r.question_number}**\n${r.answer}`;
+        }).join("\n\n---\n\n");
         setMessages((prev) => [...prev, { role: "assistant", content: answer }]);
       } else {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "Sorry, this question is not available in our database yet. Please try a different question from your syllabus." },
+          { role: "assistant", content: "Sorry, this question is not available in our exercises database yet. Please try a different question from your syllabus exercises." },
         ]);
       }
     } catch (err) {
