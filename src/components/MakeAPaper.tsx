@@ -513,7 +513,11 @@ const MakeAPaper = ({ open, onOpenChange, classId, subjectId, className: clsName
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto sm:rounded-3xl">
+      <DialogContent 
+        className="max-w-lg max-h-[85vh] overflow-y-auto sm:rounded-3xl"
+        onInteractOutside={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
         {/* Step: Mode Selection */}
         {step === "mode" && (
           <>
