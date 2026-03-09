@@ -523,7 +523,7 @@ const ChatbotPage = () => {
                               background: `${theme.glow}08`
                             }}
                           >
-                            {qa.exercise_type}
+                            {formatExerciseType(qa.exercise_type)}
                           </span>
                         )}
                         {qa.question_number > 0 && (
