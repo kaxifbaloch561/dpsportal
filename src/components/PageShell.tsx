@@ -8,7 +8,7 @@ interface PageShellProps {
 const PageShell = ({ children }: PageShellProps) => {
   return (
     <div
-      className="min-h-[100dvh] flex items-center justify-center p-1.5 sm:p-5"
+      className="h-[100dvh] flex items-center justify-center p-1.5 sm:p-5"
       style={{
         background:
           "linear-gradient(-45deg, hsl(235, 60%, 68%), hsl(235, 65%, 58%), hsl(240, 50%, 72%), hsl(235, 70%, 62%))",
@@ -37,19 +37,18 @@ const PageShell = ({ children }: PageShellProps) => {
       />
 
       <div
-        className="w-full max-w-[1400px] min-h-[100dvh] sm:min-h-[85vh] bg-card/95 backdrop-blur-xl relative flex flex-col overflow-y-auto"
+        className="w-full max-w-[1400px] h-[calc(100dvh-12px)] sm:h-[calc(100dvh-40px)] bg-card/95 backdrop-blur-xl relative flex flex-col overflow-hidden"
         style={{
           borderRadius: "clamp(12px, 3vw, 40px)",
           boxShadow:
             "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
           animation:
             "containerSpring 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards",
-          maxHeight: "100dvh",
         }}
       >
         {children}
         <AdminBackButton />
-        <footer className="relative mt-auto overflow-hidden py-3 sm:py-4">
+        <footer className="relative shrink-0 overflow-hidden py-3 sm:py-4">
           {/* Gradient line */}
           <div
             className="mx-auto mb-2 h-[1px] w-2/3 sm:w-1/2"

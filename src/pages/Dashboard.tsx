@@ -197,7 +197,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="flex-1 px-3 sm:px-8 pb-4 sm:pb-8">
+      <div className="flex-1 px-3 sm:px-8 pb-4 sm:pb-8 overflow-y-auto">
         <div className="flex items-center gap-3 mb-3 sm:mb-5 mt-2 sm:mt-4" style={{ animation: "slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
           <div className="h-8 w-1 rounded-full bg-gradient-to-b from-primary to-accent" />
           <h2 className="text-lg sm:text-2xl font-extrabold text-foreground tracking-tight">Select Your Class</h2>
