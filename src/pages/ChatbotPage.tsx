@@ -23,6 +23,18 @@ interface QASuggestion {
   question_number: number;
 }
 
+const formatExerciseType = (type: string): string => {
+  const map: Record<string, string> = {
+    short_question_answers: "Short Q/A",
+    long_question_answers: "Long Q/A",
+    fill_in_the_blanks: "Fill in Blanks",
+    mcqs: "MCQ",
+    multiple_choice: "MCQ",
+    true_false: "True/False",
+  };
+  return map[type] || type.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+};
+
 /* ── Theme map ── */
 const subjectGradients: Record<string, { bg: string; glow: string; accent: string }> = {
   math: { bg: "linear-gradient(135deg, hsl(235,78%,55%), hsl(280,70%,60%))", glow: "hsl(260,74%,58%)", accent: "hsl(280,70%,92%)" },
