@@ -601,6 +601,7 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                     </button>
                   )}
                 </div>
+              )}
             </div>
           </>
         )}
