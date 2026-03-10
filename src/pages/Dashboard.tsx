@@ -154,6 +154,7 @@ const Dashboard = () => {
             )}
           </button>
           <button
+            id="tour-discussion"
             onClick={() => setShowDiscussion(true)}
             className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
           >
