@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Send, MessageSquare, ChevronLeft, User, Clock, CheckCheck, Search, Trash2, X } from "lucide-react";
+import { Send, ChevronLeft, User, Search, Trash2, X, Check, CheckCheck, Paperclip } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -24,6 +22,7 @@ interface Message {
   subject: string;
   message: string;
   is_read: boolean;
+  is_delivered: boolean | null;
   parent_id: string | null;
   created_at: string;
 }
@@ -38,28 +37,21 @@ const AdminMessaging = () => {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [selectedTeacher, setSelectedTeacher] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newSubject, setNewSubject] = useState("");
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [search, setSearch] = useState("");
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+  const [lastMessages, setLastMessages] = useState<Record<string, Message>>({});
   const [deleteTarget, setDeleteTarget] = useState<{ type: "message" | "chat"; id?: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchTeachers = async () => {
-    const { data } = await supabase
-      .from("teacher_accounts")
-      .select("email, first_name, last_name")
-      .eq("status", "approved");
+    const { data } = await supabase.from("teacher_accounts").select("email, first_name, last_name").eq("status", "approved");
     if (data) setTeachers(data);
   };
 
   const fetchUnreadCounts = async () => {
-    const { data } = await supabase
-      .from("admin_messages")
-      .select("sender_email")
-      .eq("sender_type", "teacher")
-      .eq("is_read", false);
+    const { data } = await supabase.from("admin_messages").select("sender_email").eq("sender_type", "teacher").eq("is_read", false);
     if (data) {
       const counts: Record<string, number> = {};
       data.forEach((m: any) => { counts[m.sender_email] = (counts[m.sender_email] || 0) + 1; });
@@ -67,56 +59,52 @@ const AdminMessaging = () => {
     }
   };
 
+  const fetchLastMessages = async () => {
+    const { data } = await supabase.from("admin_messages").select("*")
+      .or("sender_email.eq.admin,recipient_email.eq.admin")
+      .order("created_at", { ascending: false });
+    if (data) {
+      const lasts: Record<string, Message> = {};
+      (data as Message[]).forEach((m) => {
+        const other = m.sender_email === "admin" ? m.recipient_email : m.sender_email;
+        if (!lasts[other]) lasts[other] = m;
+      });
+      setLastMessages(lasts);
+    }
+  };
+
   const fetchMessages = async (teacherEmail: string) => {
-    const { data } = await supabase
-      .from("admin_messages")
-      .select("*")
+    const { data } = await supabase.from("admin_messages").select("*")
       .or(`and(sender_email.eq.admin,recipient_email.eq.${teacherEmail}),and(sender_email.eq.${teacherEmail},recipient_email.eq.admin)`)
       .order("created_at", { ascending: true });
     if (data) setMessages(data as Message[]);
-
-    await supabase
-      .from("admin_messages")
-      .update({ is_read: true })
-      .eq("sender_email", teacherEmail)
-      .eq("sender_type", "teacher")
-      .eq("is_read", false);
+    await supabase.from("admin_messages").update({ is_read: true })
+      .eq("sender_email", teacherEmail).eq("sender_type", "teacher").eq("is_read", false);
     fetchUnreadCounts();
   };
 
   useEffect(() => {
-    fetchTeachers();
-    fetchUnreadCounts();
-    const ch = supabase
-      .channel("admin-messaging")
+    fetchTeachers(); fetchUnreadCounts(); fetchLastMessages();
+    const ch = supabase.channel("admin-messaging")
       .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, () => {
-        fetchUnreadCounts();
+        fetchUnreadCounts(); fetchLastMessages();
         if (selectedTeacher) fetchMessages(selectedTeacher);
-      })
-      .subscribe();
+      }).subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [selectedTeacher]);
 
-  useEffect(() => {
-    if (selectedTeacher) fetchMessages(selectedTeacher);
-  }, [selectedTeacher]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  useEffect(() => { if (selectedTeacher) fetchMessages(selectedTeacher); }, [selectedTeacher]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   const handleSend = async () => {
     if (!selectedTeacher || !newMessage.trim()) return;
     setSending(true);
     const { error } = await supabase.from("admin_messages").insert({
-      sender_type: "admin",
-      sender_email: "admin",
-      recipient_email: selectedTeacher,
-      subject: newSubject.trim() || "Message from Admin",
-      message: newMessage.trim(),
+      sender_type: "admin", sender_email: "admin", recipient_email: selectedTeacher,
+      subject: "Message from Admin", message: newMessage.trim(),
     });
     if (error) toast.error("Failed to send");
-    else { setNewMessage(""); setNewSubject(""); toast.success("Message sent!"); }
+    else { setNewMessage(""); toast.success("Message sent!"); }
     setSending(false);
   };
 
@@ -129,9 +117,7 @@ const AdminMessaging = () => {
 
   const handleDeleteChat = async () => {
     if (!selectedTeacher) return;
-    const { error } = await supabase
-      .from("admin_messages")
-      .delete()
+    const { error } = await supabase.from("admin_messages").delete()
       .or(`and(sender_email.eq.admin,recipient_email.eq.${selectedTeacher}),and(sender_email.eq.${selectedTeacher},recipient_email.eq.admin)`);
     if (error) toast.error("Failed to delete chat");
     else { toast.success("Chat deleted"); setMessages([]); }
@@ -147,58 +133,103 @@ const AdminMessaging = () => {
     return t ? `${t.first_name} ${t.last_name}` : email;
   };
 
-  // Get last message preview per teacher
-  const getLastMessage = (email: string) => {
-    const teacherMsgs = messages.length > 0 && selectedTeacher === email ? messages : [];
-    // We don't have all messages loaded for non-selected teachers, so skip
-    return null;
+  const getInitials = (email: string) => {
+    const t = teachers.find((t) => t.email === email);
+    if (t) return `${t.first_name[0]}${t.last_name[0]}`.toUpperCase();
+    return email.slice(0, 2).toUpperCase();
   };
 
+  const formatTime = (d: string) => {
+    const date = new Date(d);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    if (diff < 86400000) return date.toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" });
+    if (diff < 172800000) return "Yesterday";
+    return date.toLocaleDateString("en-PK", { day: "numeric", month: "short" });
+  };
+
+  // Sort teachers by last message time
+  const sortedTeachers = [...filtered].sort((a, b) => {
+    const la = lastMessages[a.email];
+    const lb = lastMessages[b.email];
+    if (la && lb) return new Date(lb.created_at).getTime() - new Date(la.created_at).getTime();
+    if (la) return -1;
+    if (lb) return 1;
+    return 0;
+  });
+
+  /* ════════ CHAT LIST ════════ */
   if (!selectedTeacher) {
     return (
-      <div className="px-6 pb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-            <MessageSquare size={20} />
+      <div className="px-4 sm:px-6 pb-6">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-11 h-11 rounded-[14px] bg-foreground flex items-center justify-center text-background">
+            <Send size={18} className="rotate-[-30deg]" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Direct Messages</h3>
-            <p className="text-xs text-muted-foreground">Send messages to teachers</p>
+            <h3 className="text-base font-bold text-foreground tracking-tight">Direct Messages</h3>
+            <p className="text-[11px] text-muted-foreground">Send messages to teachers</p>
           </div>
         </div>
 
+        {/* Search */}
         <div className="relative mb-4">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search teachers..."
+            placeholder="Search conversations"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 rounded-xl"
+            className="pl-10 rounded-[14px] border-border bg-background h-11 text-sm"
           />
         </div>
 
-        <div className="space-y-2">
-          {filtered.map((t) => (
-            <button
-              key={t.email}
-              onClick={() => setSelectedTeacher(t.email)}
-              className="w-full flex items-center gap-3 p-3 rounded-2xl border border-border bg-card hover:bg-accent hover:-translate-y-0.5 hover:shadow-md transition-all duration-300"
-            >
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                <User size={18} />
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-sm font-semibold text-foreground">{t.first_name} {t.last_name}</p>
-                <p className="text-[11px] text-muted-foreground">{t.email}</p>
-              </div>
-              {(unreadCounts[t.email] || 0) > 0 && (
-                <span className="min-w-[22px] h-[22px] flex items-center justify-center bg-destructive text-destructive-foreground text-[11px] font-bold rounded-full px-1.5 animate-pulse">
-                  {unreadCounts[t.email]}
-                </span>
-              )}
-            </button>
-          ))}
-          {filtered.length === 0 && (
+        {/* Section Label */}
+        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-3">Recent chats</p>
+
+        {/* Chat List */}
+        <div className="space-y-1">
+          {sortedTeachers.map((t) => {
+            const lastMsg = lastMessages[t.email];
+            const unread = unreadCounts[t.email] || 0;
+            const isLastMine = lastMsg?.sender_email === "admin";
+            return (
+              <button
+                key={t.email}
+                onClick={() => setSelectedTeacher(t.email)}
+                className="w-full flex items-center gap-3 p-3 rounded-[14px] border border-transparent hover:bg-muted/50 hover:border-border transition-all duration-200 text-left"
+              >
+                <div className="w-[42px] h-[42px] rounded-[12px] bg-foreground text-background flex items-center justify-center font-semibold text-[13px] shrink-0">
+                  {getInitials(t.email)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-0.5">
+                    <p className="text-[13px] font-semibold text-foreground truncate">{t.first_name} {t.last_name}</p>
+                    {lastMsg && (
+                      <span className={`text-[11px] shrink-0 ml-2 ${unread > 0 ? "text-foreground font-bold" : "text-muted-foreground"}`}>
+                        {formatTime(lastMsg.created_at)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-[12px] text-muted-foreground truncate pr-3 flex items-center gap-1">
+                      {isLastMine && lastMsg && (
+                        lastMsg.is_read ? <CheckCheck size={13} className="shrink-0 text-muted-foreground" />
+                          : <Check size={13} className="shrink-0 text-muted-foreground/50" />
+                      )}
+                      <span className="truncate">{lastMsg?.message || t.email}</span>
+                    </p>
+                    {unread > 0 && (
+                      <span className="min-w-[20px] h-[20px] flex items-center justify-center bg-foreground text-background text-[10px] font-bold rounded-full px-1.5 shrink-0">
+                        {unread}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+          {sortedTeachers.length === 0 && (
             <p className="text-center text-muted-foreground py-8 text-sm">No approved teachers found</p>
           )}
         </div>
@@ -206,58 +237,85 @@ const AdminMessaging = () => {
     );
   }
 
+  /* ════════ CONVERSATION ════════ */
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-border flex items-center gap-3">
-        <button onClick={() => setSelectedTeacher(null)} className="p-1.5 rounded-lg hover:bg-accent transition-colors">
-          <ChevronLeft size={20} />
-        </button>
-        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-          <User size={16} />
+    <div className="flex flex-col h-full bg-background">
+      {/* Top Bar */}
+      <div className="px-4 sm:px-6 py-4 border-b border-border flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button onClick={() => setSelectedTeacher(null)} className="w-10 h-10 rounded-[10px] border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-muted/50 transition-colors">
+            <ChevronLeft size={18} />
+          </button>
+          <div className="w-[42px] h-[42px] rounded-[12px] bg-foreground text-background flex items-center justify-center font-semibold text-[13px]">
+            {getInitials(selectedTeacher)}
+          </div>
+          <div>
+            <p className="text-[14px] font-bold text-foreground">{getTeacherName(selectedTeacher)}</p>
+            <p className="text-[11px] text-muted-foreground">Teacher</p>
+          </div>
         </div>
-        <div className="flex-1">
-          <p className="text-sm font-bold text-foreground">{getTeacherName(selectedTeacher)}</p>
-          <p className="text-[10px] text-muted-foreground">{selectedTeacher}</p>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setDeleteTarget({ type: "chat" })}
+            className="w-10 h-10 rounded-[10px] border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
+            title="Delete entire chat"
+          >
+            <Trash2 size={16} />
+          </button>
         </div>
-        <button
-          onClick={() => setDeleteTarget({ type: "chat" })}
-          className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors"
-          title="Delete entire chat"
-        >
-          <Trash2 size={16} />
-        </button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-auto p-4 space-y-3">
+      <div className="flex-1 overflow-auto px-4 sm:px-6 py-6 space-y-4 bg-background">
         {messages.length === 0 && (
-          <p className="text-center text-muted-foreground py-12 text-sm">No messages yet. Start a conversation!</p>
+          <div className="flex justify-center my-8">
+            <span className="text-[12px] bg-muted/50 text-muted-foreground px-4 py-1.5 rounded-full border border-border font-medium">
+              No messages yet — start a conversation
+            </span>
+          </div>
         )}
-        {messages.map((msg) => {
+        {messages.map((msg, i) => {
           const isAdmin = msg.sender_type === "admin";
+          const prevMsg = messages[i - 1];
+          const showTime = !prevMsg || (new Date(msg.created_at).getTime() - new Date(prevMsg.created_at).getTime()) > 600000;
           return (
-            <div key={msg.id} className={`flex ${isAdmin ? "justify-end" : "justify-start"} group`}>
-              <div className={`relative max-w-[80%] rounded-2xl p-3 ${
-                isAdmin
-                  ? "bg-primary text-primary-foreground rounded-br-md"
-                  : "bg-muted text-foreground rounded-bl-md"
-              }`}>
-                <button
-                  onClick={() => setDeleteTarget({ type: "message", id: msg.id })}
-                  className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
-                  title="Delete message"
-                >
-                  <X size={10} />
-                </button>
-                <p className="text-[10px] font-bold mb-1 opacity-75">{msg.subject}</p>
-                <p className="text-sm">{msg.message}</p>
-                <div className="flex items-center gap-1 mt-1 justify-end">
-                  <Clock size={10} className="opacity-50" />
-                  <span className="text-[9px] opacity-50">
-                    {new Date(msg.created_at).toLocaleDateString("en-PK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+            <div key={msg.id}>
+              {showTime && (
+                <div className="flex justify-center my-4">
+                  <span className="text-[11px] bg-muted/50 text-muted-foreground px-3.5 py-1 rounded-full border border-border">
+                    {formatTime(msg.created_at)}
                   </span>
-                  {isAdmin && <CheckCheck size={10} className={msg.is_read ? "text-green-300" : "opacity-50"} />}
+                </div>
+              )}
+              <div className={`flex ${isAdmin ? "justify-end" : "justify-start"} group`}>
+                <div className="max-w-[70%] flex flex-col gap-1">
+                  <div
+                    className={`relative px-3.5 py-2.5 rounded-2xl border text-[14px] leading-relaxed ${
+                      isAdmin
+                        ? "bg-muted/60 border-border rounded-br-md"
+                        : "bg-background border-border rounded-bl-md"
+                    }`}
+                    style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.04)" }}
+                  >
+                    {/* Delete button */}
+                    <button
+                      onClick={() => setDeleteTarget({ type: "message", id: msg.id })}
+                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                    >
+                      <X size={10} />
+                    </button>
+                    <p className="text-foreground">{msg.message}</p>
+                  </div>
+                  <div className={`flex items-center gap-1.5 px-1 ${isAdmin ? "justify-end" : "justify-start"}`}>
+                    <span className="text-[11px] text-muted-foreground">
+                      {new Date(msg.created_at).toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" })}
+                    </span>
+                    {isAdmin && (
+                      msg.is_read
+                        ? <CheckCheck size={13} className="text-muted-foreground" />
+                        : <Check size={13} className="text-muted-foreground/50" />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -266,25 +324,23 @@ const AdminMessaging = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="p-3 border-t border-border space-y-2">
-        <Input
-          placeholder="Subject (optional)"
-          value={newSubject}
-          onChange={(e) => setNewSubject(e.target.value)}
-          className="rounded-xl text-sm h-9"
-        />
-        <div className="flex gap-2">
-          <Textarea
-            placeholder="Type a message..."
+      {/* Composer */}
+      <div className="px-4 sm:px-5 py-4 border-t border-border">
+        <div className="flex items-center gap-2.5 border border-border rounded-[18px] px-3 py-2 bg-background" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
+          <input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className="rounded-xl text-sm min-h-[60px] resize-none"
+            placeholder="Write a message..."
+            className="flex-1 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground outline-none border-none"
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
           />
-          <Button size="icon" onClick={handleSend} disabled={sending || !newMessage.trim()} className="rounded-xl h-auto self-end">
-            <Send size={16} />
-          </Button>
+          <button
+            onClick={handleSend}
+            disabled={sending || !newMessage.trim()}
+            className="w-11 h-11 rounded-[12px] bg-foreground text-background flex items-center justify-center shrink-0 hover:opacity-90 transition-opacity disabled:opacity-30"
+          >
+            <Send size={18} />
+          </button>
         </div>
       </div>
 
@@ -292,9 +348,7 @@ const AdminMessaging = () => {
       <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
         <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {deleteTarget?.type === "chat" ? "Delete Entire Chat?" : "Delete Message?"}
-            </AlertDialogTitle>
+            <AlertDialogTitle>{deleteTarget?.type === "chat" ? "Delete Entire Chat?" : "Delete Message?"}</AlertDialogTitle>
             <AlertDialogDescription>
               {deleteTarget?.type === "chat"
                 ? `All messages with ${getTeacherName(selectedTeacher)} will be permanently deleted.`
@@ -306,9 +360,7 @@ const AdminMessaging = () => {
             <AlertDialogAction
               onClick={() => deleteTarget?.type === "chat" ? handleDeleteChat() : deleteTarget?.id && handleDeleteMessage(deleteTarget.id)}
               className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
+            >Delete</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
