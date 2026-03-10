@@ -13,6 +13,7 @@ import TeacherInbox from "@/components/TeacherInbox";
 import AnnouncementPopup from "@/components/AnnouncementPopup";
 import { supabase } from "@/integrations/supabase/client";
 import DiscussionRoom from "@/components/DiscussionRoom";
+import OnboardingTour from "@/components/OnboardingTour";
 
 const classThemes = [
   { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80%,55%))", shadow: "hsl(235,78%,65%)" },
@@ -108,6 +109,7 @@ const Dashboard = () => {
       {/* Fixed top corners: Inbox (left) & Profile (right) */}
       <div className="flex items-center justify-between px-3 sm:px-6 pt-3 sm:pt-4">
         <button
+          id="tour-inbox"
           onClick={() => setShowInbox(true)}
           className="group relative flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl bg-card/80 backdrop-blur-md border border-border/50 text-foreground hover:border-primary/40 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.2)] hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
         >
@@ -122,6 +124,7 @@ const Dashboard = () => {
           <span className="text-[10px] sm:text-xs font-bold tracking-wide uppercase text-muted-foreground group-hover:text-foreground transition-colors">Inbox</span>
         </button>
         <button
+          id="tour-profile"
           onClick={() => setShowProfile(true)}
           className="group relative flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl bg-card/80 backdrop-blur-md border border-border/50 text-foreground hover:border-primary/40 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.2)] hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
         >
@@ -138,6 +141,7 @@ const Dashboard = () => {
       <div className="px-3 sm:px-6 py-2 overflow-x-auto scrollbar-hide">
         <div className="flex items-center gap-2 min-w-max justify-center">
           <button
+            id="tour-announcements"
             onClick={() => setShowAnnouncements(true)}
             className="relative flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
           >
@@ -150,6 +154,7 @@ const Dashboard = () => {
             )}
           </button>
           <button
+            id="tour-discussion"
             onClick={() => setShowDiscussion(true)}
             className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
           >
@@ -170,7 +175,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      <div className="px-3 sm:px-8 mb-4">
+      <div className="px-3 sm:px-8 mb-4" id="tour-quick-actions">
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {quickActions.map((action, i) => {
             const Icon = action.icon;
@@ -205,7 +210,7 @@ const Dashboard = () => {
           <span className="text-[10px] font-bold text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full">{classesData.length} Classes</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5">
+        <div id="tour-classes" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5">
           {classesData.map((cls, i) => {
             const theme = classThemes[i];
             return (
@@ -262,6 +267,8 @@ const Dashboard = () => {
       <TeacherProfile open={showProfile} onOpenChange={setShowProfile} />
       <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />
       <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
+
+      {user?.role === "teacher" && user.email && <OnboardingTour userEmail={user.email} />}
     </PageShell>
   );
 };
