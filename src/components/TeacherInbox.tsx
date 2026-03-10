@@ -319,61 +319,70 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
         {/* ════════ CHATS LIST ════════ */}
         {view === "chats" && (
           <>
-            <div className="relative overflow-hidden" style={{ background: "linear-gradient(145deg, hsl(var(--primary)), hsl(255,75%,48%), hsl(280,65%,45%))" }}>
-              <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-xl" />
-              <div className="relative px-5 pt-5 pb-4">
-                <div className="flex items-center justify-between mb-3.5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-lg shadow-black/10">
-                      <Send size={15} strokeWidth={2.5} className="text-white rotate-[-30deg]" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-extrabold text-white tracking-tight leading-none">Inbox</h2>
-                      <p className="text-[9px] text-white/50 font-medium mt-0.5">Messages & Requests</p>
-                    </div>
+            {/* Clean header */}
+            <div className="px-5 pt-5 pb-4 border-b border-border bg-background">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-[14px] bg-foreground flex items-center justify-center text-background">
+                    <Send size={17} strokeWidth={2.5} className="rotate-[-30deg]" />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => { setSearch(""); setView("new-chat"); }}
-                      className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/25 transition-all active:scale-95 border border-white/10 shadow-lg shadow-black/10"
-                    >
-                      <Plus size={16} strokeWidth={2.5} />
-                    </button>
-                    <button
-                      onClick={() => onOpenChange(false)}
-                      className="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all active:scale-95 border border-white/10"
-                    >
-                      <X size={15} strokeWidth={2.5} />
-                    </button>
+                  <div>
+                    <h2 className="text-lg font-extrabold text-foreground tracking-tight leading-none">Inbox</h2>
+                    <p className="text-[10px] text-muted-foreground font-medium mt-0.5">Messages & Requests</p>
                   </div>
                 </div>
-                {/* Tabs */}
-                <div className="flex bg-white/10 backdrop-blur-md rounded-2xl p-1 border border-white/5">
+                <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setView("chats")}
-                    className="flex-1 py-2 text-[11px] font-bold rounded-xl bg-white text-primary text-center transition-all shadow-md"
+                    onClick={() => { setSearch(""); setView("new-chat"); }}
+                    className="w-10 h-10 rounded-[10px] border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-muted/50 transition-all active:scale-95"
                   >
-                    Chats {totalUnread > 0 && <span className="ml-1 bg-destructive text-destructive-foreground text-[8px] px-1.5 py-0.5 rounded-full">{totalUnread}</span>}
+                    <Plus size={16} strokeWidth={2.5} />
                   </button>
                   <button
-                    onClick={() => setView("requests")}
-                    className="flex-1 py-2 text-[11px] font-bold rounded-xl text-white/60 hover:text-white text-center transition-all"
+                    onClick={() => onOpenChange(false)}
+                    className="w-10 h-10 rounded-[10px] border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-muted/50 transition-all active:scale-95"
                   >
-                    Requests {repliedCount > 0 && <span className="ml-1 opacity-50">({repliedCount})</span>}
+                    <X size={15} strokeWidth={2.5} />
                   </button>
                 </div>
               </div>
+              {/* Tabs */}
+              <div className="flex bg-muted/50 rounded-[14px] p-1 border border-border">
+                <button
+                  onClick={() => setView("chats")}
+                  className="flex-1 py-2 text-[11px] font-bold rounded-[10px] bg-background text-foreground text-center transition-all shadow-sm border border-border"
+                >
+                  Chats {totalUnread > 0 && <span className="ml-1 bg-foreground text-background text-[8px] px-1.5 py-0.5 rounded-full">{totalUnread}</span>}
+                </button>
+                <button
+                  onClick={() => setView("requests")}
+                  className="flex-1 py-2 text-[11px] font-bold rounded-[10px] text-muted-foreground hover:text-foreground text-center transition-all"
+                >
+                  Requests {repliedCount > 0 && <span className="ml-1 opacity-50">({repliedCount})</span>}
+                </button>
+              </div>
+            </div>
+
+            {/* Search */}
+            <div className="px-4 pt-3 pb-1 bg-background">
+              <div className="relative">
+                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  placeholder="Search conversations"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-[14px] border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground outline-none"
+                />
+              </div>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mt-3 mb-1 px-1">Recent chats</p>
             </div>
 
             <div className="flex-1 overflow-auto bg-background">
               {activeChats.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 px-6">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mb-4">
-                    <MessageSquare size={32} className="text-primary/30" />
+                  <div className="w-16 h-16 rounded-[18px] bg-muted/50 border border-border flex items-center justify-center mb-4">
+                    <MessageSquare size={28} className="text-muted-foreground/40" />
                   </div>
                   <p className="text-base font-semibold text-foreground/70 mb-1">No conversations yet</p>
-                  <p className="text-xs text-muted-foreground text-center">Tap <span className="font-bold text-primary">+</span> to start chatting</p>
+                  <p className="text-xs text-muted-foreground text-center">Tap <span className="font-bold text-foreground">+</span> to start chatting</p>
                 </div>
               ) : (
                 activeChats.map((contact) => {
@@ -384,31 +393,31 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                     <button
                       key={contact.id}
                       onClick={() => openConversation(contact)}
-                      className="w-full flex items-center gap-3.5 px-4 py-3.5 hover:bg-accent/40 transition-all border-b border-border/30 text-left active:bg-accent/60"
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-all border-b border-border/30 text-left"
                     >
-                      <div className="w-[52px] h-[52px] rounded-2xl flex items-center justify-center shrink-0 text-white shadow-md" style={{ background: getAvatarGradient(contact.type) }}>
-                        {getContactIcon(contact.type)}
+                      <div className="w-[42px] h-[42px] rounded-[12px] bg-foreground text-background flex items-center justify-center font-semibold text-[13px] shrink-0">
+                        {getContactInitials(contact)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-0.5">
-                          <p className="text-[13px] font-bold text-foreground truncate">{contact.label}</p>
-                          <span className={`text-[10px] shrink-0 ml-2 ${unread > 0 ? "text-primary font-bold" : "text-muted-foreground"}`}>
+                          <p className="text-[13px] font-semibold text-foreground truncate">{contact.label}</p>
+                          <span className={`text-[11px] shrink-0 ml-2 ${unread > 0 ? "text-foreground font-bold" : "text-muted-foreground"}`}>
                             {lastMsg && formatTime(lastMsg.created_at)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <p className="text-[11px] text-muted-foreground truncate pr-3 flex items-center gap-0.5">
+                          <p className="text-[12px] text-muted-foreground truncate pr-3 flex items-center gap-1">
                             {isLastMine && (
                               lastMsg?.is_read
-                                ? <CheckCheck size={12} className="shrink-0 text-sky-500" />
+                                ? <CheckCheck size={13} className="shrink-0 text-muted-foreground" />
                                 : lastMsg?.is_delivered
-                                  ? <CheckCheck size={12} className="shrink-0 text-muted-foreground/50" />
-                                  : <Check size={12} className="shrink-0 text-muted-foreground/50" />
+                                  ? <CheckCheck size={13} className="shrink-0 text-muted-foreground/50" />
+                                  : <Check size={13} className="shrink-0 text-muted-foreground/50" />
                             )}
                             <span className="truncate">{lastMsg?.file_type?.startsWith("image") ? "📷 Photo" : lastMsg?.file_type?.startsWith("audio") ? "🎤 Voice" : lastMsg?.message || ""}</span>
                           </p>
                           {unread > 0 && (
-                            <span className="min-w-[22px] h-[22px] flex items-center justify-center bg-primary text-primary-foreground text-[10px] font-bold rounded-full px-1.5 shrink-0 shadow-sm">
+                            <span className="min-w-[20px] h-[20px] flex items-center justify-center bg-foreground text-background text-[10px] font-bold rounded-full px-1.5 shrink-0">
                               {unread}
                             </span>
                           )}
