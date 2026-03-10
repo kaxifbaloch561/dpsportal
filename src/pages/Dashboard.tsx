@@ -141,6 +141,7 @@ const Dashboard = () => {
       <div className="px-3 sm:px-6 py-2 overflow-x-auto scrollbar-hide">
         <div className="flex items-center gap-2 min-w-max justify-center">
           <button
+            id="tour-announcements"
             onClick={() => setShowAnnouncements(true)}
             className="relative flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
           >
