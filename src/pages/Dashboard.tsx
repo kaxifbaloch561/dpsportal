@@ -175,7 +175,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      <div className="px-3 sm:px-8 mb-4">
+      <div className="px-3 sm:px-8 mb-4" id="tour-quick-actions">
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {quickActions.map((action, i) => {
             const Icon = action.icon;
