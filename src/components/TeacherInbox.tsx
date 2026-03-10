@@ -601,11 +601,6 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                     </button>
                   )}
                 </div>
-              )}
-                    </button>
-                  )}
-                </div>
-              )}
             </div>
           </>
         )}
@@ -613,21 +608,19 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
         {/* ════════ REQUESTS ════════ */}
         {view === "requests" && (
           <>
-            <div style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(260,70%,55%))" }}>
-              <div className="px-4 pt-5 pb-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <button onClick={() => setView("chats")} className="w-9 h-9 rounded-xl bg-primary-foreground/15 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/25 transition-all active:scale-95">
-                    <ChevronLeft size={20} />
-                  </button>
-                  <h2 className="text-base font-bold text-primary-foreground">My Requests</h2>
-                </div>
-                <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
-                  {[{ key: "all", label: "All" }, { key: "replied", label: "Replied" }, { key: "feature", label: "Features" }, { key: "problem", label: "Problems" }].map((f) => (
-                    <button key={f.key} onClick={() => setFilter(f.key)}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0 transition-all ${filter === f.key ? "bg-primary-foreground text-primary shadow-sm" : "bg-primary-foreground/15 text-primary-foreground/70 hover:bg-primary-foreground/25"}`}
-                    >{f.label}</button>
-                  ))}
-                </div>
+            <div className="px-4 pt-5 pb-4 border-b border-border bg-background">
+              <div className="flex items-center gap-3 mb-3">
+                <button onClick={() => setView("chats")} className="w-10 h-10 rounded-[10px] border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-muted/50 transition-all active:scale-95">
+                  <ChevronLeft size={18} />
+                </button>
+                <h2 className="text-base font-bold text-foreground">My Requests</h2>
+              </div>
+              <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+                {[{ key: "all", label: "All" }, { key: "replied", label: "Replied" }, { key: "feature", label: "Features" }, { key: "problem", label: "Problems" }].map((f) => (
+                  <button key={f.key} onClick={() => setFilter(f.key)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0 transition-all border ${filter === f.key ? "bg-foreground text-background border-foreground" : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"}`}
+                  >{f.label}</button>
+                ))}
               </div>
             </div>
             <div className="flex-1 overflow-auto space-y-2 p-3 bg-background">
