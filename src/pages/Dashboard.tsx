@@ -267,6 +267,8 @@ const Dashboard = () => {
       <TeacherProfile open={showProfile} onOpenChange={setShowProfile} />
       <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />
       <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
+
+      {user?.role === "teacher" && user.email && <OnboardingTour userEmail={user.email} />}
     </PageShell>
   );
 };
