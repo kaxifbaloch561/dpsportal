@@ -434,23 +434,21 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
         {/* ════════ NEW CHAT ════════ */}
         {view === "new-chat" && (
           <>
-            <div style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(260,70%,55%))" }}>
-              <div className="px-4 pt-5 pb-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <button onClick={() => setView("chats")} className="w-9 h-9 rounded-xl bg-primary-foreground/15 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/25 transition-all active:scale-95">
-                    <ChevronLeft size={20} />
-                  </button>
-                  <h2 className="text-base font-bold text-primary-foreground">New Message</h2>
-                </div>
-                <div className="relative">
-                  <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary-foreground/40" />
-                  <input
-                    value={search} onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search contacts..."
-                    className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-primary-foreground/15 backdrop-blur-sm text-primary-foreground placeholder:text-primary-foreground/40 text-sm outline-none border-none"
-                    autoFocus
-                  />
-                </div>
+            <div className="px-4 pt-5 pb-4 border-b border-border bg-background">
+              <div className="flex items-center gap-3 mb-3">
+                <button onClick={() => setView("chats")} className="w-10 h-10 rounded-[10px] border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-muted/50 transition-all active:scale-95">
+                  <ChevronLeft size={18} />
+                </button>
+                <h2 className="text-base font-bold text-foreground">New Message</h2>
+              </div>
+              <div className="relative">
+                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  value={search} onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search contacts..."
+                  className="w-full pl-10 pr-4 py-2.5 rounded-[14px] border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground outline-none"
+                  autoFocus
+                />
               </div>
             </div>
             <div className="flex-1 overflow-auto bg-background">
@@ -458,16 +456,16 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                 <button
                   key={contact.id}
                   onClick={() => openConversation(contact)}
-                  className="w-full flex items-center gap-3.5 px-4 py-3 hover:bg-accent/40 transition-all border-b border-border/30 text-left active:bg-accent/60"
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-all border-b border-border/30 text-left"
                 >
-                  <div className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-sm" style={{ background: getAvatarGradient(contact.type) }}>
-                    {getContactIcon(contact.type)}
+                  <div className="w-[42px] h-[42px] rounded-[12px] bg-foreground text-background flex items-center justify-center font-semibold text-[13px] shrink-0">
+                    {getContactInitials(contact)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground">{contact.label}</p>
                     <p className="text-[10px] text-muted-foreground truncate">{contact.subtitle}</p>
                   </div>
-                  <span className="text-[9px] font-semibold text-muted-foreground capitalize px-2.5 py-1 rounded-full bg-muted">{contact.type}</span>
+                  <span className="text-[9px] font-semibold text-muted-foreground capitalize px-2.5 py-1 rounded-full bg-muted border border-border">{contact.type}</span>
                 </button>
               ))}
             </div>
@@ -477,28 +475,29 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
         {/* ════════ CONVERSATION ════════ */}
         {view === "conversation" && selectedContact && (
           <>
-            <div className="flex items-center gap-3 px-3 py-3" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(260,70%,55%))" }}>
-              <button onClick={() => { setView("chats"); setSelectedContact(null); }} className="w-9 h-9 rounded-xl bg-primary-foreground/15 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/25 transition-all active:scale-95 shrink-0">
-                <ChevronLeft size={20} />
+            {/* Clean header */}
+            <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border bg-background">
+              <button onClick={() => { setView("chats"); setSelectedContact(null); }} className="w-10 h-10 rounded-[10px] border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-muted/50 transition-all active:scale-95 shrink-0">
+                <ChevronLeft size={18} />
               </button>
-              <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-sm border border-white/20" style={{ background: getAvatarGradient(selectedContact.type) }}>
-                {getContactIcon(selectedContact.type)}
+              <div className="w-[42px] h-[42px] rounded-[12px] bg-foreground text-background flex items-center justify-center font-semibold text-[13px] shrink-0">
+                {getContactInitials(selectedContact)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-primary-foreground truncate">{selectedContact.label}</p>
-                <p className="text-[10px] text-primary-foreground/60 truncate">{selectedContact.type === "teacher" ? selectedContact.email : selectedContact.subtitle}</p>
+                <p className="text-[14px] font-bold text-foreground truncate">{selectedContact.label}</p>
+                <p className="text-[11px] text-muted-foreground truncate capitalize">{selectedContact.type === "teacher" ? selectedContact.email : selectedContact.subtitle}</p>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-auto px-3 py-2 space-y-1 min-h-[200px] bg-[hsl(var(--muted)/0.3)]">
+            <div className="flex-1 overflow-auto px-4 py-4 space-y-3 min-h-[200px] bg-background">
               {loadingChat ? (
                 <div className="flex items-center justify-center py-20">
-                  <div className="w-9 h-9 rounded-full border-[3px] border-primary/30 border-t-primary animate-spin" />
+                  <div className="w-9 h-9 rounded-full border-[3px] border-border border-t-foreground animate-spin" />
                 </div>
               ) : messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16">
-                  <div className="bg-card rounded-2xl px-5 py-3 shadow-sm border border-border/50">
+                  <div className="bg-muted/50 rounded-full px-5 py-2 border border-border">
                     <p className="text-xs text-muted-foreground text-center">Say hello to <span className="font-bold text-foreground">{selectedContact.label}</span> 👋</p>
                   </div>
                 </div>
@@ -511,33 +510,35 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                   return (
                     <div key={msg.id}>
                       {showTime && (
-                        <div className="flex justify-center my-3">
-                          <span className="text-[10px] bg-card text-muted-foreground px-3 py-1 rounded-full shadow-sm border border-border/50 font-medium">
+                        <div className="flex justify-center my-4">
+                          <span className="text-[11px] bg-muted/50 text-muted-foreground px-3.5 py-1 rounded-full border border-border">
                             {formatTime(msg.created_at)}
                           </span>
                         </div>
                       )}
                       <div className={`flex ${isMe ? "justify-end" : "justify-start"} ${sameSender ? "mt-0.5" : "mt-2"}`}>
-                        <div
-                          className={`relative max-w-[80%] px-3.5 py-2 ${
-                            isMe
-                              ? "bg-primary text-primary-foreground rounded-2xl rounded-br-lg"
-                              : "bg-card text-foreground rounded-2xl rounded-bl-lg border border-border/40"
-                          }`}
-                          style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-                        >
-                          {!msg.file_url && <p className="text-[13px] leading-[1.45] whitespace-pre-wrap break-words">{msg.message}</p>}
-                          {renderFileContent(msg)}
-                          <div className="flex items-center gap-1 justify-end mt-1 -mb-0.5">
-                            <span className={`text-[9px] ${isMe ? "text-primary-foreground/50" : "text-muted-foreground"}`}>
+                        <div className="max-w-[75%] flex flex-col gap-1">
+                          <div
+                            className={`relative px-3.5 py-2.5 rounded-2xl border text-[13px] leading-relaxed ${
+                              isMe
+                                ? "bg-muted/60 border-border rounded-br-md"
+                                : "bg-background border-border rounded-bl-md"
+                            }`}
+                            style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.04)" }}
+                          >
+                            {!msg.file_url && <p className="text-foreground whitespace-pre-wrap break-words">{msg.message}</p>}
+                            {renderFileContent(msg)}
+                          </div>
+                          <div className={`flex items-center gap-1.5 px-1 ${isMe ? "justify-end" : "justify-start"}`}>
+                            <span className="text-[10px] text-muted-foreground">
                               {new Date(msg.created_at).toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" })}
                             </span>
                             {isMe && (
                               msg.is_read
-                                ? <CheckCheck size={13} className="text-sky-300" />
+                                ? <CheckCheck size={13} className="text-muted-foreground" />
                                 : msg.is_delivered
-                                  ? <CheckCheck size={13} className="text-primary-foreground/40" />
-                                  : <Check size={13} className="text-primary-foreground/40" />
+                                  ? <CheckCheck size={13} className="text-muted-foreground/50" />
+                                  : <Check size={13} className="text-muted-foreground/50" />
                             )}
                           </div>
                         </div>
@@ -549,10 +550,10 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Bar */}
-            <div className="bg-card border-t border-border/50 px-2 py-2">
+            {/* Composer */}
+            <div className="bg-background border-t border-border px-3 py-3">
               {isRecording ? (
-                <div className="flex items-center gap-3 px-3 py-2 bg-destructive/5 rounded-2xl border border-destructive/20">
+                <div className="flex items-center gap-3 px-3 py-2 bg-destructive/5 rounded-[18px] border border-destructive/20">
                   <button onClick={cancelRecording} className="w-9 h-9 rounded-full bg-destructive/10 flex items-center justify-center text-destructive hover:bg-destructive/20 transition-colors shrink-0">
                     <X size={16} />
                   </button>
@@ -561,48 +562,46 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
                     <span className="text-sm font-mono font-bold text-destructive">{formatRecTime(recordingTime)}</span>
                     <span className="text-xs text-muted-foreground">Recording...</span>
                   </div>
-                  <button onClick={stopRecording} className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/30 hover:opacity-90 transition-opacity shrink-0 active:scale-95">
-                    <Send size={16} className="ml-0.5" />
+                  <button onClick={stopRecording} className="w-11 h-11 rounded-[12px] bg-foreground flex items-center justify-center text-background hover:opacity-90 transition-opacity shrink-0 active:scale-95">
+                    <Send size={16} />
                   </button>
                 </div>
               ) : (
-                <div className="flex items-end gap-1.5">
+                <div className="flex items-center gap-2 border border-border rounded-[18px] px-2.5 py-1.5 bg-background" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                   {/* Attachment buttons */}
-                  <div className="flex gap-0.5 pb-1">
-                    <button onClick={() => imageInputRef.current?.click()} className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all active:scale-95" title="Send photo">
-                      <Image size={18} />
-                    </button>
-                    <button onClick={() => fileInputRef.current?.click()} className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all active:scale-95" title="Send document">
-                      <Paperclip size={18} />
-                    </button>
-                  </div>
+                  <button onClick={() => imageInputRef.current?.click()} className="w-10 h-10 rounded-[10px] border border-border flex items-center justify-center text-muted-foreground hover:bg-muted/50 transition-all active:scale-95 shrink-0" title="Send photo">
+                    <Image size={17} />
+                  </button>
+                  <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 rounded-[10px] border border-border flex items-center justify-center text-muted-foreground hover:bg-muted/50 transition-all active:scale-95 shrink-0" title="Send document">
+                    <Paperclip size={17} />
+                  </button>
                   {/* Text input */}
-                  <div className="flex-1 bg-muted rounded-2xl px-4 py-1 min-h-[42px] flex items-center">
-                    <textarea
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Type a message..."
-                      rows={1}
-                      className="flex-1 bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground outline-none border-none resize-none max-h-[100px] py-2.5 leading-5"
-                      onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                      onInput={(e) => { const t = e.currentTarget; t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 100) + "px"; }}
-                    />
-                  </div>
+                  <input
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Write a message..."
+                    className="flex-1 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground outline-none border-none py-2"
+                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+                  />
                   {/* Send or Mic */}
                   {newMessage.trim() ? (
                     <button
                       onClick={() => handleSend()}
                       disabled={sending}
-                      className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-lg shadow-primary/30 hover:opacity-90 transition-all disabled:opacity-50 active:scale-95 mb-0.5"
+                      className="w-11 h-11 rounded-[12px] bg-foreground text-background flex items-center justify-center shrink-0 hover:opacity-90 transition-all disabled:opacity-30 active:scale-95"
                     >
-                      <Send size={17} className="ml-0.5" />
+                      <Send size={17} />
                     </button>
                   ) : (
                     <button
                       onClick={startRecording}
-                      className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-lg shadow-primary/30 hover:opacity-90 transition-all active:scale-95 mb-0.5"
+                      className="w-11 h-11 rounded-[12px] bg-foreground text-background flex items-center justify-center shrink-0 hover:opacity-90 transition-all active:scale-95"
                     >
                       <Mic size={18} />
+                    </button>
+                  )}
+                </div>
+              )}
                     </button>
                   )}
                 </div>
