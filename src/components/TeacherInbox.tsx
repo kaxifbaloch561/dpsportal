@@ -264,14 +264,14 @@ const TeacherInbox = ({ open, onOpenChange }: Props) => {
   const filtered = filter === "all" ? requests : filter === "replied" ? requests.filter((r) => r.admin_reply) : requests.filter((r) => r.type === filter);
 
   const getContactIcon = (type: string) => {
-    if (type === "admin") return <ShieldCheck size={20} />;
-    if (type === "principal") return <GraduationCap size={20} />;
-    return <User size={20} />;
+    if (type === "admin") return <ShieldCheck size={18} />;
+    if (type === "principal") return <GraduationCap size={18} />;
+    return <User size={18} />;
   };
-  const getAvatarGradient = (type: string) => {
-    if (type === "admin") return "linear-gradient(135deg, hsl(235,78%,55%), hsl(260,70%,60%))";
-    if (type === "principal") return "linear-gradient(135deg, hsl(270,60%,50%), hsl(290,55%,55%))";
-    return "linear-gradient(135deg, hsl(160,55%,38%), hsl(140,60%,45%))";
+  const getContactInitials = (contact: Contact) => {
+    const parts = contact.label.split(" ");
+    if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    return contact.label.slice(0, 2).toUpperCase();
   };
   const formatTime = (d: string) => {
     const date = new Date(d);
