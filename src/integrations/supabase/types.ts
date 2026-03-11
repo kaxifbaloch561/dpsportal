@@ -309,6 +309,81 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_plans: {
+        Row: {
+          class_name: string
+          color: string | null
+          created_at: string | null
+          id: string
+          lesson_date: string
+          notes: string | null
+          period_number: number
+          subject: string
+          teacher_email: string
+          topic: string
+          updated_at: string | null
+        }
+        Insert: {
+          class_name: string
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          lesson_date: string
+          notes?: string | null
+          period_number: number
+          subject: string
+          teacher_email: string
+          topic: string
+          updated_at?: string | null
+        }
+        Update: {
+          class_name?: string
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          lesson_date?: string
+          notes?: string | null
+          period_number?: number
+          subject?: string
+          teacher_email?: string
+          topic?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          recipient_email: string
+          reference_id: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          recipient_email: string
+          reference_id?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          recipient_email?: string
+          reference_id?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
       subjects: {
         Row: {
           class_id: number
