@@ -181,9 +181,9 @@ const TeacherGuide = () => {
 
         {/* Hero Header */}
         <div
-          className="bg-card/95 backdrop-blur-xl rounded-[32px] p-6 sm:p-8 mb-6 text-center relative overflow-hidden"
+          className="bg-card rounded-[32px] p-6 sm:p-8 mb-6 text-center relative overflow-hidden"
           style={{
-            boxShadow: "0 30px 60px rgba(0,0,0,0.12), inset 0 0 0 1.5px rgba(255,255,255,0.5)",
+            boxShadow: "0 30px 60px rgba(0,0,0,0.12)",
             animation: "containerSpring 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
           }}
         >
