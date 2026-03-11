@@ -7,9 +7,7 @@ import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import TeacherRequestForm from "@/components/TeacherRequestForm";
 
-import TeacherProfile from "@/components/TeacherProfile";
-import { Sparkles, AlertTriangle, Info, Send, Fingerprint, Megaphone, MessagesSquare } from "lucide-react";
-import TeacherInbox from "@/components/TeacherInbox";
+import { Sparkles, AlertTriangle, Info, Megaphone, MessagesSquare } from "lucide-react";
 import AnnouncementPopup from "@/components/AnnouncementPopup";
 import { supabase } from "@/integrations/supabase/client";
 import DiscussionRoom from "@/components/DiscussionRoom";
