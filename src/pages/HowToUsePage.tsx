@@ -238,7 +238,7 @@ const HowToUsePage = () => {
             return (
               <div
                 key={i}
-                className="group relative rounded-3xl border border-border/60 bg-card/80 backdrop-blur-sm overflow-hidden hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
+                className="group relative rounded-3xl border border-border/60 bg-card overflow-hidden hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
                 style={{
                   animation: `slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.4 + i * 0.06}s`,
                   opacity: 0

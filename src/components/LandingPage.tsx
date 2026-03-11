@@ -51,7 +51,7 @@ const LandingPage = () => {
           </div>
 
           {/* Nav - hidden on mobile */}
-          <div className="hidden md:flex items-center bg-primary/85 backdrop-blur-md rounded-full p-1.5" style={{ boxShadow: "0 15px 35px hsl(235, 78%, 65%, 0.5)" }}>
+          <div className="hidden md:flex items-center bg-primary/85 rounded-full p-1.5" style={{ boxShadow: "0 15px 35px hsl(235, 78%, 65%, 0.5)" }}>
             <nav>
               <ul className="flex list-none px-6 gap-6 md:gap-9">
                 {["Home", "About", "Timing", "Courses"].map((item) => (

@@ -121,7 +121,7 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
           
           <button
             onClick={() => onOpenChange(false)}
-            className="absolute top-3.5 right-3.5 w-8 h-8 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all active:scale-95 border border-white/10"
+            className="absolute top-3.5 right-3.5 w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all active:scale-95 border border-white/10"
           >
             <X size={14} strokeWidth={2.5} />
           </button>

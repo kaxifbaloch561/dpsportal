@@ -46,7 +46,7 @@ const InstallPage = () => {
   return (
     <div className="min-h-[100dvh] bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border/50 px-4 py-3 flex items-center gap-3">
+      <div className="sticky top-0 z-10 bg-background border-b border-border/50 px-4 py-3 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all active:scale-95 min-h-[44px] min-w-[44px]">
           <ArrowLeft size={16} />
         </button>
