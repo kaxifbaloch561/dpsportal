@@ -19,27 +19,54 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-splash-bg transition-opacity duration-1000 gap-8 ${
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-splash-bg transition-opacity duration-1000 gap-6 ${
         fadeOut ? "opacity-0" : "opacity-100"
       }`}
     >
+      {/* Outer glow ring */}
       <div
-        className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] rounded-full overflow-hidden border-4 border-primary/30 shadow-2xl"
+        className="relative"
         style={{
-          animation: "sibiPopAndGlow 3s ease-out forwards, sibiSoftGlow 3.5s 3s infinite alternate ease-in-out",
+          animation: "sibiPopAndGlow 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
         }}
       >
-        <img
-          src={schoolLogo}
-          alt="Divisional Public School SIBI"
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <div className="w-[200px] sm:w-[260px] h-[6px] rounded-full bg-primary/15 overflow-hidden">
+        {/* Pulsing ring behind the circle */}
         <div
-          className="h-full rounded-full bg-primary"
+          className="absolute inset-[-8px] rounded-full"
           style={{
-            animation: "splashProgress 1.8s ease-in-out forwards",
+            background: "radial-gradient(circle, hsl(var(--splash-glow) / 0.4) 0%, transparent 70%)",
+            animation: "splashRingPulse 2s 1.5s infinite ease-in-out",
+          }}
+        />
+        {/* Circle container with clip */}
+        <div
+          className="w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] rounded-full overflow-hidden border-[3px] border-[hsl(var(--splash-glow)/0.6)] shadow-[0_0_40px_hsl(var(--splash-glow)/0.3)]"
+          style={{
+            animation: "sibiSoftGlow 3s 2s infinite alternate ease-in-out",
+          }}
+        >
+          <img
+            src={schoolLogo}
+            alt="Divisional Public School SIBI"
+            className="w-full h-full object-cover scale-110"
+          />
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div
+        className="w-[180px] sm:w-[240px] h-[5px] rounded-full overflow-hidden"
+        style={{
+          background: "hsl(var(--splash-glow) / 0.15)",
+          animation: "fade-in 0.6s 0.5s both ease-out",
+        }}
+      >
+        <div
+          className="h-full rounded-full"
+          style={{
+            background: "linear-gradient(90deg, hsl(var(--splash-glow)), hsl(var(--primary)))",
+            animation: "splashProgress 1.8s 0.5s ease-in-out forwards",
+            width: "0%",
           }}
         />
       </div>
