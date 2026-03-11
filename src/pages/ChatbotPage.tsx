@@ -164,7 +164,7 @@ const FormattedMessage = memo(({ content, glow }: { content: string; glow: strin
     <div className="relative group">
       <button
         onClick={handleCopy}
-        className="absolute -top-1 -right-1 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-accent/60 bg-card/80 backdrop-blur-sm border border-border/30 shadow-sm"
+        className="absolute -top-1 -right-1 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-accent/60 bg-card border border-border/30 shadow-sm"
         title="Copy answer"
       >
         {copied ? <Check size={11} className="text-green-500" /> : <Copy size={11} className="text-muted-foreground" />}
