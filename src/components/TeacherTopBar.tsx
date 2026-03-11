@@ -8,9 +8,13 @@ import TeacherProfile from "@/components/TeacherProfile";
 
 const TeacherTopBar = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [showInbox, setShowInbox] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [unreadInbox, setUnreadInbox] = useState(0);
+
+  const isDashboard = location.pathname === "/dashboard";
 
   useEffect(() => {
     if (user?.role !== "teacher" || !user.email) return;
