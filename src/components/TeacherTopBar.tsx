@@ -78,7 +78,8 @@ const TeacherTopBar = () => {
             )}
           </div>
           <span className="text-[10px] sm:text-xs font-bold tracking-wide uppercase text-muted-foreground group-hover:text-foreground transition-colors">Inbox</span>
-        </button>
+          </button>
+        </div>
 
         <button
           id="tour-profile"
