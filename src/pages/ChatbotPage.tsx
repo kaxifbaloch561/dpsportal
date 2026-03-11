@@ -244,7 +244,7 @@ const TypingIndicator = memo(({ theme }: { theme: typeof subjectGradients.defaul
       <Bot size={13} className="sm:w-4 sm:h-4 text-white" />
     </div>
     <div
-      className="bg-card/95 backdrop-blur-sm border border-border/30 rounded-2xl rounded-bl-md px-4 py-2.5 sm:py-3.5"
+      className="bg-card border border-border/30 rounded-2xl rounded-bl-md px-4 py-2.5 sm:py-3.5"
       style={{ boxShadow: "0 2px 10px -4px hsl(0 0% 0% / 0.05)" }}
     >
       <div className="flex items-center gap-2">
