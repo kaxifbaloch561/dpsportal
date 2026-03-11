@@ -222,7 +222,7 @@ const OnboardingTour = ({ userEmail, onComplete }: Props) => {
           <div className="relative w-full max-w-[380px] rounded-3xl overflow-hidden"
             style={{
               background: "linear-gradient(145deg, hsl(235,78%,62%), hsl(270,72%,55%), hsl(200,85%,50%))",
-              boxShadow: "0 40px 80px -20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15)",
+              boxShadow: "0 40px 80px -20px rgba(0,0,0,0.5)",
             }}
           >
             {/* Noise texture */}
