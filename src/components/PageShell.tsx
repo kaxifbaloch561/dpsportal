@@ -47,6 +47,7 @@ const PageShell = ({ children }: PageShellProps) => {
             "containerSpring 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards",
         }}
       >
+        <TeacherTopBar />
         {children}
         <AdminBackButton />
         <footer className="relative shrink-0 overflow-hidden py-3 sm:py-4">
