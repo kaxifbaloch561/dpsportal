@@ -72,64 +72,9 @@ const Dashboard = () => {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
-  // Fetch unread inbox count + mark messages as delivered (user is online)
-  useEffect(() => {
-    if (!user?.email) return;
-    const fetchUnread = async () => {
-      const { count } = await supabase
-        .from("admin_messages")
-        .select("id", { count: "exact", head: true })
-        .eq("recipient_email", user.email)
-        .eq("is_read", false);
-      setUnreadInbox(count ?? 0);
-    };
-    // Mark all incoming messages as delivered since user is online
-    const markDelivered = async () => {
-      await supabase
-        .from("admin_messages")
-        .update({ is_delivered: true } as any)
-        .eq("recipient_email", user.email)
-        .eq("is_delivered", false);
-    };
-    fetchUnread();
-    markDelivered();
-    const ch = supabase
-      .channel("dashboard-inbox-count")
-      .on("postgres_changes", { event: "*", schema: "public", table: "admin_messages" }, () => { fetchUnread(); markDelivered(); })
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [user?.email]);
-
   return (
     <PageShell>
-      {/* Fixed top corners: Inbox (left) & Profile (right) */}
-      <div className="flex items-center justify-between px-3 sm:px-6 pt-3 sm:pt-4">
-        <button
-          id="tour-inbox"
-          onClick={() => setShowInbox(true)}
-          className="group relative flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl bg-card/80 backdrop-blur-md border border-border/50 text-foreground hover:border-primary/40 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.2)] hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
-        >
-          <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground shadow-md shadow-primary/20 group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300">
-            <Send size={13} strokeWidth={2.5} className="rotate-[-30deg]" />
-            {unreadInbox > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-0.5 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center border-[1.5px] border-card animate-pulse">
-                {unreadInbox > 9 ? "9+" : unreadInbox}
-              </span>
-            )}
-          </div>
-          <span className="text-[10px] sm:text-xs font-bold tracking-wide uppercase text-muted-foreground group-hover:text-foreground transition-colors">Inbox</span>
-        </button>
-        <button
-          id="tour-profile"
-          onClick={() => setShowProfile(true)}
-          className="group relative flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl bg-card/80 backdrop-blur-md border border-border/50 text-foreground hover:border-primary/40 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.2)] hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
-        >
-          <span className="text-[10px] sm:text-xs font-bold tracking-wide uppercase text-muted-foreground group-hover:text-foreground transition-colors">Profile</span>
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-violet-500/20 group-hover:shadow-lg group-hover:shadow-violet-500/30 transition-all duration-300">
-            <Fingerprint size={14} strokeWidth={2.5} />
-          </div>
-        </button>
-      </div>
+      <div className="pt-14 sm:pt-16" /> {/* Spacer for global TeacherTopBar */}
 
       <DashboardHeader subtitle="Select your class to begin" />
 
