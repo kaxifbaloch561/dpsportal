@@ -148,12 +148,12 @@ const TeacherRegistration = ({ onBack }: { onBack: () => void }) => {
 
   if (step === "done") {
     return (
-      <div className="min-h-screen flex items-center justify-center p-5" style={{
+      <div className="min-h-[100dvh] flex items-center justify-center p-3 sm:p-5" style={{
         background: "linear-gradient(-45deg, hsl(235, 60%, 68%), hsl(235, 65%, 58%), hsl(240, 50%, 72%), hsl(235, 70%, 62%))",
         backgroundSize: "400% 400%",
         animation: "gradientBG 15s ease infinite",
       }}>
-        <div className="w-full max-w-md bg-card/95 backdrop-blur-xl rounded-[40px] p-10 text-center" style={{
+        <div className="w-full max-w-md bg-card/95 backdrop-blur-xl rounded-[28px] sm:rounded-[40px] p-6 sm:p-10 text-center" style={{
           boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
         }}>
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
@@ -179,15 +179,15 @@ const TeacherRegistration = ({ onBack }: { onBack: () => void }) => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-5" style={{
+    <div className="min-h-[100dvh] flex items-center justify-center p-2 sm:p-5" style={{
       background: "linear-gradient(-45deg, hsl(235, 60%, 68%), hsl(235, 65%, 58%), hsl(240, 50%, 72%), hsl(235, 70%, 62%))",
       backgroundSize: "400% 400%",
       animation: "gradientBG 15s ease infinite",
     }}>
-      <div className="fixed top-[-100px] left-[10%] w-[350px] h-[350px] bg-blob-blue rounded-full blur-[40px] opacity-60" style={{ animation: "floatBlob 8s ease-in-out infinite" }} />
-      <div className="fixed bottom-[-100px] right-[20%] w-[400px] h-[400px] bg-blob-pink blur-[40px] opacity-60" style={{ borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%", animation: "floatBlob 12s ease-in-out infinite reverse" }} />
+      <div className="fixed top-[-100px] left-[10%] w-[350px] h-[350px] bg-blob-blue rounded-full blur-[40px] opacity-60 hidden sm:block" style={{ animation: "floatBlob 8s ease-in-out infinite" }} />
+      <div className="fixed bottom-[-100px] right-[20%] w-[400px] h-[400px] bg-blob-pink blur-[40px] opacity-60 hidden sm:block" style={{ borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%", animation: "floatBlob 12s ease-in-out infinite reverse" }} />
 
-      <div className="w-full max-w-md bg-card/95 backdrop-blur-xl rounded-[40px] p-8 relative overflow-hidden" style={{
+      <div className="w-full max-w-md bg-card/95 backdrop-blur-xl rounded-[24px] sm:rounded-[40px] p-5 sm:p-8 relative overflow-hidden max-h-[calc(100dvh-16px)] sm:max-h-none overflow-y-auto" style={{
         boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
         animation: "containerSpring 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
       }}>

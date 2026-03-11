@@ -159,7 +159,7 @@ const TeacherGuide = () => {
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-[100dvh]"
       style={{
         background: "linear-gradient(-45deg, hsl(235, 60%, 68%), hsl(235, 65%, 58%), hsl(240, 50%, 72%), hsl(235, 70%, 62%))",
         backgroundSize: "400% 400%",

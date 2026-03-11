@@ -258,7 +258,7 @@ const ExerciseCard = ({
       {/* MCQ Options */}
       {isMCQ && options.length > 0 && (
         <div className="px-3.5 sm:px-7 pb-3 sm:pb-4">
-          <div className="ml-[42px] sm:ml-[52px] space-y-1.5 sm:space-y-2">
+          <div className="ml-[38px] sm:ml-[52px] space-y-1.5 sm:space-y-2">
             {options.map((opt: string, i: number) => {
               const letter = String.fromCharCode(97 + i);
               const isCorrect = item.correct_option &&
@@ -269,7 +269,7 @@ const ExerciseCard = ({
               return (
                 <div
                   key={i}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all duration-200 ${
+                  className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border transition-all duration-200 ${
                     isCorrect
                       ? "border-emerald-500/30 bg-emerald-500/[0.06]"
                       : "border-border/40 bg-muted/20"
@@ -297,7 +297,7 @@ const ExerciseCard = ({
 
       {/* Answer Section */}
       {item.answer && (
-        <div className="mx-3.5 sm:mx-7 mb-4 sm:mb-5 ml-[42px] sm:ml-[68px]">
+        <div className="mx-3.5 sm:mx-7 mb-4 sm:mb-5 ml-[46px] sm:ml-[68px]">
           <div className="pt-4 border-t border-border/40">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-1 h-4 rounded-full bg-gradient-to-b from-primary to-accent" />
@@ -314,7 +314,7 @@ const ExerciseCard = ({
 
       {/* MCQ Correct Answer fallback */}
       {isMCQ && item.correct_option && !item.answer && (
-        <div className="mx-3.5 sm:mx-7 mb-4 sm:mb-5 ml-[42px] sm:ml-[68px]">
+        <div className="mx-3.5 sm:mx-7 mb-4 sm:mb-5 ml-[46px] sm:ml-[68px]">
           <div className="pt-4 border-t border-border/40">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-1 h-4 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600" />

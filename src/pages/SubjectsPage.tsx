@@ -54,14 +54,14 @@ const SubjectsPage = () => {
           <span className="text-[10px] font-bold text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full">{cls.subjects.length} Subjects</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5">
           {cls.subjects.map((subject, i) => {
             const theme = subjectThemes[subject.id] || defaultTheme;
             return (
               <button
                 key={subject.id}
                 onClick={() => navigate(`/class/${cls.id}/subject/${subject.id}`)}
-                className="group relative cursor-pointer overflow-hidden rounded-[22px] border-0 p-0 h-40 transition-all duration-500 hover:-translate-y-4 hover:scale-[1.02] active:scale-[0.97]"
+                className="group relative cursor-pointer overflow-hidden rounded-[18px] sm:rounded-[22px] border-0 p-0 h-32 sm:h-40 transition-all duration-500 hover:-translate-y-4 hover:scale-[1.02] active:scale-[0.97]"
                 style={{
                   animation: `cardEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.3 + i * 0.06}s`,
                   opacity: 0,
@@ -91,12 +91,12 @@ const SubjectsPage = () => {
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col items-center justify-center h-full w-full p-4 gap-2">
+                <div className="relative z-10 flex flex-col items-center justify-center h-full w-full p-3 sm:p-4 gap-1.5 sm:gap-2">
                   {/* Subject icon circle */}
-                  <div className="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center mb-1 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] group-hover:scale-110 group-hover:bg-white/25 transition-all duration-500">
-                    <span className="text-lg font-black text-white drop-shadow-sm">{subject.name.charAt(0)}</span>
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center mb-0.5 sm:mb-1 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] group-hover:scale-110 group-hover:bg-white/25 transition-all duration-500">
+                    <span className="text-base sm:text-lg font-black text-white drop-shadow-sm">{subject.name.charAt(0)}</span>
                   </div>
-                  <span className={`text-[15px] sm:text-base font-extrabold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] text-center leading-tight break-words max-w-full ${/[\u0600-\u06FF]/.test(subject.name) ? 'font-urdu' : ''}`}>
+                  <span className={`text-[13px] sm:text-base font-extrabold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] text-center leading-tight break-words max-w-full ${/[\u0600-\u06FF]/.test(subject.name) ? 'font-urdu' : ''}`}>
                     {subject.name}
                   </span>
                   {/* Bottom accent */}

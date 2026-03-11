@@ -151,7 +151,7 @@ const HowToUsePage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-background relative overflow-hidden">
       {/* Animated background blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] animate-pulse" />

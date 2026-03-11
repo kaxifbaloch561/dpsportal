@@ -149,7 +149,7 @@ const Dashboard = () => {
           <span className="text-[10px] font-bold text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full">{classesData.length} Classes</span>
         </div>
 
-        <div id="tour-classes" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5">
+        <div id="tour-classes" className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-5">
           {classesData.map((cls, i) => {
             const theme = classThemes[i];
             return (
@@ -179,12 +179,12 @@ const Dashboard = () => {
                 {/* Glass border top */}
                 <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                 
-                <div className="relative z-10 flex flex-col items-center gap-3 py-7 px-4">
-                  <div className="w-[64px] h-[64px] rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.3),0_8px_24px_-8px_rgba(0,0,0,0.2)] group-hover:scale-110 group-hover:rotate-2 group-hover:bg-white/25 transition-all duration-500">
-                    <span className="text-[28px] font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)]">{cls.id}</span>
+                <div className="relative z-10 flex flex-col items-center gap-2 sm:gap-3 py-5 sm:py-7 px-3 sm:px-4">
+                  <div className="w-[52px] h-[52px] sm:w-[64px] sm:h-[64px] rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.3),0_8px_24px_-8px_rgba(0,0,0,0.2)] group-hover:scale-110 group-hover:rotate-2 group-hover:bg-white/25 transition-all duration-500">
+                    <span className="text-[24px] sm:text-[28px] font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)]">{cls.id}</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
-                    <span className="text-[14px] font-bold text-white tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.15)]">{cls.name}</span>
+                    <span className="text-[13px] sm:text-[14px] font-bold text-white tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.15)]">{cls.name}</span>
                     <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm rounded-full px-2.5 py-0.5 border border-white/10">
                       <span className="text-[10px] text-white/80 font-semibold">{cls.subjects.length} Subjects</span>
                     </div>
