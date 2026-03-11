@@ -22,7 +22,7 @@ const LandingPage = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-2 sm:p-5 overflow-x-hidden"
+      className="min-h-[100dvh] flex items-center justify-center p-1.5 sm:p-5 overflow-x-hidden"
       style={{
         background: "linear-gradient(-45deg, hsl(235, 60%, 68%), hsl(235, 65%, 58%), hsl(240, 50%, 72%), hsl(235, 70%, 62%))",
         backgroundSize: "400% 400%",
@@ -31,9 +31,9 @@ const LandingPage = () => {
     >
       <div
         ref={containerRef}
-        className="w-full max-w-[1400px] min-h-[100dvh] sm:min-h-[750px] bg-card/95 backdrop-blur-xl relative overflow-hidden flex flex-col"
+        className="w-full max-w-[1400px] min-h-[calc(100dvh-12px)] sm:min-h-[750px] bg-card/95 backdrop-blur-xl relative overflow-hidden flex flex-col"
         style={{
-          borderRadius: "clamp(16px, 4vw, 40px)",
+          borderRadius: "clamp(12px, 4vw, 40px)",
           boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
           animation: "containerSpring 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
         }}
@@ -44,8 +44,8 @@ const LandingPage = () => {
         <div data-speed="-4" className="absolute top-[40%] left-[35%] w-[200px] h-[200px] bg-blob-green blur-[40px] z-0 hidden sm:block" style={{ borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%", animation: "floatBlob 10s ease-in-out infinite 2s" }} />
 
         {/* Header */}
-        <header className="relative z-20 flex flex-wrap justify-between items-center px-5 sm:px-10 md:px-20 py-5 sm:py-8 gap-4" style={{ animation: "slideDown 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
-          <div className="flex items-center gap-3 font-black text-xl sm:text-2xl text-foreground cursor-pointer hover:scale-105 transition-transform">
+        <header className="relative z-20 flex flex-wrap justify-between items-center px-4 sm:px-10 md:px-20 py-4 sm:py-8 gap-3 sm:gap-4" style={{ animation: "slideDown 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
+          <div className="flex items-center gap-2.5 sm:gap-3 font-black text-lg sm:text-2xl text-foreground cursor-pointer hover:scale-105 transition-transform">
             <img src={schoolLogo} alt="DPS SIBI" className="w-8 h-8 sm:w-10 sm:h-10" />
             <div className="leading-tight">DPS<br/>SIBI</div>
           </div>
@@ -71,13 +71,13 @@ const LandingPage = () => {
         </header>
 
         {/* Main */}
-        <main className="relative z-10 flex flex-1 flex-col lg:flex-row items-center justify-between px-5 sm:px-10 md:px-20 gap-6 sm:gap-10 pb-20 sm:pb-0">
+        <main className="relative z-10 flex flex-1 flex-col lg:flex-row items-center justify-between px-4 sm:px-10 md:px-20 gap-6 sm:gap-10 pb-16 sm:pb-0">
           <div className="flex-1 max-w-[600px] lg:pr-10 text-center lg:text-left">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground -mb-2 sm:-mb-4" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s", opacity: 0 }}>
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold text-foreground -mb-1 sm:-mb-4" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s", opacity: 0 }}>
               Let's
             </h2>
             <h1
-              className="text-5xl sm:text-6xl md:text-8xl font-black leading-tight mb-1"
+              className="text-4xl sm:text-6xl md:text-8xl font-black leading-tight mb-1"
               style={{
                 background: "linear-gradient(to right, hsl(235, 78%, 65%), hsl(270, 60%, 55%), hsl(235, 78%, 65%))",
                 backgroundSize: "200% auto",
@@ -90,29 +90,29 @@ const LandingPage = () => {
             >
               E-learning
             </h1>
-            <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground leading-tight mb-4 sm:mb-6" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.9s", opacity: 0 }}>
+            <h3 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-foreground leading-tight mb-3 sm:mb-6" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.9s", opacity: 0 }}>
               at your home
             </h3>
-            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-6 sm:mb-10" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1.1s", opacity: 0 }}>
+            <p className="text-muted-foreground text-xs sm:text-base leading-relaxed mb-5 sm:mb-10 max-w-[90%] mx-auto lg:mx-0" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1.1s", opacity: 0 }}>
               Unlock your potential with world-class education from the comfort of your living room. Interactive courses, expert tutors, and a community dedicated to your growth.
             </p>
-            <div className="flex gap-3 sm:gap-5 justify-center lg:justify-start" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1.3s", opacity: 0 }}>
+            <div className="flex gap-2.5 sm:gap-5 justify-center lg:justify-start" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1.3s", opacity: 0 }}>
               <a
                 href="#"
-                className="inline-flex items-center gap-2 px-5 sm:px-8 py-3 sm:py-4 rounded-full bg-primary text-primary-foreground font-bold text-sm sm:text-base relative overflow-hidden transition-all duration-300 hover:-translate-y-2 z-[1]"
+                className="inline-flex items-center gap-2 px-5 sm:px-8 py-2.5 sm:py-4 rounded-full bg-primary text-primary-foreground font-bold text-xs sm:text-base relative overflow-hidden transition-all duration-300 hover:-translate-y-2 z-[1] min-h-[44px]"
                 style={{ boxShadow: "0 15px 30px hsl(235, 78%, 65%, 0.5)" }}
               >
-                Apply now <ArrowRight size={18} />
+                Apply now <ArrowRight size={16} className="sm:w-[18px] sm:h-[18px]" />
                 <span className="absolute top-0 w-1/2 h-full" style={{ background: "linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.4), rgba(255,255,255,0))", transform: "skewX(-25deg)", animation: "shine 4s infinite" }} />
               </a>
-              <a href="#" className="px-5 sm:px-8 py-3 sm:py-4 rounded-full border-2 border-primary text-primary font-bold text-sm sm:text-base transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:-translate-y-2 hover:shadow-lg">
+              <a href="#" className="px-5 sm:px-8 py-2.5 sm:py-4 rounded-full border-2 border-primary text-primary font-bold text-xs sm:text-base transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:-translate-y-2 hover:shadow-lg min-h-[44px] flex items-center">
                 Read More
               </a>
             </div>
           </div>
 
           {/* Image section - smaller on mobile */}
-          <div className="flex-1 flex justify-center lg:justify-end items-center relative" style={{ animation: "popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1s", opacity: 0 }}>
+          <div className="flex-1 flex justify-center lg:justify-end items-center relative hidden sm:flex" style={{ animation: "popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1s", opacity: 0 }}>
             <div
               className="relative w-[70%] sm:w-[90%] max-w-[550px] aspect-square flex items-center justify-center p-5 z-[5]"
               style={{
@@ -145,16 +145,16 @@ const LandingPage = () => {
         </main>
 
         {/* Bottom elements */}
-        <div className="absolute bottom-4 sm:bottom-8 w-full px-5 sm:px-10 md:px-20 flex justify-between items-end z-20">
+        <div className="relative sm:absolute sm:bottom-8 w-full px-4 sm:px-10 md:px-20 py-3 sm:py-0 flex justify-between items-center sm:items-end z-20">
           <div className="flex gap-2 sm:gap-3" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1.5s", opacity: 0 }}>
             {[Instagram, Facebook, Twitter, Linkedin].map((Icon, i) => (
-              <a key={i} href="#" className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-card flex items-center justify-center text-primary shadow-md transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:-translate-y-2 hover:rotate-[360deg] hover:shadow-lg">
+              <a key={i} href="#" className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-card flex items-center justify-center text-primary shadow-md transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:-translate-y-2 hover:rotate-[360deg] hover:shadow-lg min-h-[44px] min-w-[44px]">
                 <Icon size={16} />
               </a>
             ))}
           </div>
           <div
-            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-primary-foreground text-2xl sm:text-3xl cursor-pointer relative transition-all duration-300 hover:scale-110 hover:-translate-y-1"
+            className="w-11 h-11 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-primary-foreground text-2xl sm:text-3xl cursor-pointer relative transition-all duration-300 hover:scale-110 hover:-translate-y-1 min-h-[44px]"
             style={{
               background: "linear-gradient(135deg, hsl(235, 78%, 65%), hsl(270, 60%, 55%))",
               boxShadow: "0 15px 30px hsl(235, 78%, 65%, 0.5)",
@@ -162,7 +162,7 @@ const LandingPage = () => {
               opacity: 0,
             }}
           >
-            <MessageCircle size={24} />
+            <MessageCircle size={20} className="sm:w-6 sm:h-6" />
             <span className="absolute top-0 right-0 w-4 h-4 sm:w-5 sm:h-5 bg-secondary rounded-full text-[10px] font-bold flex items-center justify-center border-2 border-card">3</span>
           </div>
         </div>
