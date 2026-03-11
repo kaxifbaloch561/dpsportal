@@ -15,7 +15,7 @@ const DashboardHeader = ({ showBack = false, subtitle }: DashboardHeaderProps) =
 
   return (
     <div className={`flex flex-col items-center gap-1.5 sm:gap-2 px-3 sm:px-8 ${isTeacher ? 'pt-1 sm:pt-2' : 'pt-3 sm:pt-8'} pb-2 sm:pb-4 relative`}>
-      {showBack && (
+      {showBack && !isTeacher && (
         <button
           onClick={() => navigate(-1)}
           className="absolute left-3 sm:left-8 top-3 sm:top-8 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 active:scale-95"
