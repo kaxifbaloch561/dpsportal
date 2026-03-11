@@ -96,7 +96,7 @@ const SubjectsPage = () => {
                   <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center mb-0.5 sm:mb-1 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] group-hover:scale-110 group-hover:bg-white/25 transition-all duration-500">
                     <span className="text-base sm:text-lg font-black text-white drop-shadow-sm">{subject.name.charAt(0)}</span>
                   </div>
-                  <span className={`text-[15px] sm:text-base font-extrabold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] text-center leading-tight break-words max-w-full ${/[\u0600-\u06FF]/.test(subject.name) ? 'font-urdu' : ''}`}>
+                  <span className={`text-[13px] sm:text-base font-extrabold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] text-center leading-tight break-words max-w-full ${/[\u0600-\u06FF]/.test(subject.name) ? 'font-urdu' : ''}`}>
                     {subject.name}
                   </span>
                   {/* Bottom accent */}
