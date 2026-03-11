@@ -319,7 +319,7 @@ const ExerciseCard = ({
   const isLongAnswer = exerciseType === "long_question_answers";
   const isShortAnswer = exerciseType === "short_question_answers";
   const options = (item.options as string[]) || [];
-  const copyText = `Q.${index} ${item.question}\n\nAns: ${item.answer || item.correct_option || ""}`;
+  const copyText = `Q.${index} ${item.question}\n\nAns: ${mdBoldToPlain(item.answer || item.correct_option || "")}`;
 
   return (
     <div className="bg-card border border-border/60 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
