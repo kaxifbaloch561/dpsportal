@@ -93,7 +93,7 @@ const SubjectsPage = () => {
                 {/* Content */}
                 <div className="relative z-10 flex flex-col items-center justify-center h-full w-full p-3 sm:p-4 gap-1.5 sm:gap-2">
                   {/* Subject icon circle */}
-                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-0.5 sm:mb-1 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] group-hover:scale-110 group-hover:bg-white/25 transition-all duration-500">
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-black/10 border border-white/15 flex items-center justify-center mb-0.5 sm:mb-1 shadow-[0_6px_18px_-8px_rgba(0,0,0,0.25)] group-hover:scale-110 transition-all duration-500">
                     <span className="text-base sm:text-lg font-black text-white drop-shadow-sm">{subject.name.charAt(0)}</span>
                   </div>
                   <span className={`text-[13px] sm:text-base font-extrabold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] text-center leading-tight break-words max-w-full ${/[\u0600-\u06FF]/.test(subject.name) ? 'font-urdu' : ''}`}>
