@@ -180,8 +180,8 @@ const Dashboard = () => {
                 <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                 
                 <div className="relative z-10 flex flex-col items-center gap-2 sm:gap-3 py-5 sm:py-7 px-3 sm:px-4">
-                  <div className="w-[64px] h-[64px] rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.3),0_8px_24px_-8px_rgba(0,0,0,0.2)] group-hover:scale-110 group-hover:rotate-2 group-hover:bg-white/25 transition-all duration-500">
-                    <span className="text-[28px] font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)]">{cls.id}</span>
+                  <div className="w-[52px] h-[52px] sm:w-[64px] sm:h-[64px] rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.3),0_8px_24px_-8px_rgba(0,0,0,0.2)] group-hover:scale-110 group-hover:rotate-2 group-hover:bg-white/25 transition-all duration-500">
+                    <span className="text-[24px] sm:text-[28px] font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)]">{cls.id}</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
                     <span className="text-[14px] font-bold text-white tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.15)]">{cls.name}</span>
