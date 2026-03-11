@@ -229,7 +229,7 @@ const OnboardingTour = ({ userEmail, onComplete }: Props) => {
             <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
 
             <div className="relative z-10 flex flex-col items-center px-6 sm:px-8 py-10 sm:py-12 text-center">
-              <div className="w-20 h-20 rounded-[22px] bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center mb-5 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.3)]"
+              <div className="w-20 h-20 rounded-[22px] bg-black/10 border border-white/25 flex items-center justify-center mb-5 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.3)]"
                 style={{ animation: "tourBounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both" }}>
                 <Rocket size={36} className="text-white drop-shadow-lg" />
               </div>
