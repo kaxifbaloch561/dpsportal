@@ -234,9 +234,9 @@ const TeacherGuide = () => {
 
                   {/* Card */}
                   <div
-                    className="bg-card/95 backdrop-blur-xl rounded-[22px] p-4 sm:p-5 relative overflow-hidden group"
+                    className="bg-card rounded-[22px] p-4 sm:p-5 relative overflow-hidden group"
                     style={{
-                      boxShadow: "0 8px 28px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.45)",
+                      boxShadow: "0 8px 28px rgba(0,0,0,0.06)",
                     }}
                   >
                     <div className="absolute top-0 left-5 right-5 h-[2px] rounded-full" style={{ background: `linear-gradient(90deg, transparent, ${step.color}30, transparent)` }} />
