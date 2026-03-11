@@ -24,6 +24,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const HowToUsePage = lazy(() => import("./pages/HowToUsePage"));
 const TeacherGuide = lazy(() => import("./pages/TeacherGuide"));
 const InstallPage = lazy(() => import("./pages/InstallPage"));
+const LessonPlannerPage = lazy(() => import("./pages/LessonPlannerPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
