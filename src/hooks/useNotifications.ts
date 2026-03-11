@@ -30,7 +30,7 @@ export const useNotifications = () => {
         icon: icon || "/pwa-192x192.png",
         badge: "/pwa-192x192.png",
         tag: `dps-${Date.now()}`,
-        vibrate: [200, 100, 200],
+        } as NotificationOptions & { vibrate?: number[] });
       });
       notif.onclick = () => { window.focus(); notif.close(); };
     } catch { /* SW context fallback - ignore */ }
