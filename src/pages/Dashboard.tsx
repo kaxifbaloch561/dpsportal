@@ -7,11 +7,12 @@ import DashboardHeader from "@/components/DashboardHeader";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import TeacherRequestForm from "@/components/TeacherRequestForm";
 
-import { Sparkles, AlertTriangle, Info, Megaphone, MessagesSquare } from "lucide-react";
+import { Sparkles, AlertTriangle, Info, Megaphone, MessagesSquare, CalendarDays } from "lucide-react";
 import AnnouncementPopup from "@/components/AnnouncementPopup";
 import { supabase } from "@/integrations/supabase/client";
 import DiscussionRoom from "@/components/DiscussionRoom";
 import OnboardingTour from "@/components/OnboardingTour";
+import { useNotifications } from "@/hooks/useNotifications";
 
 
 const classThemes = [
@@ -43,6 +44,9 @@ const Dashboard = () => {
   const [showDiscussion, setShowDiscussion] = useState(false);
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
   const [announcementCount, setAnnouncementCount] = useState(0);
+
+  // Activate browser notifications for teachers
+  useNotifications();
 
   useEffect(() => {
     const notif = localStorage.getItem("dps_login_notification");
@@ -99,6 +103,13 @@ const Dashboard = () => {
           >
             <MessagesSquare size={16} />
             <span className="text-xs font-bold whitespace-nowrap">Discussion</span>
+          </button>
+          <button
+            onClick={() => navigate("/lesson-planner")}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:from-emerald-500/20 hover:to-teal-500/20 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
+          >
+            <CalendarDays size={16} />
+            <span className="text-xs font-bold whitespace-nowrap">Lesson Planner</span>
           </button>
         </div>
       </div>
