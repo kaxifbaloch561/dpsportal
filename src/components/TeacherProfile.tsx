@@ -105,11 +105,11 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-md p-4 pt-[8vh] sm:pt-[10vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 pt-[8vh] sm:pt-[10vh] overflow-y-auto">
       <div
-        className="w-full max-w-sm bg-card/95 backdrop-blur-2xl rounded-[28px] relative overflow-hidden border border-border/30 mb-8"
+        className="w-full max-w-sm bg-card rounded-[28px] relative overflow-hidden border border-border/30 mb-8"
         style={{
-          boxShadow: "0 40px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.1)",
+          boxShadow: "0 40px 80px rgba(0,0,0,0.25)",
           animation: "containerSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
         }}
       >
