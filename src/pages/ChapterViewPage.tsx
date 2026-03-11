@@ -64,20 +64,32 @@ const ChapterViewPage = () => {
             }}
           >
             {/* Chapter Title Header */}
-            <div className="flex items-center mt-3 sm:mt-4 mb-4 sm:mb-6 gap-2.5 sm:gap-3">
-              <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground text-sm sm:text-lg font-black flex items-center justify-center shadow-lg shrink-0">
-                {chapter.chapter_number}
-              </span>
-              <h2 className="text-sm sm:text-2xl font-bold text-foreground flex-1 min-w-0 line-clamp-2 leading-snug">{chapter.chapter_title}</h2>
+            <div className="mt-3 sm:mt-4 mb-4 sm:mb-6">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground text-sm sm:text-lg font-black flex items-center justify-center shadow-lg shrink-0">
+                  {chapter.chapter_number}
+                </span>
+                <h2 className="text-sm sm:text-2xl font-bold text-foreground flex-1 min-w-0 line-clamp-2 leading-snug">{chapter.chapter_title}</h2>
+                {/* Desktop: inline button */}
+                <Button
+                  onClick={() =>
+                    navigate(`/class/${classId}/subject/${subjectId}/chapter/${chapter.chapter_number}/exercise`)
+                  }
+                  className="hidden sm:flex gap-2 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg text-sm px-5 h-11 shrink-0 whitespace-nowrap"
+                >
+                  <ClipboardList className="w-4 h-4" />
+                  Exercise
+                </Button>
+              </div>
+              {/* Mobile: full-width button below title */}
               <Button
                 onClick={() =>
                   navigate(`/class/${classId}/subject/${subjectId}/chapter/${chapter.chapter_number}/exercise`)
                 }
-                className="gap-1.5 sm:gap-2 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg text-xs sm:text-sm px-3 sm:px-5 h-10 sm:h-11 shrink-0 whitespace-nowrap"
+                className="sm:hidden w-full mt-3 gap-2 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg text-xs h-10"
               >
                 <ClipboardList className="w-4 h-4" />
-                <span className="hidden sm:inline">Exercise</span>
-                <span className="sm:hidden">Exercise</span>
+                Exercise
               </Button>
             </div>
 
