@@ -23,6 +23,7 @@ const ChatbotPage = lazy(() => import("./pages/ChatbotPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const HowToUsePage = lazy(() => import("./pages/HowToUsePage"));
 const TeacherGuide = lazy(() => import("./pages/TeacherGuide"));
+const InstallPage = lazy(() => import("./pages/InstallPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
