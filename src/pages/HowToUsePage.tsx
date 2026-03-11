@@ -160,7 +160,7 @@ const HowToUsePage = () => {
       </div>
 
       {/* Sticky header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/50">
+      <header className="sticky top-0 z-50 bg-background border-b border-border/50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
