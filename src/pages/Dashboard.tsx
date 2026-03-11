@@ -39,13 +39,10 @@ const Dashboard = () => {
   const { data: classesData = [] } = useClassesData();
   const [formType, setFormType] = useState<"feature" | "problem" | null>(null);
   
-  const [showInbox, setShowInbox] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
   const [showAnnouncements, setShowAnnouncements] = useState(false);
   const [showDiscussion, setShowDiscussion] = useState(false);
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
   const [announcementCount, setAnnouncementCount] = useState(0);
-  const [unreadInbox, setUnreadInbox] = useState(0);
 
   useEffect(() => {
     const notif = localStorage.getItem("dps_login_notification");
