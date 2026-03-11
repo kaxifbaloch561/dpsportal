@@ -468,7 +468,7 @@ const ChatbotPage = () => {
             {/* Autocomplete dropdown */}
             {showSuggestions && suggestions.length > 0 && (
               <div
-                className="absolute bottom-full mb-1.5 left-0 right-0 bg-card/98 backdrop-blur-xl border border-border/50 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden z-50"
+                className="absolute bottom-full mb-1.5 left-0 right-0 bg-card border border-border/50 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden z-50"
                 style={{ animation: "cardEntrance 0.12s ease-out forwards", boxShadow: `0 -6px 32px -8px ${theme.glow}10` }}
               >
                 <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border/30">
