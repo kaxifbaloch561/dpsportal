@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail, BookOpen, Shield, LogOut, Eye, EyeOff, X, KeyRound, Check, Fingerprint, Sparkles, Crown } from "lucide-react";
+import { resolveAvatarUrl } from "@/utils/avatarMap";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -137,10 +138,10 @@ const TeacherProfile = ({ open, onOpenChange }: TeacherProfileProps) => {
             <div className="flex flex-col items-center -mt-12 mb-3">
               <div className="relative">
                 <div className="w-[88px] h-[88px] rounded-2xl border-[3px] border-card overflow-hidden bg-white flex items-center justify-center shadow-xl shadow-black/15 ring-2 ring-primary/20">
-                   {teacher.avatar_url ? (
-                     <img src={teacher.avatar_url} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }} />
+                   {resolveAvatarUrl(teacher.avatar_url) ? (
+                     <img src={resolveAvatarUrl(teacher.avatar_url)!} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }} />
                    ) : null}
-                   <Fingerprint size={36} className={`text-muted-foreground/30 ${teacher.avatar_url ? 'hidden' : ''}`} />
+                   <Fingerprint size={36} className={`text-muted-foreground/30 ${resolveAvatarUrl(teacher.avatar_url) ? 'hidden' : ''}`} />
                 </div>
                 <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-lg flex items-center justify-center shadow-lg border-2 border-card" style={{ background: "linear-gradient(135deg, hsl(145,72%,46%), hsl(160,80%,40%))" }}>
                   <Check size={13} className="text-white" strokeWidth={3} />

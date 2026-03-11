@@ -1,32 +1,22 @@
 import { useState } from "react";
 import { Camera, Upload, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-import male1 from "@/assets/avatars/male-1.png";
-import male2 from "@/assets/avatars/male-2.png";
-import male3 from "@/assets/avatars/male-3.png";
-import male4 from "@/assets/avatars/male-4.png";
-import male5 from "@/assets/avatars/male-5.png";
-import female1 from "@/assets/avatars/female-1.png";
-import female2 from "@/assets/avatars/female-2.png";
-import female3 from "@/assets/avatars/female-3.png";
-import female4 from "@/assets/avatars/female-4.png";
-import female5 from "@/assets/avatars/female-5.png";
+import { avatarMap } from "@/utils/avatarMap";
 
 const maleAvatars = [
-  { id: "male-1", url: male1, gender: "male" as const },
-  { id: "male-2", url: male2, gender: "male" as const },
-  { id: "male-3", url: male3, gender: "male" as const },
-  { id: "male-4", url: male4, gender: "male" as const },
-  { id: "male-5", url: male5, gender: "male" as const },
+  { id: "male-1", gender: "male" as const },
+  { id: "male-2", gender: "male" as const },
+  { id: "male-3", gender: "male" as const },
+  { id: "male-4", gender: "male" as const },
+  { id: "male-5", gender: "male" as const },
 ];
 
 const femaleAvatars = [
-  { id: "female-1", url: female1, gender: "female" as const },
-  { id: "female-2", url: female2, gender: "female" as const },
-  { id: "female-3", url: female3, gender: "female" as const },
-  { id: "female-4", url: female4, gender: "female" as const },
-  { id: "female-5", url: female5, gender: "female" as const },
+  { id: "female-1", gender: "female" as const },
+  { id: "female-2", gender: "female" as const },
+  { id: "female-3", gender: "female" as const },
+  { id: "female-4", gender: "female" as const },
+  { id: "female-5", gender: "female" as const },
 ];
 
 const allAvatars = [...maleAvatars, ...femaleAvatars];
@@ -62,6 +52,9 @@ const AvatarSelector = ({ value, onChange }: AvatarSelectorProps) => {
 
   const filteredAvatars = allAvatars.filter((a) => a.gender === gender);
 
+  // Resolve current value for display
+  const displayUrl = avatarMap[value] || value;
+
   return (
     <div className="space-y-4">
       <label className="block text-sm font-semibold text-foreground">Profile Picture</label>
@@ -69,8 +62,8 @@ const AvatarSelector = ({ value, onChange }: AvatarSelectorProps) => {
       {/* Current selection preview */}
       <div className="flex items-center gap-4">
         <div className="w-20 h-20 rounded-full border-4 border-primary/20 overflow-hidden bg-muted flex items-center justify-center">
-          {value ? (
-            <img src={value} alt="Avatar" className="w-full h-full object-cover" />
+          {displayUrl ? (
+            <img src={displayUrl} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
             <User size={32} className="text-muted-foreground" />
           )}
@@ -134,14 +127,14 @@ const AvatarSelector = ({ value, onChange }: AvatarSelectorProps) => {
               <button
                 key={avatar.id}
                 type="button"
-                onClick={() => onChange(avatar.url, "avatar")}
+                onClick={() => onChange(avatar.id, "avatar")}
                 className={`w-14 h-14 rounded-full overflow-hidden border-3 transition-all hover:scale-110 ${
-                  value === avatar.url
+                  value === avatar.id
                     ? "border-primary ring-2 ring-primary/30 scale-110"
                     : "border-border hover:border-primary/50"
                 }`}
               >
-                <img src={avatar.url} alt={avatar.id} className="w-full h-full object-cover" />
+                <img src={avatarMap[avatar.id]} alt={avatar.id} className="w-full h-full object-cover" />
               </button>
             ))}
           </div>

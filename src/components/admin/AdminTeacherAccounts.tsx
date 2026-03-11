@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Check, X, Pause, Trash2, ArrowLeft, User, Mail, BookOpen, Shield, Eye, EyeOff, UserPlus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import AdminCreateTeacher from "./AdminCreateTeacher";
+import { resolveAvatarUrl } from "@/utils/avatarMap";
 
 interface TeacherAccount {
   id: string;
@@ -115,8 +116,8 @@ const AdminTeacherAccounts = ({ isPrincipal = false }: AdminTeacherAccountsProps
           {/* Profile header */}
           <div className="flex items-center gap-4">
             <div className="w-20 h-20 rounded-full border-4 border-primary/20 overflow-hidden bg-muted flex items-center justify-center">
-              {selectedTeacher.avatar_url ? (
-                <img src={selectedTeacher.avatar_url} alt="" className="w-full h-full object-cover" />
+              {resolveAvatarUrl(selectedTeacher.avatar_url) ? (
+                <img src={resolveAvatarUrl(selectedTeacher.avatar_url)!} alt="" className="w-full h-full object-cover" />
               ) : (
                 <User size={32} className="text-muted-foreground" />
               )}
@@ -256,8 +257,8 @@ const AdminTeacherAccounts = ({ isPrincipal = false }: AdminTeacherAccountsProps
               className="w-full flex items-center gap-3 p-4 rounded-2xl bg-card border border-border hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.18)] hover:-translate-y-1 hover:border-primary/20 transition-all duration-300 text-left active:scale-[0.98]"
             >
               <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex items-center justify-center shrink-0">
-                {teacher.avatar_url ? (
-                  <img src={teacher.avatar_url} alt="" className="w-full h-full object-cover" />
+                {resolveAvatarUrl(teacher.avatar_url) ? (
+                  <img src={resolveAvatarUrl(teacher.avatar_url)!} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <User size={20} className="text-muted-foreground" />
                 )}
