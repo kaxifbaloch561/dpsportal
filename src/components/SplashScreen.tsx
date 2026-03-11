@@ -40,7 +40,7 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
         />
         {/* Circle container with clip */}
         <div
-          className="w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] rounded-full overflow-hidden border-[3px] border-[hsl(var(--splash-glow)/0.6)] shadow-[0_0_40px_hsl(var(--splash-glow)/0.3)]"
+          className="w-[160px] h-[160px] sm:w-[200px] sm:h-[200px]"
           style={{
             animation: "sibiSoftGlow 3s 2s infinite alternate ease-in-out",
           }}
@@ -48,7 +48,7 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
           <img
             src={schoolLogo}
             alt="Divisional Public School SIBI"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         </div>
       </div>
