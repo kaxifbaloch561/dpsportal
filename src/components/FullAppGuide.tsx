@@ -278,21 +278,23 @@ const FullAppGuide = ({ userEmail, onComplete }: Props) => {
         {/* Footer: nav */}
         <div className="flex items-center justify-between px-5 py-3 sm:py-4 border-t border-border/60 bg-muted/20">
           {/* Dots */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 overflow-x-auto max-w-[140px] sm:max-w-[200px] scrollbar-hide">
             {slides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => { setDirection(i > step ? "next" : "prev"); setStep(i); }}
-                className={`rounded-full transition-all duration-300 ${
+                className={`rounded-full transition-all duration-300 shrink-0 ${
                   i === step
                     ? "w-5 h-2"
-                    : "w-2 h-2 hover:opacity-80"
+                    : i < step
+                    ? "w-2 h-2"
+                    : "w-2 h-2 bg-border"
                 }`}
                 style={{
                   background: i === step ? current.color : i < step ? `${current.color}66` : undefined,
                 }}
-                {...(i !== step && i >= step ? { className: `rounded-full transition-all duration-300 w-2 h-2 bg-border hover:opacity-80` } : {})}
               />
+            ))}
             ))}
           </div>
 
