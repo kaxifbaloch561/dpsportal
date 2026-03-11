@@ -116,8 +116,8 @@ const AdminTeacherAccounts = ({ isPrincipal = false }: AdminTeacherAccountsProps
           {/* Profile header */}
           <div className="flex items-center gap-4">
             <div className="w-20 h-20 rounded-full border-4 border-primary/20 overflow-hidden bg-muted flex items-center justify-center">
-              {selectedTeacher.avatar_url ? (
-                <img src={selectedTeacher.avatar_url} alt="" className="w-full h-full object-cover" />
+              {resolveAvatarUrl(selectedTeacher.avatar_url) ? (
+                <img src={resolveAvatarUrl(selectedTeacher.avatar_url)!} alt="" className="w-full h-full object-cover" />
               ) : (
                 <User size={32} className="text-muted-foreground" />
               )}
