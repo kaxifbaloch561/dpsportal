@@ -25,11 +25,23 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         runtimeCaching: [
           {
+            urlPattern: /^https:\/\/gjysdcpctijftwsxiolg\.supabase\.co\/rest\/v1\/(classes|subjects|chapters|chapter_exercises|chapter_qa|announcements).*/i,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "supabase-content",
+              expiration: { maxEntries: 200, maxAgeSeconds: 7 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+              networkTimeoutSeconds: 5,
+            },
+          },
+          {
             urlPattern: /^https:\/\/gjysdcpctijftwsxiolg\.supabase\.co\/.*/i,
             handler: "NetworkFirst",
             options: {
-              cacheName: "supabase-api",
-              expiration: { maxEntries: 50, maxAgeSeconds: 300 },
+              cacheName: "supabase-api-other",
+              expiration: { maxEntries: 50, maxAgeSeconds: 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+              networkTimeoutSeconds: 5,
             },
           },
         ],
