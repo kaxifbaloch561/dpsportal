@@ -269,10 +269,7 @@ const Dashboard = () => {
       <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />
       <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
 
-      {user?.role === "teacher" && user.email && !fullGuideShown && (
-        <FullAppGuide userEmail={user.email} onComplete={() => setFullGuideShown(true)} />
-      )}
-      {user?.role === "teacher" && user.email && fullGuideShown && (
+      {user?.role === "teacher" && user.email && (
         <OnboardingTour userEmail={user.email} />
       )}
     </PageShell>
