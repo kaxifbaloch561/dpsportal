@@ -153,8 +153,8 @@ const TeacherRegistration = ({ onBack }: { onBack: () => void }) => {
         backgroundSize: "400% 400%",
         animation: "gradientBG 15s ease infinite",
       }}>
-        <div className="w-full max-w-md bg-card/95 backdrop-blur-xl rounded-[28px] sm:rounded-[40px] p-6 sm:p-10 text-center" style={{
-          boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
+        <div className="w-full max-w-md bg-card rounded-[28px] sm:rounded-[40px] p-6 sm:p-10 text-center" style={{
+          boxShadow: "0 40px 80px rgba(0,0,0,0.2)",
         }}>
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
             <Check size={40} className="text-green-600" />
