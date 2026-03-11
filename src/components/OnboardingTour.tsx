@@ -217,7 +217,7 @@ const OnboardingTour = ({ userEmail, onComplete }: Props) => {
   if (isWelcome) {
     return (
       <>
-        <div className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm" style={{ animation: "tourFadeIn 0.3s ease" }} />
+        <div className="fixed inset-0 z-[10000] bg-black/60" style={{ animation: "tourFadeIn 0.3s ease" }} />
         <div className="fixed inset-0 z-[10002] flex items-center justify-center p-4" style={{ animation: "tourFadeIn 0.4s ease" }}>
           <div className="relative w-full max-w-[380px] rounded-3xl overflow-hidden"
             style={{
