@@ -278,7 +278,7 @@ const OnboardingTour = ({ userEmail, onComplete }: Props) => {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[10000] bg-black/50 backdrop-blur-[3px]"
+        className="fixed inset-0 z-[10000] bg-black/50"
         style={{ animation: "tourFadeIn 0.3s ease" }}
         onClick={completeTour}
       />
