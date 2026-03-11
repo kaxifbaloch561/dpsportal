@@ -277,7 +277,7 @@ const EmptyState = memo(({ theme, subjectName }: {
   <div className="flex flex-col items-center justify-center text-center py-8 sm:py-14" style={{ animation: "cardEntrance 0.2s ease-out forwards" }}>
     <div className="relative mb-3 sm:mb-5" style={{ animation: "float 4s ease-in-out infinite" }}>
       <div className="absolute inset-0 rounded-full blur-3xl opacity-15" style={{ background: theme.bg, transform: "scale(2)" }} />
-      <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl flex items-center justify-center overflow-hidden bg-card/80 backdrop-blur-sm border border-border/30 shadow-xl">
+      <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl flex items-center justify-center overflow-hidden bg-card border border-border/30 shadow-xl">
         <img src={schoolLogo} alt="DPS" loading="eager" decoding="async" className="w-12 h-12 sm:w-20 sm:h-20 object-contain" />
       </div>
       <div className="absolute -top-1 -right-1">
