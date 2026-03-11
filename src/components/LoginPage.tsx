@@ -35,7 +35,7 @@ const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-3 sm:p-5"
+      className="min-h-[100dvh] flex items-center justify-center p-2 sm:p-5"
       style={{
         background: "linear-gradient(-45deg, hsl(235, 60%, 68%), hsl(235, 65%, 58%), hsl(240, 50%, 72%), hsl(235, 70%, 62%))",
         backgroundSize: "400% 400%",

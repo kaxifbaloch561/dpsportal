@@ -184,7 +184,7 @@ const Dashboard = () => {
                     <span className="text-[24px] sm:text-[28px] font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)]">{cls.id}</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
-                    <span className="text-[14px] font-bold text-white tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.15)]">{cls.name}</span>
+                    <span className="text-[13px] sm:text-[14px] font-bold text-white tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.15)]">{cls.name}</span>
                     <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm rounded-full px-2.5 py-0.5 border border-white/10">
                       <span className="text-[10px] text-white/80 font-semibold">{cls.subjects.length} Subjects</span>
                     </div>
