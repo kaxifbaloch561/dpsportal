@@ -68,7 +68,7 @@ const SubjectsPage = () => {
                   boxShadow: `0 8px 32px -8px ${theme.shadow}55`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 24px 56px -12px ${theme.shadow}aa, 0 0 0 1.5px rgba(255,255,255,0.15)`;
+                  e.currentTarget.style.boxShadow = `0 24px 56px -12px ${theme.shadow}aa`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = `0 8px 32px -8px ${theme.shadow}55`;
@@ -76,33 +76,19 @@ const SubjectsPage = () => {
               >
                 {/* Gradient background */}
                 <div className="absolute inset-0" style={{ background: theme.bg }} />
-                {/* Noise texture */}
-                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")" }} />
-                {/* Glass border top */}
-                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                {/* Decorative elements */}
-                <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-white/[0.08] group-hover:scale-[1.8] transition-transform duration-700 ease-out" />
-                <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-white/[0.05] group-hover:scale-[1.5] transition-transform duration-700 delay-75 ease-out" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 rounded-full bg-white/[0.02] group-hover:scale-[2.5] transition-transform duration-1000" />
 
-                {/* Shimmer sweep */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                </div>
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col items-center justify-center h-full w-full p-3 sm:p-4 gap-1.5 sm:gap-2">
                   {/* Subject icon circle */}
-                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-0.5 sm:mb-1 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] group-hover:scale-110 group-hover:bg-white/25 transition-all duration-500">
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-black/10 border border-white/15 flex items-center justify-center mb-0.5 sm:mb-1 shadow-[0_6px_18px_-8px_rgba(0,0,0,0.25)] group-hover:scale-110 transition-all duration-500">
                     <span className="text-base sm:text-lg font-black text-white drop-shadow-sm">{subject.name.charAt(0)}</span>
                   </div>
                   <span className={`text-[13px] sm:text-base font-extrabold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)] text-center leading-tight break-words max-w-full ${/[\u0600-\u06FF]/.test(subject.name) ? 'font-urdu' : ''}`}>
                     {subject.name}
                   </span>
                   {/* Bottom accent */}
-                  <div className="relative h-0.5 w-6 rounded-full overflow-hidden bg-white/15 group-hover:w-10 transition-all duration-500 mt-0.5">
-                    <div className="absolute inset-0 bg-white/70 rounded-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 delay-100" />
-                  </div>
+                  <div className="h-0.5 w-6 rounded-full bg-white/35 group-hover:w-10 transition-all duration-500 mt-0.5" />
                 </div>
               </button>
             );
