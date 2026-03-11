@@ -59,7 +59,7 @@ const TeacherTopBar = () => {
           {!isDashboard && (
             <button
               onClick={() => navigate(-1)}
-              className="group flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-card/80 backdrop-blur-md border border-border/50 text-foreground hover:border-primary/40 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.2)] hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
+              className="group flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-card border border-border/50 text-foreground hover:border-primary/40 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.2)] hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.97]"
             >
               <ArrowLeft size={16} strokeWidth={2.5} className="text-muted-foreground group-hover:text-foreground transition-colors" />
             </button>
