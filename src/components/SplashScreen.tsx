@@ -65,7 +65,7 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
           className="h-full rounded-full"
           style={{
             background: "linear-gradient(90deg, hsl(var(--splash-glow)), hsl(var(--primary)))",
-            animation: "splashProgress 1.8s 0.5s ease-in-out forwards",
+            animation: "splashProgress 1.5s 0.2s ease-in-out forwards",
             width: "0%",
           }}
         />
