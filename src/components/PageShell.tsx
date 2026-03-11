@@ -38,11 +38,10 @@ const PageShell = ({ children }: PageShellProps) => {
       />
 
       <div
-        className="w-full max-w-[1400px] h-[calc(100dvh-12px)] sm:h-[calc(100dvh-40px)] bg-card/95 backdrop-blur-xl relative flex flex-col overflow-hidden"
+        className="w-full max-w-[1400px] h-[calc(100dvh-12px)] sm:h-[calc(100dvh-40px)] bg-card relative flex flex-col overflow-hidden"
         style={{
           borderRadius: "clamp(12px, 3vw, 40px)",
-          boxShadow:
-            "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
+          boxShadow: "0 40px 80px rgba(0,0,0,0.2)",
           animation:
             "containerSpring 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards",
         }}
