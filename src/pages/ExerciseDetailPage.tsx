@@ -258,7 +258,7 @@ const ExerciseCard = ({
       {/* MCQ Options */}
       {isMCQ && options.length > 0 && (
         <div className="px-3.5 sm:px-7 pb-3 sm:pb-4">
-          <div className="ml-[42px] sm:ml-[52px] space-y-1.5 sm:space-y-2">
+          <div className="ml-[38px] sm:ml-[52px] space-y-1.5 sm:space-y-2">
             {options.map((opt: string, i: number) => {
               const letter = String.fromCharCode(97 + i);
               const isCorrect = item.correct_option &&
