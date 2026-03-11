@@ -9,8 +9,8 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setFadeOut(true), 1800);
-    const removeTimer = setTimeout(() => onFinished(), 2500);
+    const fadeTimer = setTimeout(() => setFadeOut(true), 1500);
+    const removeTimer = setTimeout(() => onFinished(), 2000);
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(removeTimer);
@@ -19,7 +19,7 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-splash-bg transition-opacity duration-1000 gap-6 ${
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-splash-bg transition-opacity duration-500 gap-6 ${
         fadeOut ? "opacity-0" : "opacity-100"
       }`}
     >
@@ -65,7 +65,7 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
           className="h-full rounded-full"
           style={{
             background: "linear-gradient(90deg, hsl(var(--splash-glow)), hsl(var(--primary)))",
-            animation: "splashProgress 1.8s 0.5s ease-in-out forwards",
+            animation: "splashProgress 1.5s 0.2s ease-in-out forwards",
             width: "0%",
           }}
         />
