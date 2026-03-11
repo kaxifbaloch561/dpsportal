@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Check, X, Pause, Trash2, ArrowLeft, User, Mail, BookOpen, Shield, Eye, EyeOff, UserPlus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import AdminCreateTeacher from "./AdminCreateTeacher";
+import { resolveAvatarUrl } from "@/utils/avatarMap";
 
 interface TeacherAccount {
   id: string;
