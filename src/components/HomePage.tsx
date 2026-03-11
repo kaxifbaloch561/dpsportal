@@ -19,7 +19,7 @@ const HomePage = () => {
         className="w-full max-w-[1400px] min-h-[calc(100dvh-12px)] sm:min-h-[85vh] bg-card relative overflow-hidden flex flex-col"
         style={{
           borderRadius: "clamp(12px, 3vw, 40px)",
-          boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
+          boxShadow: "0 40px 80px rgba(0,0,0,0.2)",
           animation: "containerSpring 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
         }}
       >
