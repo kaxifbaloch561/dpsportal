@@ -137,7 +137,7 @@ const ExercisePage = () => {
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : availableTypes.length === 0 ? (
-          <div className="text-center text-muted-foreground py-20 bg-card/50 rounded-2xl border border-border/40 text-sm">
+          <div className="text-center text-muted-foreground py-20 bg-card rounded-2xl border border-border/40 text-sm">
             No exercises available yet for this chapter.
           </div>
         ) : (
@@ -154,7 +154,7 @@ const ExercisePage = () => {
                   onClick={() =>
                     navigate(`/class/${classId}/subject/${subjectId}/chapter/${chapterNumber}/exercise/${type}`)
                   }
-                  className="group relative flex items-center gap-3 sm:gap-5 py-3.5 sm:py-5 px-3.5 sm:px-6 rounded-xl sm:rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm text-left transition-all duration-300 ease-out hover:border-primary/40 hover:shadow-[0_12px_40px_-12px_hsl(var(--primary)/0.2)] hover:-translate-y-1 active:scale-[0.99]"
+                  className="group relative flex items-center gap-3 sm:gap-5 py-3.5 sm:py-5 px-3.5 sm:px-6 rounded-xl sm:rounded-2xl border border-border/60 bg-card text-left transition-all duration-300 ease-out hover:border-primary/40 hover:shadow-[0_12px_40px_-12px_hsl(var(--primary)/0.2)] hover:-translate-y-1 active:scale-[0.99]"
                   style={{
                     animation: `slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.08 * index + 0.2}s`,
                     opacity: 0,

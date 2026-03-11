@@ -9,7 +9,7 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import {
   Loader2, Copy, Check, Download, BookOpen,
   PenLine, CheckCircle2, Columns3, ToggleLeft,
-  FileText, MessageSquareText
+  FileText, MessageSquareText, ClipboardList
 } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
@@ -115,6 +115,48 @@ const handleDownloadPdf = (
   toast.success("PDF downloaded!");
 };
 
+/** Copy all exercises to clipboard with proper formatting */
+const handleCopyAll = (
+  exercises: any[],
+  typeLabel: string,
+  className: string,
+  subjectName: string,
+  chapNum: number,
+  exerciseType: string
+) => {
+  const isMCQ = exerciseType === "choose_correct_answer" || exerciseType === "true_false";
+  let text = `📚 ${className} — ${subjectName}\n`;
+  text += `📖 Chapter ${chapNum} — ${typeLabel}\n`;
+  text += `${"─".repeat(40)}\n\n`;
+
+  exercises.forEach((item, idx) => {
+    text += `Q.${idx + 1}  ${item.question}\n`;
+
+    if (isMCQ && Array.isArray(item.options) && item.options.length > 0) {
+      item.options.forEach((opt: string, i: number) => {
+        const letter = String.fromCharCode(97 + i);
+        const isCorrect = item.correct_option &&
+          (item.correct_option.toLowerCase() === letter ||
+           item.correct_option.toLowerCase() === String.fromCharCode(65 + i) ||
+           item.correct_option === opt);
+        text += `   ${letter}) ${opt}${isCorrect ? " ✅" : ""}\n`;
+      });
+    }
+
+    const ansText = item.answer || item.correct_option || "";
+    if (ansText) {
+      text += `\n✏️ Ans: ${ansText}\n`;
+    }
+    text += `\n${"─".repeat(30)}\n\n`;
+  });
+
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    toast.success("All exercises copied!");
+  }).catch(() => {
+    toast.error("Failed to copy");
+  });
+};
+
 const ExerciseDetailPage = () => {
   const { classId, subjectId, chapterNumber, exerciseType } = useParams();
   const { data: classesData = [] } = useClassesData();
@@ -162,32 +204,39 @@ const ExerciseDetailPage = () => {
           className="mt-3 sm:mt-4 mb-5 sm:mb-8"
           style={{ animation: "slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards", opacity: 0 }}
         >
-          <div className="flex items-center justify-between flex-wrap gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className={`flex items-center justify-center w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${typeGradient} text-white shadow-lg`}>
-                <TypeIcon className="w-5 h-5 sm:w-7 sm:h-7" />
-              </div>
-              <div>
-                <h2 className="text-lg sm:text-2xl font-extrabold text-foreground tracking-tight">
-                  {typeLabel}
-                </h2>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                  Chapter {chapNum} • {exercises?.length || 0} Questions
-                </p>
-              </div>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className={`flex items-center justify-center w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${typeGradient} text-white shadow-lg`}>
+              <TypeIcon className="w-5 h-5 sm:w-7 sm:h-7" />
             </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg sm:text-2xl font-extrabold text-foreground tracking-tight">
+                {typeLabel}
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                Chapter {chapNum} • {exercises?.length || 0} Questions
+              </p>
+            </div>
+          </div>
 
-            {exercises && exercises.length > 0 && (
+          {/* Action Buttons Row — below the title */}
+          {exercises && exercises.length > 0 && (
+            <div className="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-4">
               <button
                 onClick={() => handleDownloadPdf(exercises, typeLabel, cls?.name || "", subject?.name || "", chapNum)}
-                className="flex items-center gap-1.5 sm:gap-2.5 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground text-xs sm:text-sm font-bold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-95"
+                className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-primary text-primary-foreground text-xs sm:text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-95 min-h-[44px]"
               >
                 <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Download PDF</span>
-                <span className="sm:hidden">PDF</span>
+                Download PDF
               </button>
-            )}
-          </div>
+              <button
+                onClick={() => handleCopyAll(exercises, typeLabel, cls?.name || "", subject?.name || "", chapNum, exerciseType || "")}
+                className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-muted text-foreground text-xs sm:text-sm font-bold border border-border hover:bg-accent hover:-translate-y-0.5 transition-all duration-300 active:scale-95 min-h-[44px]"
+              >
+                <ClipboardList className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                Copy All
+              </button>
+            </div>
+          )}
         </div>
 
         {isLoading ? (
@@ -195,7 +244,7 @@ const ExerciseDetailPage = () => {
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : !exercises || exercises.length === 0 ? (
-          <div className="text-center text-muted-foreground py-20 bg-card/50 rounded-2xl border border-border/40">
+          <div className="text-center text-muted-foreground py-20 bg-card rounded-2xl border border-border/40">
             No exercises available.
           </div>
         ) : (
@@ -241,7 +290,7 @@ const ExerciseCard = ({
   const copyText = `Q.${index} ${item.question}\n\nAns: ${item.answer || item.correct_option || ""}`;
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+    <div className="bg-card border border-border/60 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Question Header */}
       <div className="px-3.5 sm:px-7 pt-4 sm:pt-5 pb-3 sm:pb-4">
         <div className="flex gap-2.5 sm:gap-3.5 items-start">

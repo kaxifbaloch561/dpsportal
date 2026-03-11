@@ -153,8 +153,8 @@ const TeacherRegistration = ({ onBack }: { onBack: () => void }) => {
         backgroundSize: "400% 400%",
         animation: "gradientBG 15s ease infinite",
       }}>
-        <div className="w-full max-w-md bg-card/95 backdrop-blur-xl rounded-[28px] sm:rounded-[40px] p-6 sm:p-10 text-center" style={{
-          boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
+        <div className="w-full max-w-md bg-card rounded-[28px] sm:rounded-[40px] p-6 sm:p-10 text-center" style={{
+          boxShadow: "0 40px 80px rgba(0,0,0,0.2)",
         }}>
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
             <Check size={40} className="text-green-600" />
@@ -187,8 +187,8 @@ const TeacherRegistration = ({ onBack }: { onBack: () => void }) => {
       <div className="fixed top-[-100px] left-[10%] w-[350px] h-[350px] bg-blob-blue rounded-full blur-[40px] opacity-60 hidden sm:block" style={{ animation: "floatBlob 8s ease-in-out infinite" }} />
       <div className="fixed bottom-[-100px] right-[20%] w-[400px] h-[400px] bg-blob-pink blur-[40px] opacity-60 hidden sm:block" style={{ borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%", animation: "floatBlob 12s ease-in-out infinite reverse" }} />
 
-      <div className="w-full max-w-md bg-card/95 backdrop-blur-xl rounded-[24px] sm:rounded-[40px] p-5 sm:p-8 relative overflow-hidden max-h-[calc(100dvh-16px)] sm:max-h-none overflow-y-auto" style={{
-        boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
+      <div className="w-full max-w-md bg-card rounded-[24px] sm:rounded-[40px] p-5 sm:p-8 relative overflow-hidden max-h-[calc(100dvh-16px)] sm:max-h-none overflow-y-auto" style={{
+        boxShadow: "0 40px 80px rgba(0,0,0,0.2)",
         animation: "containerSpring 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
       }}>
         {/* Header */}

@@ -31,10 +31,10 @@ const LandingPage = () => {
     >
       <div
         ref={containerRef}
-        className="w-full max-w-[1400px] min-h-[calc(100dvh-12px)] sm:min-h-[750px] bg-card/95 backdrop-blur-xl relative overflow-hidden flex flex-col"
+        className="w-full max-w-[1400px] min-h-[calc(100dvh-12px)] sm:min-h-[750px] bg-card relative overflow-hidden flex flex-col"
         style={{
           borderRadius: "clamp(12px, 4vw, 40px)",
-          boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
+          boxShadow: "0 40px 80px rgba(0,0,0,0.2)",
           animation: "containerSpring 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
         }}
       >
@@ -51,7 +51,7 @@ const LandingPage = () => {
           </div>
 
           {/* Nav - hidden on mobile */}
-          <div className="hidden md:flex items-center bg-primary/85 backdrop-blur-md rounded-full p-1.5" style={{ boxShadow: "0 15px 35px hsl(235, 78%, 65%, 0.5)" }}>
+          <div className="hidden md:flex items-center bg-primary/85 rounded-full p-1.5" style={{ boxShadow: "0 15px 35px hsl(235, 78%, 65%, 0.5)" }}>
             <nav>
               <ul className="flex list-none px-6 gap-6 md:gap-9">
                 {["Home", "About", "Timing", "Courses"].map((item) => (

@@ -47,10 +47,10 @@ const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
       <div className="fixed bottom-[-100px] right-[20%] w-[400px] h-[400px] bg-blob-pink blur-[40px] opacity-60 hidden sm:block" style={{ borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%", animation: "floatBlob 12s ease-in-out infinite reverse" }} />
 
       <div
-        className="w-full max-w-md bg-card/95 backdrop-blur-xl p-6 sm:p-10 relative overflow-hidden"
+        className="w-full max-w-md bg-card p-6 sm:p-10 relative overflow-hidden"
         style={{
           borderRadius: "clamp(20px, 5vw, 40px)",
-          boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
+          boxShadow: "0 40px 80px rgba(0,0,0,0.2)",
           animation: "containerSpring 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
         }}
       >

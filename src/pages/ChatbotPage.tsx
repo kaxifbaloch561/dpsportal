@@ -164,7 +164,7 @@ const FormattedMessage = memo(({ content, glow }: { content: string; glow: strin
     <div className="relative group">
       <button
         onClick={handleCopy}
-        className="absolute -top-1 -right-1 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-accent/60 bg-card/80 backdrop-blur-sm border border-border/30 shadow-sm"
+        className="absolute -top-1 -right-1 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-accent/60 bg-card border border-border/30 shadow-sm"
         title="Copy answer"
       >
         {copied ? <Check size={11} className="text-green-500" /> : <Copy size={11} className="text-muted-foreground" />}
@@ -207,7 +207,7 @@ const ChatBubble = memo(({ msg, theme }: { msg: Message; theme: typeof subjectGr
         className={`max-w-[85%] sm:max-w-[78%] px-3 sm:px-5 py-2.5 sm:py-3.5 text-[12.5px] sm:text-[13.5px] ${
           isUser
             ? "rounded-2xl rounded-br-md text-white whitespace-pre-wrap leading-relaxed"
-            : "bg-card/95 backdrop-blur-sm text-foreground rounded-2xl rounded-bl-md border border-border/30"
+            : "bg-card text-foreground rounded-2xl rounded-bl-md border border-border/30"
         }`}
         style={
           isUser
@@ -244,7 +244,7 @@ const TypingIndicator = memo(({ theme }: { theme: typeof subjectGradients.defaul
       <Bot size={13} className="sm:w-4 sm:h-4 text-white" />
     </div>
     <div
-      className="bg-card/95 backdrop-blur-sm border border-border/30 rounded-2xl rounded-bl-md px-4 py-2.5 sm:py-3.5"
+      className="bg-card border border-border/30 rounded-2xl rounded-bl-md px-4 py-2.5 sm:py-3.5"
       style={{ boxShadow: "0 2px 10px -4px hsl(0 0% 0% / 0.05)" }}
     >
       <div className="flex items-center gap-2">
@@ -277,7 +277,7 @@ const EmptyState = memo(({ theme, subjectName }: {
   <div className="flex flex-col items-center justify-center text-center py-8 sm:py-14" style={{ animation: "cardEntrance 0.2s ease-out forwards" }}>
     <div className="relative mb-3 sm:mb-5" style={{ animation: "float 4s ease-in-out infinite" }}>
       <div className="absolute inset-0 rounded-full blur-3xl opacity-15" style={{ background: theme.bg, transform: "scale(2)" }} />
-      <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl flex items-center justify-center overflow-hidden bg-card/80 backdrop-blur-sm border border-border/30 shadow-xl">
+      <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl flex items-center justify-center overflow-hidden bg-card border border-border/30 shadow-xl">
         <img src={schoolLogo} alt="DPS" loading="eager" decoding="async" className="w-12 h-12 sm:w-20 sm:h-20 object-contain" />
       </div>
       <div className="absolute -top-1 -right-1">
@@ -468,7 +468,7 @@ const ChatbotPage = () => {
             {/* Autocomplete dropdown */}
             {showSuggestions && suggestions.length > 0 && (
               <div
-                className="absolute bottom-full mb-1.5 left-0 right-0 bg-card/98 backdrop-blur-xl border border-border/50 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden z-50"
+                className="absolute bottom-full mb-1.5 left-0 right-0 bg-card border border-border/50 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden z-50"
                 style={{ animation: "cardEntrance 0.12s ease-out forwards", boxShadow: `0 -6px 32px -8px ${theme.glow}10` }}
               >
                 <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border/30">
@@ -525,7 +525,7 @@ const ChatbotPage = () => {
 
             <form
               onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-              className="relative flex items-center gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl border bg-card/85 backdrop-blur-xl transition-all duration-200"
+              className="relative flex items-center gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl border bg-card transition-all duration-200"
               style={{
                 borderColor: isFocused ? `${theme.glow}35` : "hsl(var(--border) / 0.5)",
                 boxShadow: isFocused

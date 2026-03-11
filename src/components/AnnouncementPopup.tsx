@@ -87,7 +87,7 @@ const AnnouncementPopup = ({ open, onOpenChange }: Props) => {
             <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-white/10" />
           </div>
           <div className="relative flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-white/25 flex items-center justify-center">
               <Megaphone size={24} className="text-black" />
             </div>
             <div>

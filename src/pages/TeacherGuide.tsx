@@ -174,16 +174,16 @@ const TeacherGuide = () => {
         {/* Back button */}
         <button
           onClick={() => navigate("/")}
-          className="inline-flex items-center gap-2 text-sm font-semibold mb-5 transition-all backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-white/80 hover:text-white hover:bg-white/10"
+          className="inline-flex items-center gap-2 text-sm font-semibold mb-5 transition-all px-4 py-2 rounded-full border border-white/20 text-white/80 hover:text-white hover:bg-white/10"
         >
           <ArrowLeft size={15} /> Back to Login
         </button>
 
         {/* Hero Header */}
         <div
-          className="bg-card/95 backdrop-blur-xl rounded-[32px] p-6 sm:p-8 mb-6 text-center relative overflow-hidden"
+          className="bg-card rounded-[32px] p-6 sm:p-8 mb-6 text-center relative overflow-hidden"
           style={{
-            boxShadow: "0 30px 60px rgba(0,0,0,0.12), inset 0 0 0 1.5px rgba(255,255,255,0.5)",
+            boxShadow: "0 30px 60px rgba(0,0,0,0.12)",
             animation: "containerSpring 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
           }}
         >
@@ -234,9 +234,9 @@ const TeacherGuide = () => {
 
                   {/* Card */}
                   <div
-                    className="bg-card/95 backdrop-blur-xl rounded-[22px] p-4 sm:p-5 relative overflow-hidden group"
+                    className="bg-card rounded-[22px] p-4 sm:p-5 relative overflow-hidden group"
                     style={{
-                      boxShadow: "0 8px 28px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.45)",
+                      boxShadow: "0 8px 28px rgba(0,0,0,0.06)",
                     }}
                   >
                     <div className="absolute top-0 left-5 right-5 h-[2px] rounded-full" style={{ background: `linear-gradient(90deg, transparent, ${step.color}30, transparent)` }} />
@@ -282,9 +282,9 @@ const TeacherGuide = () => {
 
         {/* Account Status */}
         <div
-          className="bg-card/95 backdrop-blur-xl rounded-[28px] p-5 sm:p-7 mb-6 relative overflow-hidden"
+          className="bg-card rounded-[28px] p-5 sm:p-7 mb-6 relative overflow-hidden"
           style={{
-            boxShadow: "0 20px 50px rgba(0,0,0,0.08), inset 0 0 0 1.5px rgba(255,255,255,0.45)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.08)",
             animation: `slideUp 0.5s ease forwards ${0.3 + steps.length * 0.07 + 0.05}s`,
             opacity: 0,
           }}
@@ -324,9 +324,9 @@ const TeacherGuide = () => {
 
         {/* Important Notes */}
         <div
-          className="bg-card/95 backdrop-blur-xl rounded-[28px] p-5 sm:p-7 mb-6 relative overflow-hidden"
+          className="bg-card rounded-[28px] p-5 sm:p-7 mb-6 relative overflow-hidden"
           style={{
-            boxShadow: "0 20px 50px rgba(0,0,0,0.08), inset 0 0 0 1.5px rgba(255,255,255,0.45)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.08)",
             animation: `slideUp 0.5s ease forwards ${0.3 + steps.length * 0.07 + 0.12}s`,
             opacity: 0,
           }}

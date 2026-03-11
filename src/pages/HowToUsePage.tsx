@@ -160,7 +160,7 @@ const HowToUsePage = () => {
       </div>
 
       {/* Sticky header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/50">
+      <header className="sticky top-0 z-50 bg-background border-b border-border/50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
@@ -218,7 +218,7 @@ const HowToUsePage = () => {
           { label: "Communication Tools", value: "3", color: "from-blue-500 to-indigo-600" },
           { label: "AI Powered", value: "Yes", color: "from-cyan-500 to-blue-600" }].
           map((stat, i) =>
-          <div key={i} className="relative rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-4 text-center overflow-hidden group hover:border-primary/30 transition-all duration-300">
+          <div key={i} className="relative rounded-2xl border border-border/60 bg-card p-4 text-center overflow-hidden group hover:border-primary/30 transition-all duration-300">
               <div className={`text-2xl sm:text-3xl font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
                 {stat.value}
               </div>
@@ -238,7 +238,7 @@ const HowToUsePage = () => {
             return (
               <div
                 key={i}
-                className="group relative rounded-3xl border border-border/60 bg-card/80 backdrop-blur-sm overflow-hidden hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
+                className="group relative rounded-3xl border border-border/60 bg-card overflow-hidden hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
                 style={{
                   animation: `slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.4 + i * 0.06}s`,
                   opacity: 0
