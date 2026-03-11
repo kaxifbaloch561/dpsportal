@@ -16,7 +16,7 @@ const HomePage = () => {
       <div className="fixed top-[40%] left-[35%] w-[200px] h-[200px] bg-blob-green blur-[40px] opacity-60 hidden sm:block" style={{ borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%", animation: "floatBlob 10s ease-in-out infinite 2s" }} />
 
       <div
-        className="w-full max-w-[1400px] min-h-[calc(100dvh-12px)] sm:min-h-[85vh] bg-card/95 backdrop-blur-xl relative overflow-hidden flex flex-col"
+        className="w-full max-w-[1400px] min-h-[calc(100dvh-12px)] sm:min-h-[85vh] bg-card relative overflow-hidden flex flex-col"
         style={{
           borderRadius: "clamp(12px, 3vw, 40px)",
           boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
