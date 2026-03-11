@@ -324,9 +324,9 @@ const TeacherGuide = () => {
 
         {/* Important Notes */}
         <div
-          className="bg-card/95 backdrop-blur-xl rounded-[28px] p-5 sm:p-7 mb-6 relative overflow-hidden"
+          className="bg-card rounded-[28px] p-5 sm:p-7 mb-6 relative overflow-hidden"
           style={{
-            boxShadow: "0 20px 50px rgba(0,0,0,0.08), inset 0 0 0 1.5px rgba(255,255,255,0.45)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.08)",
             animation: `slideUp 0.5s ease forwards ${0.3 + steps.length * 0.07 + 0.12}s`,
             opacity: 0,
           }}

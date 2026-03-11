@@ -525,7 +525,7 @@ const ChatbotPage = () => {
 
             <form
               onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-              className="relative flex items-center gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl border bg-card/85 backdrop-blur-xl transition-all duration-200"
+              className="relative flex items-center gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl border bg-card transition-all duration-200"
               style={{
                 borderColor: isFocused ? `${theme.glow}35` : "hsl(var(--border) / 0.5)",
                 boxShadow: isFocused
