@@ -174,7 +174,7 @@ const TeacherGuide = () => {
         {/* Back button */}
         <button
           onClick={() => navigate("/")}
-          className="inline-flex items-center gap-2 text-sm font-semibold mb-5 transition-all backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-white/80 hover:text-white hover:bg-white/10"
+          className="inline-flex items-center gap-2 text-sm font-semibold mb-5 transition-all px-4 py-2 rounded-full border border-white/20 text-white/80 hover:text-white hover:bg-white/10"
         >
           <ArrowLeft size={15} /> Back to Login
         </button>
