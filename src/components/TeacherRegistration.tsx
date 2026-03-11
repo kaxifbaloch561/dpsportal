@@ -148,12 +148,12 @@ const TeacherRegistration = ({ onBack }: { onBack: () => void }) => {
 
   if (step === "done") {
     return (
-      <div className="min-h-screen flex items-center justify-center p-5" style={{
+      <div className="min-h-[100dvh] flex items-center justify-center p-3 sm:p-5" style={{
         background: "linear-gradient(-45deg, hsl(235, 60%, 68%), hsl(235, 65%, 58%), hsl(240, 50%, 72%), hsl(235, 70%, 62%))",
         backgroundSize: "400% 400%",
         animation: "gradientBG 15s ease infinite",
       }}>
-        <div className="w-full max-w-md bg-card/95 backdrop-blur-xl rounded-[40px] p-10 text-center" style={{
+        <div className="w-full max-w-md bg-card/95 backdrop-blur-xl rounded-[28px] sm:rounded-[40px] p-6 sm:p-10 text-center" style={{
           boxShadow: "0 40px 80px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5)",
         }}>
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
