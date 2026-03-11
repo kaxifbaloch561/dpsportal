@@ -137,7 +137,7 @@ const ExercisePage = () => {
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : availableTypes.length === 0 ? (
-          <div className="text-center text-muted-foreground py-20 bg-card/50 rounded-2xl border border-border/40 text-sm">
+          <div className="text-center text-muted-foreground py-20 bg-card rounded-2xl border border-border/40 text-sm">
             No exercises available yet for this chapter.
           </div>
         ) : (
