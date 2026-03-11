@@ -115,8 +115,12 @@ const handleDownloadPdf = (
   toast.success("PDF downloaded!");
 };
 
-/** Copy all exercises to clipboard with proper formatting */
-const handleCopyAll = (
+/** Convert markdown bold **text** to <b>text</b> for HTML, or strip for plain text */
+const mdBoldToHtml = (text: string) => text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+const mdBoldToPlain = (text: string) => text.replace(/\*\*(.*?)\*\*/g, '$1');
+
+/** Copy all exercises to clipboard with rich HTML formatting (bold works in Google Docs etc.) */
+const handleCopyAll = async (
   exercises: any[],
   typeLabel: string,
   className: string,
@@ -125,36 +129,64 @@ const handleCopyAll = (
   exerciseType: string
 ) => {
   const isMCQ = exerciseType === "choose_correct_answer" || exerciseType === "true_false";
-  let text = `📚 ${className} — ${subjectName}\n`;
-  text += `📖 Chapter ${chapNum} — ${typeLabel}\n`;
-  text += `${"─".repeat(40)}\n\n`;
+
+  // Build HTML version
+  let html = `<h3>📚 ${className} — ${subjectName}</h3>`;
+  html += `<h4>📖 Chapter ${chapNum} — ${typeLabel}</h4><hr/><br/>`;
+
+  // Build plain text version (fallback)
+  let plain = `📚 ${className} — ${subjectName}\n`;
+  plain += `📖 Chapter ${chapNum} — ${typeLabel}\n`;
+  plain += `${"─".repeat(40)}\n\n`;
 
   exercises.forEach((item, idx) => {
-    text += `Q.${idx + 1}  ${item.question}\n`;
+    html += `<p><b>Q.${idx + 1}</b>&nbsp;&nbsp;${item.question}</p>`;
+    plain += `Q.${idx + 1}  ${item.question}\n`;
 
     if (isMCQ && Array.isArray(item.options) && item.options.length > 0) {
+      html += '<ul style="list-style:none;padding-left:16px;">';
       item.options.forEach((opt: string, i: number) => {
         const letter = String.fromCharCode(97 + i);
         const isCorrect = item.correct_option &&
           (item.correct_option.toLowerCase() === letter ||
            item.correct_option.toLowerCase() === String.fromCharCode(65 + i) ||
            item.correct_option === opt);
-        text += `   ${letter}) ${opt}${isCorrect ? " ✅" : ""}\n`;
+        html += `<li>${letter}) ${opt}${isCorrect ? " ✅" : ""}</li>`;
+        plain += `   ${letter}) ${opt}${isCorrect ? " ✅" : ""}\n`;
       });
+      html += '</ul>';
     }
 
     const ansText = item.answer || item.correct_option || "";
     if (ansText) {
-      text += `\n✏️ Ans: ${ansText}\n`;
+      const htmlAns = mdBoldToHtml(ansText).replace(/\n/g, '<br/>');
+      html += `<p>✏️ <b>Ans:</b> ${htmlAns}</p>`;
+      plain += `\nAns: ${mdBoldToPlain(ansText)}\n`;
     }
-    text += `\n${"─".repeat(30)}\n\n`;
+    html += '<hr style="border:none;border-top:1px solid #ddd;margin:12px 0;"/>';
+    plain += `\n${"─".repeat(30)}\n\n`;
   });
 
-  navigator.clipboard.writeText(text.trim()).then(() => {
+  try {
+    // Try rich HTML clipboard (works in Google Docs, Word, etc.)
+    const htmlBlob = new Blob([html], { type: "text/html" });
+    const textBlob = new Blob([plain.trim()], { type: "text/plain" });
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        "text/html": htmlBlob,
+        "text/plain": textBlob,
+      }),
+    ]);
     toast.success("All exercises copied!");
-  }).catch(() => {
-    toast.error("Failed to copy");
-  });
+  } catch {
+    // Fallback to plain text
+    try {
+      await navigator.clipboard.writeText(plain.trim());
+      toast.success("All exercises copied!");
+    } catch {
+      toast.error("Failed to copy");
+    }
+  }
 };
 
 const ExerciseDetailPage = () => {
