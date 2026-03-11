@@ -269,7 +269,14 @@ const Dashboard = () => {
       <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />
       <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
 
-      {user?.role === "teacher" && user.email && <OnboardingTour userEmail={user.email} />}
+      {user?.role === "teacher" && user.email && (
+        <>
+          {!localStorage.getItem(`dps_full_guide_completed_${user.email}`) && (
+            <FullAppGuide userEmail={user.email} onComplete={() => {}} />
+          )}
+          <OnboardingTour userEmail={user.email} />
+        </>
+      )}
     </PageShell>
   );
 };
