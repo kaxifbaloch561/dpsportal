@@ -149,7 +149,7 @@ const Dashboard = () => {
           <span className="text-[10px] font-bold text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full">{classesData.length} Classes</span>
         </div>
 
-        <div id="tour-classes" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5">
+        <div id="tour-classes" className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-5">
           {classesData.map((cls, i) => {
             const theme = classThemes[i];
             return (
