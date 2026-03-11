@@ -23,13 +23,13 @@ const DashboardHeader = ({ showBack = false, subtitle }: DashboardHeaderProps) =
           <ArrowLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       )}
-      <img src={schoolLogo} alt="DPS SIBI" className="w-9 h-9 sm:w-14 sm:h-14" />
+      <img src={schoolLogo} alt="DPS SIBI" className="w-12 h-12 sm:w-16 sm:h-16" />
       <div className="text-center">
-        <h1 className="text-[10px] sm:text-sm font-semibold text-foreground tracking-widest uppercase font-sans">
+        <h1 className="text-xs sm:text-base font-semibold text-foreground tracking-widest uppercase font-sans">
           DPS Portal
         </h1>
         {subtitle && (
-          <p className="text-[9px] sm:text-xs text-muted-foreground mt-0.5 max-w-[220px] sm:max-w-none truncate">{subtitle}</p>
+          <p className="text-[10px] sm:text-sm text-muted-foreground mt-0.5 max-w-[220px] sm:max-w-none truncate">{subtitle}</p>
         )}
       </div>
     </div>
