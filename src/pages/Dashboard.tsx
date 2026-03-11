@@ -166,19 +166,8 @@ const Dashboard = () => {
                 onMouseLeave={(e) => { e.currentTarget.style.boxShadow = `0 8px 32px -8px ${theme.shadow}55`; }}
               >
                 <div className="absolute inset-0" style={{ background: theme.bg }} />
-                {/* Noise texture overlay */}
-                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")" }} />
-                {/* Decorative orbs */}
-                <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-white/[0.08] group-hover:scale-[1.8] transition-transform duration-700 ease-out" />
-                <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-white/[0.05] group-hover:scale-[1.5] transition-transform duration-700 delay-75 ease-out" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-white/[0.03] group-hover:scale-[2] transition-transform duration-1000" />
-                {/* Shimmer */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                </div>
-                {/* Glass border top */}
-                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                
+                <div className="absolute inset-0" style={{ background: theme.bg }} />
+
                 <div className="relative z-10 flex flex-col items-center gap-2 sm:gap-3 py-5 sm:py-7 px-3 sm:px-4">
                   <div className="w-[52px] h-[52px] sm:w-[64px] sm:h-[64px] rounded-xl sm:rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.3),0_8px_24px_-8px_rgba(0,0,0,0.2)] group-hover:scale-110 group-hover:rotate-2 group-hover:bg-white/25 transition-all duration-500">
                     <span className="text-[24px] sm:text-[28px] font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)]">{cls.id}</span>
