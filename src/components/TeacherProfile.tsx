@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail, BookOpen, Shield, LogOut, Eye, EyeOff, X, KeyRound, Check, Fingerprint, Sparkles, Crown } from "lucide-react";
+import { resolveAvatarUrl } from "@/utils/avatarMap";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
