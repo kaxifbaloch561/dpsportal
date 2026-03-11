@@ -294,7 +294,7 @@ const FullAppGuide = ({ userEmail, onComplete }: Props) => {
                   background: i === step ? current.color : i < step ? `${current.color}66` : undefined,
                 }}
               />
-            ))
+            )}
           </div>
 
           {/* Buttons */}
