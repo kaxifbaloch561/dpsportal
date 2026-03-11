@@ -54,7 +54,7 @@ const SubjectsPage = () => {
           <span className="text-[10px] font-bold text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full">{cls.subjects.length} Subjects</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5">
           {cls.subjects.map((subject, i) => {
             const theme = subjectThemes[subject.id] || defaultTheme;
             return (
