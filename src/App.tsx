@@ -23,6 +23,7 @@ const ChatbotPage = lazy(() => import("./pages/ChatbotPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const HowToUsePage = lazy(() => import("./pages/HowToUsePage"));
 const TeacherGuide = lazy(() => import("./pages/TeacherGuide"));
+const InstallPage = lazy(() => import("./pages/InstallPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -66,6 +67,7 @@ const App = () => (
               <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber/exercise/:exerciseType" element={<ExerciseDetailPage />} />
               <Route path="/class/:classId/subject/:subjectId/chat" element={<ChatbotPage />} />
               <Route path="/teacher-guide" element={<TeacherGuide />} />
+              <Route path="/install" element={<InstallPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
