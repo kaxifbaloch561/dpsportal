@@ -45,6 +45,9 @@ const Dashboard = () => {
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
   const [announcementCount, setAnnouncementCount] = useState(0);
 
+  // Activate browser notifications for teachers
+  useNotifications();
+
   useEffect(() => {
     const notif = localStorage.getItem("dps_login_notification");
     if (notif) {
