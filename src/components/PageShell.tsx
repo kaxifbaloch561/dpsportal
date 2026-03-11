@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import AdminBackButton from "@/components/AdminBackButton";
+import TeacherTopBar from "@/components/TeacherTopBar";
 
 interface PageShellProps {
   children: ReactNode;
