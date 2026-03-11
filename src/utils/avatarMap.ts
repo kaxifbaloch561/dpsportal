@@ -35,9 +35,11 @@ export function resolveAvatarUrl(value: string | null | undefined): string | nul
   // If it's a data URI or http URL, use directly
   if (value.startsWith("data:") || value.startsWith("http")) return value;
   
-  // Try to match legacy Vite-hashed URLs (e.g., "/assets/male-1-abc123.png")
-  for (const [id, url] of Object.entries(avatarMap)) {
-    if (value.includes(id)) return url;
+  // Try to match legacy Vite-hashed URLs or dev paths
+  // e.g. "/assets/male-4-SRYeEBa6.png" or "/src/assets/avatars/male-1.png"
+  const avatarIds = Object.keys(avatarMap);
+  for (const id of avatarIds) {
+    if (value.includes(id)) return avatarMap[id];
   }
   
   // Fallback: return as-is
