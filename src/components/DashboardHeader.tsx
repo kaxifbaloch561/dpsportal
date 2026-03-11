@@ -23,7 +23,7 @@ const DashboardHeader = ({ showBack = false, subtitle }: DashboardHeaderProps) =
           <ArrowLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       )}
-      <img src={schoolLogo} alt="DPS SIBI" className="w-12 h-12 sm:w-16 sm:h-16" />
+      <img src={schoolLogo} alt="DPS SIBI" className="w-14 h-14 sm:w-20 sm:h-20" />
       <div className="text-center">
         <h1 className="text-xs sm:text-base font-semibold text-foreground tracking-widest uppercase font-sans">
           DPS Portal
