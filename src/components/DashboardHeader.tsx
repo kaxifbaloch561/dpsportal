@@ -23,7 +23,7 @@ const DashboardHeader = ({ showBack = false, subtitle }: DashboardHeaderProps) =
           <ArrowLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       )}
-      <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-white shadow-md">
+      <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full overflow-hidden shadow-md">
         <img src={schoolLogo} alt="DPS SIBI" className="w-full h-full object-cover" />
       </div>
       <div className="text-center">

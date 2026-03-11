@@ -56,7 +56,7 @@ const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
       >
         {/* Logo */}
         <div className="flex flex-col items-center mb-6 sm:mb-8" style={{ animation: "slideDown 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s", opacity: 0 }}>
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-white shadow-lg mb-3">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden shadow-lg mb-3">
             <img src={schoolLogo} alt="DPS SIBI" className="w-full h-full object-cover" />
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-foreground">DPS Login Portal</h1>
