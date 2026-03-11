@@ -64,22 +64,20 @@ const ChapterViewPage = () => {
             }}
           >
             {/* Chapter Title Header */}
-            <div className="flex items-center justify-between mt-3 sm:mt-4 mb-4 sm:mb-6 gap-3">
-              <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
-                <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground text-sm sm:text-lg font-black flex items-center justify-center shadow-lg shrink-0">
-                  {chapter.chapter_number}
-                </span>
-                <h2 className="text-base sm:text-2xl font-bold text-foreground truncate">{chapter.chapter_title}</h2>
-              </div>
+            <div className="flex items-center mt-3 sm:mt-4 mb-4 sm:mb-6 gap-2.5 sm:gap-3">
+              <span className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground text-sm sm:text-lg font-black flex items-center justify-center shadow-lg shrink-0">
+                {chapter.chapter_number}
+              </span>
+              <h2 className="text-sm sm:text-2xl font-bold text-foreground flex-1 min-w-0 line-clamp-2 leading-snug">{chapter.chapter_title}</h2>
               <Button
                 onClick={() =>
                   navigate(`/class/${classId}/subject/${subjectId}/chapter/${chapter.chapter_number}/exercise`)
                 }
-                className="gap-1.5 sm:gap-2 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg text-xs sm:text-sm px-3 sm:px-4 h-9 sm:h-10 shrink-0"
+                className="gap-1.5 sm:gap-2 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground shadow-lg text-xs sm:text-sm px-3 sm:px-5 h-10 sm:h-11 shrink-0 whitespace-nowrap"
               >
-                <ClipboardList className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <ClipboardList className="w-4 h-4" />
                 <span className="hidden sm:inline">Exercise</span>
-                <span className="sm:hidden">Ex.</span>
+                <span className="sm:hidden">Exercise</span>
               </Button>
             </div>
 
