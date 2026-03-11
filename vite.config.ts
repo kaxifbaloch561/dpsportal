@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => ({
         short_name: "DPS Portal",
         description: "DPS Portal — Teacher-focused platform for classes, papers & AI support",
         theme_color: "#4338ca",
-        background_color: "#0f0e17",
+        background_color: "#ffffff",
         display: "standalone",
         orientation: "portrait",
         start_url: "/",
