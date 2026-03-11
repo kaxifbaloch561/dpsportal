@@ -19,7 +19,7 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-splash-bg transition-opacity duration-1000 gap-6 ${
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-splash-bg transition-opacity duration-500 gap-6 ${
         fadeOut ? "opacity-0" : "opacity-100"
       }`}
     >
