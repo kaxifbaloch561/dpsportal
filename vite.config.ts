@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => ({
       },
       manifest: {
         name: "DPS Portal",
-        short_name: "DPS Portal",
+        short_name: "DPS",
         description: "DPS Portal — Teacher-focused platform for classes, papers & AI support",
         theme_color: "#4338ca",
         background_color: "#ffffff",
@@ -56,10 +56,14 @@ export default defineConfig(({ mode }) => ({
         orientation: "portrait",
         start_url: "/",
         scope: "/",
+        categories: ["education"],
         icons: [
           { src: "/pwa-192x192.png", sizes: "192x192", type: "image/png" },
           { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png" },
           { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+        ],
+        screenshots: [
+          { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png", form_factor: "narrow" },
         ],
       },
     }),
