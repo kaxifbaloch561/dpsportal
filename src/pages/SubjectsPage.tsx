@@ -61,7 +61,7 @@ const SubjectsPage = () => {
               <button
                 key={subject.id}
                 onClick={() => navigate(`/class/${cls.id}/subject/${subject.id}`)}
-                className="group relative cursor-pointer overflow-hidden rounded-[22px] border-0 p-0 h-40 transition-all duration-500 hover:-translate-y-4 hover:scale-[1.02] active:scale-[0.97]"
+                className="group relative cursor-pointer overflow-hidden rounded-[18px] sm:rounded-[22px] border-0 p-0 h-32 sm:h-40 transition-all duration-500 hover:-translate-y-4 hover:scale-[1.02] active:scale-[0.97]"
                 style={{
                   animation: `cardEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${0.3 + i * 0.06}s`,
                   opacity: 0,
