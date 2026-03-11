@@ -30,10 +30,9 @@ export const useNotifications = () => {
         icon: icon || "/pwa-192x192.png",
         badge: "/pwa-192x192.png",
         tag: `dps-${Date.now()}`,
-        } as NotificationOptions & { vibrate?: number[] });
       });
       notif.onclick = () => { window.focus(); notif.close(); };
-    } catch { /* SW context fallback - ignore */ }
+    } catch { /* ignore */ }
   }, []);
 
   useEffect(() => {
