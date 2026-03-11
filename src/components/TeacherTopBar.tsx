@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Send, Fingerprint } from "lucide-react";
+import { Send, Fingerprint, ArrowLeft } from "lucide-react";
 import TeacherInbox from "@/components/TeacherInbox";
 import TeacherProfile from "@/components/TeacherProfile";
 
