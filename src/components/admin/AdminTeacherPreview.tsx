@@ -47,8 +47,9 @@ const AdminTeacherPreview = () => {
               onMouseLeave={(e) => { e.currentTarget.style.boxShadow = `0 8px 28px -8px ${theme.shadow}55`; }}
             >
               <div className="absolute inset-0" style={{ background: theme.bg }} />
+              <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-white/10 group-hover:scale-150 transition-transform duration-700" />
               <div className="relative z-10 flex flex-col items-center gap-3 py-6 px-4">
-                <div className="w-14 h-14 rounded-2xl bg-black/10 border border-white/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                   <span className="text-2xl font-black text-white">{cls.id}</span>
                 </div>
                 <span className="text-sm font-bold text-white tracking-wide">{cls.name}</span>
