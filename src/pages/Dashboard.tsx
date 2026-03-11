@@ -74,8 +74,6 @@ const Dashboard = () => {
 
   return (
     <PageShell>
-      <div className="pt-14 sm:pt-16" /> {/* Spacer for global TeacherTopBar */}
-
       <DashboardHeader subtitle="Select your class to begin" />
 
       {/* Action buttons row: scrollable */}
