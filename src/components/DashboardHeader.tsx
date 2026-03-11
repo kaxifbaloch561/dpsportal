@@ -1,6 +1,7 @@
 import schoolLogo from "@/assets/school-logo.png";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardHeaderProps {
   showBack?: boolean;
@@ -9,9 +10,11 @@ interface DashboardHeaderProps {
 
 const DashboardHeader = ({ showBack = false, subtitle }: DashboardHeaderProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isTeacher = user?.role === "teacher";
 
   return (
-    <div className="flex flex-col items-center gap-1.5 sm:gap-2 px-3 sm:px-8 pt-3 sm:pt-8 pb-2 sm:pb-4 relative">
+    <div className={`flex flex-col items-center gap-1.5 sm:gap-2 px-3 sm:px-8 ${isTeacher ? 'pt-1 sm:pt-2' : 'pt-3 sm:pt-8'} pb-2 sm:pb-4 relative`}>
       {showBack && (
         <button
           onClick={() => navigate(-1)}
