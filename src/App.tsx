@@ -69,6 +69,7 @@ const App = () => (
               <Route path="/class/:classId/subject/:subjectId/chat" element={<ChatbotPage />} />
               <Route path="/teacher-guide" element={<TeacherGuide />} />
               <Route path="/install" element={<InstallPage />} />
+              <Route path="/lesson-planner" element={<LessonPlannerPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
