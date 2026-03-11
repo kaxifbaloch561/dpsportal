@@ -291,7 +291,7 @@ const HtmlChapterContent = ({ content }: { content: string }) => {
       {sections.map((section, idx) => (
         <div
           key={idx}
-          className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+          className="bg-card border border-border/60 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
           style={{
             animation: `slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${idx * 0.06}s forwards`,
             opacity: 0,
