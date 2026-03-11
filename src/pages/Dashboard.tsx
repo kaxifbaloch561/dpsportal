@@ -162,7 +162,7 @@ const Dashboard = () => {
                   opacity: 0,
                   boxShadow: `0 8px 32px -8px ${theme.shadow}55`,
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 24px 56px -12px ${theme.shadow}aa, 0 0 0 1.5px rgba(255,255,255,0.15)`; }}
+                onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 24px 56px -12px ${theme.shadow}aa`; }}
                 onMouseLeave={(e) => { e.currentTarget.style.boxShadow = `0 8px 32px -8px ${theme.shadow}55`; }}
               >
                 <div className="absolute inset-0" style={{ background: theme.bg }} />
