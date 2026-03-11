@@ -207,7 +207,7 @@ const ChatBubble = memo(({ msg, theme }: { msg: Message; theme: typeof subjectGr
         className={`max-w-[85%] sm:max-w-[78%] px-3 sm:px-5 py-2.5 sm:py-3.5 text-[12.5px] sm:text-[13.5px] ${
           isUser
             ? "rounded-2xl rounded-br-md text-white whitespace-pre-wrap leading-relaxed"
-            : "bg-card/95 backdrop-blur-sm text-foreground rounded-2xl rounded-bl-md border border-border/30"
+            : "bg-card text-foreground rounded-2xl rounded-bl-md border border-border/30"
         }`}
         style={
           isUser
