@@ -14,6 +14,7 @@ import AnnouncementPopup from "@/components/AnnouncementPopup";
 import { supabase } from "@/integrations/supabase/client";
 import DiscussionRoom from "@/components/DiscussionRoom";
 import OnboardingTour from "@/components/OnboardingTour";
+import FullAppGuide from "@/components/FullAppGuide";
 
 const classThemes = [
   { bg: "linear-gradient(135deg, hsl(235,78%,62%), hsl(260,80%,55%))", shadow: "hsl(235,78%,65%)" },
@@ -47,6 +48,10 @@ const Dashboard = () => {
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
   const [announcementCount, setAnnouncementCount] = useState(0);
   const [unreadInbox, setUnreadInbox] = useState(0);
+  const [fullGuideShown, setFullGuideShown] = useState(() => {
+    if (user?.role !== "teacher" || !user.email) return true;
+    return !!localStorage.getItem(`dps_full_guide_completed_${user.email}`);
+  });
 
   useEffect(() => {
     const notif = localStorage.getItem("dps_login_notification");
@@ -268,7 +273,12 @@ const Dashboard = () => {
       <AnnouncementPopup open={showAnnouncements} onOpenChange={setShowAnnouncements} />
       <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
 
-      {user?.role === "teacher" && user.email && <OnboardingTour userEmail={user.email} />}
+      {user?.role === "teacher" && user.email && !fullGuideShown && (
+        <FullAppGuide userEmail={user.email} onComplete={() => setFullGuideShown(true)} />
+      )}
+      {user?.role === "teacher" && user.email && fullGuideShown && (
+        <OnboardingTour userEmail={user.email} />
+      )}
     </PageShell>
   );
 };
