@@ -85,7 +85,7 @@ const ChaptersPage = () => {
                 </span>
 
                 <div className="flex-1 min-w-0">
-                  <span className="text-sm sm:text-base font-semibold text-foreground block truncate group-hover:text-primary transition-colors duration-300">
+                  <span className="text-sm sm:text-base font-semibold text-foreground block group-hover:text-primary transition-colors duration-300 leading-snug break-words whitespace-normal">
                     {ch.chapter_title}
                   </span>
                 </div>
