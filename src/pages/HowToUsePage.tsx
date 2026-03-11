@@ -218,7 +218,7 @@ const HowToUsePage = () => {
           { label: "Communication Tools", value: "3", color: "from-blue-500 to-indigo-600" },
           { label: "AI Powered", value: "Yes", color: "from-cyan-500 to-blue-600" }].
           map((stat, i) =>
-          <div key={i} className="relative rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-4 text-center overflow-hidden group hover:border-primary/30 transition-all duration-300">
+          <div key={i} className="relative rounded-2xl border border-border/60 bg-card p-4 text-center overflow-hidden group hover:border-primary/30 transition-all duration-300">
               <div className={`text-2xl sm:text-3xl font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
                 {stat.value}
               </div>
