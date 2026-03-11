@@ -48,10 +48,6 @@ const Dashboard = () => {
   const [loginNotification, setLoginNotification] = useState<string | null>(null);
   const [announcementCount, setAnnouncementCount] = useState(0);
   const [unreadInbox, setUnreadInbox] = useState(0);
-  const [fullGuideShown, setFullGuideShown] = useState(() => {
-    if (user?.role !== "teacher" || !user.email) return true;
-    return !!localStorage.getItem(`dps_full_guide_completed_${user.email}`);
-  });
 
   useEffect(() => {
     const notif = localStorage.getItem("dps_login_notification");
