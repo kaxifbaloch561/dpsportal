@@ -100,9 +100,7 @@ const SubjectsPage = () => {
                     {subject.name}
                   </span>
                   {/* Bottom accent */}
-                  <div className="relative h-0.5 w-6 rounded-full overflow-hidden bg-white/15 group-hover:w-10 transition-all duration-500 mt-0.5">
-                    <div className="absolute inset-0 bg-white/70 rounded-full origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 delay-100" />
-                  </div>
+                  <div className="h-0.5 w-6 rounded-full bg-white/35 group-hover:w-10 transition-all duration-500 mt-0.5" />
                 </div>
               </button>
             );
