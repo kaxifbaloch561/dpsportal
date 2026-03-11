@@ -241,6 +241,11 @@
   to { filter: drop-shadow(0 0 50px hsl(35, 100%, 50%)); }
 }
 
+@keyframes splashProgress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
 @keyframes gradientBG {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
