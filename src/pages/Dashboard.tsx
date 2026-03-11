@@ -169,7 +169,7 @@ const Dashboard = () => {
                 <div className="absolute inset-0" style={{ background: theme.bg }} />
 
                 <div className="relative z-10 flex flex-col items-center gap-2 sm:gap-3 py-5 sm:py-7 px-3 sm:px-4">
-                  <div className="w-[52px] h-[52px] sm:w-[64px] sm:h-[64px] rounded-xl sm:rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.3),0_8px_24px_-8px_rgba(0,0,0,0.2)] group-hover:scale-110 group-hover:rotate-2 group-hover:bg-white/25 transition-all duration-500">
+                  <div className="w-[52px] h-[52px] sm:w-[64px] sm:h-[64px] rounded-xl sm:rounded-2xl bg-black/10 border border-white/15 flex items-center justify-center shadow-[0_8px_24px_-8px_rgba(0,0,0,0.2)] group-hover:scale-110 group-hover:rotate-2 transition-all duration-500">
                     <span className="text-[24px] sm:text-[28px] font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.2)]">{cls.id}</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
