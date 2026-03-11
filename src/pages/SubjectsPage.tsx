@@ -76,8 +76,6 @@ const SubjectsPage = () => {
               >
                 {/* Gradient background */}
                 <div className="absolute inset-0" style={{ background: theme.bg }} />
-                {/* Glass border top */}
-                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                 {/* Decorative elements */}
                 <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-white/[0.08] group-hover:scale-[1.8] transition-transform duration-700 ease-out" />
                 <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-white/[0.05] group-hover:scale-[1.5] transition-transform duration-700 delay-75 ease-out" />
