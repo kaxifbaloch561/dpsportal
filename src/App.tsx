@@ -67,6 +67,7 @@ const App = () => (
               <Route path="/class/:classId/subject/:subjectId/chapter/:chapterNumber/exercise/:exerciseType" element={<ExerciseDetailPage />} />
               <Route path="/class/:classId/subject/:subjectId/chat" element={<ChatbotPage />} />
               <Route path="/teacher-guide" element={<TeacherGuide />} />
+              <Route path="/install" element={<InstallPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
