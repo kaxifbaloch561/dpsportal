@@ -250,12 +250,6 @@ const PrincipalMessaging = () => {
             <p className="text-[11px] text-muted-foreground">Teacher</p>
           </div>
         </div>
-        <button
-          onClick={() => setDeleteTarget({ type: "chat" })}
-          className="w-10 h-10 rounded-[10px] border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
-        >
-          <Trash2 size={16} />
-        </button>
       </div>
 
       <div className="flex-1 overflow-auto px-4 sm:px-6 py-6 space-y-4 bg-background">
