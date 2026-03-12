@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Megaphone, Plus, Trash2, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Megaphone, Plus, Trash2, Clock, CheckCircle2, XCircle, Eye, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 
 interface Announcement {
@@ -15,30 +15,45 @@ interface Announcement {
   created_at: string;
 }
 
+interface AnnouncementView {
+  id: string;
+  announcement_id: string;
+  teacher_email: string;
+  teacher_name: string;
+  seen_at: string;
+}
+
 const AdminAnnouncements = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [views, setViews] = useState<AnnouncementView[]>([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [creating, setCreating] = useState(false);
+  const [expandedViews, setExpandedViews] = useState<string | null>(null);
 
-  const fetchAnnouncements = async () => {
-    const { data } = await supabase
-      .from("announcements")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (data) setAnnouncements(data as Announcement[]);
+  const fetchData = async () => {
+    const [annRes, viewsRes] = await Promise.all([
+      supabase.from("announcements").select("*").order("created_at", { ascending: false }),
+      supabase.from("announcement_views").select("*").order("seen_at", { ascending: false }),
+    ]);
+    if (annRes.data) setAnnouncements(annRes.data as Announcement[]);
+    if (viewsRes.data) setViews(viewsRes.data as AnnouncementView[]);
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchAnnouncements();
-    const ch = supabase
+    fetchData();
+    const ch1 = supabase
       .channel("admin-announcements")
-      .on("postgres_changes", { event: "*", schema: "public", table: "announcements" }, () => fetchAnnouncements())
+      .on("postgres_changes", { event: "*", schema: "public", table: "announcements" }, () => fetchData())
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    const ch2 = supabase
+      .channel("admin-ann-views")
+      .on("postgres_changes", { event: "*", schema: "public", table: "announcement_views" }, () => fetchData())
+      .subscribe();
+    return () => { supabase.removeChannel(ch1); supabase.removeChannel(ch2); };
   }, []);
 
   const handleCreate = async () => {
@@ -71,6 +86,24 @@ const AdminAnnouncements = () => {
     if (days > 0) return `${days}d ${hours}h ${mins}m`;
     if (hours > 0) return `${hours}h ${mins}m`;
     return `${mins}m`;
+  };
+
+  const getViewsForAnnouncement = (announcementId: string) =>
+    views.filter((v) => v.announcement_id === announcementId);
+
+  const formatSeenTime = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return d.toLocaleDateString("en-PK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   };
 
   // Countdown timer
@@ -138,6 +171,9 @@ const AdminAnnouncements = () => {
           {announcements.map((a) => {
             const isExpired = a.expires_at && new Date(a.expires_at).getTime() < Date.now();
             const isActive = a.is_active && !isExpired;
+            const annViews = getViewsForAnnouncement(a.id);
+            const isViewsOpen = expandedViews === a.id;
+
             return (
               <div
                 key={a.id}
@@ -190,6 +226,80 @@ const AdminAnnouncements = () => {
                       <Trash2 size={14} />
                     </Button>
                   </div>
+                </div>
+
+                {/* Seen By Section - WhatsApp style */}
+                <div className="mt-3 pt-3 border-t border-border">
+                  <button
+                    onClick={() => setExpandedViews(isViewsOpen ? null : a.id)}
+                    className="flex items-center gap-2 w-full text-left hover:bg-muted/30 rounded-xl px-2 py-1.5 transition-colors"
+                  >
+                    <Eye size={13} className="text-blue-500" />
+                    <span className="text-[11px] font-bold text-foreground">
+                      Seen by {annViews.length} teacher{annViews.length !== 1 ? "s" : ""}
+                    </span>
+                    {annViews.length > 0 && (
+                      <>
+                        {/* WhatsApp-style double blue ticks */}
+                        <span className="text-blue-500 text-xs font-black">✓✓</span>
+                        {/* Stacked avatars preview */}
+                        <div className="flex -space-x-1.5 ml-auto mr-1">
+                          {annViews.slice(0, 4).map((v, i) => (
+                            <div
+                              key={v.id}
+                              className="w-5 h-5 rounded-full bg-primary/15 border-2 border-card flex items-center justify-center text-[7px] font-black text-primary"
+                              style={{ zIndex: 4 - i }}
+                            >
+                              {v.teacher_name.charAt(0).toUpperCase()}
+                            </div>
+                          ))}
+                          {annViews.length > 4 && (
+                            <div className="w-5 h-5 rounded-full bg-muted border-2 border-card flex items-center justify-center text-[7px] font-bold text-muted-foreground">
+                              +{annViews.length - 4}
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                    {isViewsOpen ? <ChevronUp size={13} className="text-muted-foreground" /> : <ChevronDown size={13} className="text-muted-foreground" />}
+                  </button>
+
+                  {/* Expanded seen-by list */}
+                  {isViewsOpen && (
+                    <div className="mt-2 rounded-xl border border-border bg-muted/20 overflow-hidden">
+                      {annViews.length === 0 ? (
+                        <div className="px-4 py-3 text-xs text-muted-foreground/60 text-center">
+                          No one has seen this yet
+                        </div>
+                      ) : (
+                        <div className="divide-y divide-border">
+                          {annViews.map((v) => (
+                            <div key={v.id} className="flex items-center gap-3 px-3 py-2.5 hover:bg-muted/30 transition-colors">
+                              {/* Avatar */}
+                              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-[11px] font-black text-primary shrink-0">
+                                {v.teacher_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                              </div>
+                              {/* Name */}
+                              <div className="flex-1 min-w-0">
+                                <div className="text-xs font-bold text-foreground truncate">{v.teacher_name}</div>
+                                <div className="text-[10px] text-muted-foreground truncate">{v.teacher_email}</div>
+                              </div>
+                              {/* Seen time */}
+                              <div className="text-right shrink-0">
+                                <div className="text-[10px] font-semibold text-blue-500 flex items-center gap-1">
+                                  <span className="text-blue-500">✓✓</span>
+                                  {formatSeenTime(v.seen_at)}
+                                </div>
+                                <div className="text-[9px] text-muted-foreground">
+                                  {new Date(v.seen_at).toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" })}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             );
