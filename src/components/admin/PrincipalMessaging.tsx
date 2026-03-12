@@ -100,21 +100,6 @@ const PrincipalMessaging = () => {
     setSending(false);
   };
 
-  const handleDeleteMessage = async (msgId: string) => {
-    const { error } = await supabase.from("admin_messages").delete().eq("id", msgId);
-    if (error) toast.error("Failed to delete message");
-    else { toast.success("Message deleted"); if (selectedTeacher) fetchMessages(selectedTeacher); }
-    setDeleteTarget(null);
-  };
-
-  const handleDeleteChat = async () => {
-    if (!selectedTeacher) return;
-    const { error } = await supabase.from("admin_messages").delete()
-      .or(`and(sender_email.eq.${PRINCIPAL_EMAIL},recipient_email.eq.${selectedTeacher}),and(sender_email.eq.${selectedTeacher},recipient_email.eq.${PRINCIPAL_EMAIL})`);
-    if (error) toast.error("Failed to delete chat");
-    else { toast.success("Chat deleted"); setMessages([]); }
-    setDeleteTarget(null);
-  };
 
   const filtered = teachers.filter((t) =>
     `${t.first_name} ${t.last_name} ${t.email}`.toLowerCase().includes(search.toLowerCase())
