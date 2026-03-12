@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
-import { MessageSquare, Megaphone, MessagesSquare, Users, UserPlus, LogOut } from "lucide-react";
+import { MessageSquare, Megaphone, MessagesSquare, Users, UserPlus, LogOut, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import PrincipalMessaging from "@/components/admin/PrincipalMessaging";
@@ -11,6 +11,7 @@ import AdminAnnouncements from "@/components/admin/AdminAnnouncements";
 import AdminTeacherPreview from "@/components/admin/AdminTeacherPreview";
 import AdminTeacherAccounts from "@/components/admin/AdminTeacherAccounts";
 import DiscussionRoom from "@/components/DiscussionRoom";
+import AdminLessonPlanner from "@/components/admin/AdminLessonPlanner";
 
 const tabs = [
   { key: "messaging", label: "Messages", icon: MessageSquare },
@@ -18,6 +19,7 @@ const tabs = [
   { key: "discussion", label: "Discussion", icon: MessagesSquare },
   { key: "teacher", label: "Teacher Panel", icon: Users },
   { key: "accounts", label: "Teacher Accounts", icon: UserPlus },
+  { key: "lessons", label: "Lesson Plans", icon: CalendarDays },
 ] as const;
 
 type TabKey = (typeof tabs)[number]["key"];
@@ -104,6 +106,7 @@ const PrincipalDashboard = () => {
         {activeTab === "announcements" && <AdminAnnouncements />}
         {activeTab === "teacher" && <AdminTeacherPreview />}
         {activeTab === "accounts" && <AdminTeacherAccounts isPrincipal />}
+        {activeTab === "lessons" && <AdminLessonPlanner />}
       </div>
 
       <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
