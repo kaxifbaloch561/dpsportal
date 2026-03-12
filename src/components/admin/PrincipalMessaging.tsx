@@ -1,18 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
-import { Send, ChevronLeft, User, Search, Trash2, X, Check, CheckCheck } from "lucide-react";
+import { Send, ChevronLeft, User, Search, Check, CheckCheck } from "lucide-react";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 const PRINCIPAL_EMAIL = "principal.access@dps.portal";
 
@@ -44,7 +34,7 @@ const PrincipalMessaging = () => {
   const [search, setSearch] = useState("");
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
   const [lastMessages, setLastMessages] = useState<Record<string, Message>>({});
-  const [deleteTarget, setDeleteTarget] = useState<{ type: "message" | "chat"; id?: string } | null>(null);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchTeachers = async () => {
@@ -110,21 +100,6 @@ const PrincipalMessaging = () => {
     setSending(false);
   };
 
-  const handleDeleteMessage = async (msgId: string) => {
-    const { error } = await supabase.from("admin_messages").delete().eq("id", msgId);
-    if (error) toast.error("Failed to delete message");
-    else { toast.success("Message deleted"); if (selectedTeacher) fetchMessages(selectedTeacher); }
-    setDeleteTarget(null);
-  };
-
-  const handleDeleteChat = async () => {
-    if (!selectedTeacher) return;
-    const { error } = await supabase.from("admin_messages").delete()
-      .or(`and(sender_email.eq.${PRINCIPAL_EMAIL},recipient_email.eq.${selectedTeacher}),and(sender_email.eq.${selectedTeacher},recipient_email.eq.${PRINCIPAL_EMAIL})`);
-    if (error) toast.error("Failed to delete chat");
-    else { toast.success("Chat deleted"); setMessages([]); }
-    setDeleteTarget(null);
-  };
 
   const filtered = teachers.filter((t) =>
     `${t.first_name} ${t.last_name} ${t.email}`.toLowerCase().includes(search.toLowerCase())
@@ -250,12 +225,6 @@ const PrincipalMessaging = () => {
             <p className="text-[11px] text-muted-foreground">Teacher</p>
           </div>
         </div>
-        <button
-          onClick={() => setDeleteTarget({ type: "chat" })}
-          className="w-10 h-10 rounded-[10px] border border-border bg-background flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
-        >
-          <Trash2 size={16} />
-        </button>
       </div>
 
       <div className="flex-1 overflow-auto px-4 sm:px-6 py-6 space-y-4 bg-background">
@@ -289,12 +258,6 @@ const PrincipalMessaging = () => {
                     }`}
                     style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.04)" }}
                   >
-                    <button
-                      onClick={() => setDeleteTarget({ type: "message", id: msg.id })}
-                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
-                    >
-                      <X size={10} />
-                    </button>
                     <p className="text-foreground">{msg.message}</p>
                   </div>
                   <div className={`flex items-center gap-1.5 px-1 ${isPrincipal ? "justify-end" : "justify-start"}`}>
@@ -335,25 +298,6 @@ const PrincipalMessaging = () => {
         </div>
       </div>
 
-      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
-        <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>{deleteTarget?.type === "chat" ? "Delete Entire Chat?" : "Delete Message?"}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {deleteTarget?.type === "chat"
-                ? `All messages with ${getTeacherName(selectedTeacher)} will be permanently deleted.`
-                : "This message will be permanently deleted."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleteTarget?.type === "chat" ? handleDeleteChat() : deleteTarget?.id && handleDeleteMessage(deleteTarget.id)}
-              className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
