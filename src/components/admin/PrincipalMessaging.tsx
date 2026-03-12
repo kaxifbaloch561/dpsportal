@@ -283,12 +283,6 @@ const PrincipalMessaging = () => {
                     }`}
                     style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.04)" }}
                   >
-                    <button
-                      onClick={() => setDeleteTarget({ type: "message", id: msg.id })}
-                      className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
-                    >
-                      <X size={10} />
-                    </button>
                     <p className="text-foreground">{msg.message}</p>
                   </div>
                   <div className={`flex items-center gap-1.5 px-1 ${isPrincipal ? "justify-end" : "justify-start"}`}>
