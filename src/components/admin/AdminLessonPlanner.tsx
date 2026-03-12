@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { format, startOfWeek, endOfWeek, addDays, addWeeks, subWeeks, startOfMonth, endOfMonth, subMonths, eachDayOfInterval, isSameDay, isSameMonth, isToday } from "date-fns";
+import { format, startOfWeek, endOfWeek, addDays, addWeeks, subWeeks, startOfMonth, endOfMonth, addMonths, subMonths, eachDayOfInterval, isSameDay, isSameMonth, isToday } from "date-fns";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, LayoutGrid, User, BookOpen, Clock, Search } from "lucide-react";
 
 interface LessonWithTeacher {
