@@ -11,6 +11,7 @@ import AdminAnnouncements from "@/components/admin/AdminAnnouncements";
 import AdminTeacherPreview from "@/components/admin/AdminTeacherPreview";
 import AdminTeacherAccounts from "@/components/admin/AdminTeacherAccounts";
 import DiscussionRoom from "@/components/DiscussionRoom";
+import AdminLessonPlanner from "@/components/admin/AdminLessonPlanner";
 
 const tabs = [
   { key: "messaging", label: "Messages", icon: MessageSquare },
