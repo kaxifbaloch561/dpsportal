@@ -137,6 +137,7 @@ const AdminDashboard = () => {
         {activeTab === "monitor" && <AdminMessageMonitor />}
         {activeTab === "teacher" && <AdminTeacherPreview />}
         {activeTab === "accounts" && <AdminTeacherAccounts />}
+        {activeTab === "lessons" && <AdminLessonPlanner />}
       </div>
 
       <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />

@@ -106,6 +106,7 @@ const PrincipalDashboard = () => {
         {activeTab === "announcements" && <AdminAnnouncements />}
         {activeTab === "teacher" && <AdminTeacherPreview />}
         {activeTab === "accounts" && <AdminTeacherAccounts isPrincipal />}
+        {activeTab === "lessons" && <AdminLessonPlanner />}
       </div>
 
       <DiscussionRoom open={showDiscussion} onOpenChange={setShowDiscussion} />
