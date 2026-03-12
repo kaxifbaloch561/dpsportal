@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Megaphone, Clock, X, ChevronRight } from "lucide-react";
 
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const AnnouncementPopup = ({ open, onOpenChange }: Props) => {
+  const { user, isTeacher } = useAuth();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [, setTick] = useState(0);
@@ -50,6 +52,43 @@ const AnnouncementPopup = ({ open, onOpenChange }: Props) => {
     const timer = setInterval(() => setTick((t) => t + 1), 30000);
     return () => { supabase.removeChannel(ch); clearInterval(timer); };
   }, []);
+
+  // Record view when teacher opens the popup
+  const recordView = async () => {
+    if (!isTeacher || !user?.email || announcements.length === 0) return;
+
+    // Fetch teacher name
+    const { data: teacher } = await supabase
+      .from("teacher_accounts")
+      .select("first_name, last_name")
+      .eq("email", user.email)
+      .maybeSingle();
+
+    const teacherName = teacher ? `${teacher.first_name} ${teacher.last_name}` : user.email;
+
+    // Upsert view for each active announcement
+    for (const a of announcements) {
+      await supabase
+        .from("announcement_views")
+        .upsert(
+          {
+            announcement_id: a.id,
+            teacher_email: user.email,
+            teacher_name: teacherName,
+            seen_at: new Date().toISOString(),
+          },
+          { onConflict: "announcement_id,teacher_email" }
+        );
+    }
+  };
+
+  // When popup becomes visible, record the view
+  useEffect(() => {
+    const isOpen = open || showLoginPopup;
+    if (isOpen && announcements.length > 0) {
+      recordView();
+    }
+  }, [open, showLoginPopup, announcements.length]);
 
   const getCountdown = (expiresAt: string) => {
     const diff = new Date(expiresAt).getTime() - Date.now();
