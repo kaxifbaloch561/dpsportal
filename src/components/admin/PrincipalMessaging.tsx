@@ -34,7 +34,7 @@ const PrincipalMessaging = () => {
   const [search, setSearch] = useState("");
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
   const [lastMessages, setLastMessages] = useState<Record<string, Message>>({});
-  const [deleteTarget, setDeleteTarget] = useState<{ type: "message" | "chat"; id?: string } | null>(null);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchTeachers = async () => {
