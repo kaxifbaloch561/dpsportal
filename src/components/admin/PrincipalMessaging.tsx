@@ -323,25 +323,6 @@ const PrincipalMessaging = () => {
         </div>
       </div>
 
-      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
-        <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>{deleteTarget?.type === "chat" ? "Delete Entire Chat?" : "Delete Message?"}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {deleteTarget?.type === "chat"
-                ? `All messages with ${getTeacherName(selectedTeacher)} will be permanently deleted.`
-                : "This message will be permanently deleted."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleteTarget?.type === "chat" ? handleDeleteChat() : deleteTarget?.id && handleDeleteMessage(deleteTarget.id)}
-              className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
