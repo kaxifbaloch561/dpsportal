@@ -26,6 +26,7 @@ const tabs = [
   { key: "monitor", label: "Monitor", icon: Eye },
   { key: "teacher", label: "Teacher Panel", icon: Users },
   { key: "accounts", label: "Teacher Accounts", icon: UserPlus },
+  { key: "lessons", label: "Lesson Plans", icon: CalendarDays },
 ] as const;
 
 type TabKey = (typeof tabs)[number]["key"];
