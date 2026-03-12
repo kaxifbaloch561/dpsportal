@@ -82,7 +82,7 @@ const Dashboard = () => {
 
       {/* Action buttons row: scrollable */}
       <div className="px-3 sm:px-6 py-2 overflow-x-auto scrollbar-hide">
-        <div className="flex items-center gap-2 min-w-max justify-center">
+        <div className="flex items-center gap-2 w-full sm:justify-center">
           <button
             id="tour-announcements"
             onClick={() => setShowAnnouncements(true)}
