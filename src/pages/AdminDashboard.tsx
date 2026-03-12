@@ -14,6 +14,7 @@ import AdminMessaging from "@/components/admin/AdminMessaging";
 import AdminAnnouncements from "@/components/admin/AdminAnnouncements";
 import AdminMessageMonitor from "@/components/admin/AdminMessageMonitor";
 import DiscussionRoom from "@/components/DiscussionRoom";
+import AdminLessonPlanner from "@/components/admin/AdminLessonPlanner";
 
 const tabs = [
   { key: "notifications", label: "Notifications", icon: Bell },
