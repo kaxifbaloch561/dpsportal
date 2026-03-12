@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import PageShell from "@/components/PageShell";
 import DashboardHeader from "@/components/DashboardHeader";
-import { MessageSquare, Megaphone, MessagesSquare, Users, UserPlus, LogOut } from "lucide-react";
+import { MessageSquare, Megaphone, MessagesSquare, Users, UserPlus, LogOut, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import PrincipalMessaging from "@/components/admin/PrincipalMessaging";
