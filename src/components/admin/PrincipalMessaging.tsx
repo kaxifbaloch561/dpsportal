@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
-import { Send, ChevronLeft, User, Search, Trash2, X, Check, CheckCheck } from "lucide-react";
+import { Send, ChevronLeft, User, Search, Check, CheckCheck } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
