@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { format, startOfWeek, endOfWeek, addDays, addWeeks, subWeeks, isToday } from "date-fns";
-import { ChevronLeft, ChevronRight, User, BookOpen, Clock, Filter, CalendarDays, X } from "lucide-react";
+import { format, startOfWeek, endOfWeek, addDays, addWeeks, subWeeks, isToday, isPast, isFuture } from "date-fns";
+import { ChevronLeft, ChevronRight, User, BookOpen, Clock, CalendarDays, X, GraduationCap, FileText, ChevronDown, Users } from "lucide-react";
 
 interface LessonWithTeacher {
   id: string;
@@ -16,6 +16,11 @@ interface LessonWithTeacher {
   color: string | null;
 }
 
+const TEACHER_COLORS = [
+  "hsl(235,78%,58%)", "hsl(340,72%,52%)", "hsl(160,55%,40%)", "hsl(25,90%,52%)",
+  "hsl(200,80%,48%)", "hsl(270,65%,55%)", "hsl(45,90%,48%)", "hsl(180,60%,40%)",
+];
+
 const AdminLessonPlanner = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [lessons, setLessons] = useState<LessonWithTeacher[]>([]);
@@ -23,6 +28,7 @@ const AdminLessonPlanner = () => {
   const [selectedTeacher, setSelectedTeacher] = useState<string>("all");
   const [teachers, setTeachers] = useState<{ email: string; name: string }[]>([]);
   const [detailLesson, setDetailLesson] = useState<LessonWithTeacher | null>(null);
+  const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
   useEffect(() => { fetchData(); }, []);
 
@@ -43,6 +49,11 @@ const AdminLessonPlanner = () => {
     setLoading(false);
   };
 
+  const getTeacherColor = (email: string) => {
+    const idx = teachers.findIndex((t) => t.email === email);
+    return TEACHER_COLORS[idx % TEACHER_COLORS.length] || TEACHER_COLORS[0];
+  };
+
   const filteredLessons = useMemo(
     () => (selectedTeacher === "all" ? lessons : lessons.filter((l) => l.teacher_email === selectedTeacher)),
     [lessons, selectedTeacher]
@@ -56,207 +67,298 @@ const AdminLessonPlanner = () => {
     filteredLessons.filter((l) => l.lesson_date === format(date, "yyyy-MM-dd")).sort((a, b) => a.period_number - b.period_number);
 
   const totalLessons = filteredLessons.length;
-  const totalTeachersWithLessons = new Set(filteredLessons.map((l) => l.teacher_email)).size;
+  const totalTeachersActive = new Set(filteredLessons.map((l) => l.teacher_email)).size;
 
   return (
     <div className="px-3 sm:px-6 pb-6">
-      {/* Header with stats */}
-      <div className="mb-5">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <CalendarDays size={20} className="text-primary" />
+      {/* ── Top Summary Bar ── */}
+      <div className="grid grid-cols-3 gap-2.5 mb-5">
+        <div className="p-3.5 rounded-2xl bg-primary/8 border border-primary/15">
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
+              <CalendarDays size={14} className="text-primary" />
+            </div>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Total Lessons</span>
           </div>
-          <div>
-            <h2 className="text-base sm:text-lg font-black text-foreground">Lesson Plans Overview</h2>
-            <p className="text-xs text-muted-foreground">
-              {totalTeachersWithLessons} teacher{totalTeachersWithLessons !== 1 ? "s" : ""} • {totalLessons} lesson{totalLessons !== 1 ? "s" : ""} scheduled
-            </p>
+          <div className="text-2xl font-black text-primary">{totalLessons}</div>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-accent border border-accent-foreground/10">
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className="w-7 h-7 rounded-lg bg-accent-foreground/10 flex items-center justify-center">
+              <Users size={14} className="text-accent-foreground" />
+            </div>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Active Teachers</span>
+          </div>
+          <div className="text-2xl font-black text-accent-foreground">{totalTeachersActive}</div>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-secondary/8 border border-secondary/15">
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className="w-7 h-7 rounded-lg bg-secondary/15 flex items-center justify-center">
+              <Clock size={14} className="text-secondary" />
+            </div>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">This Week</span>
+          </div>
+          <div className="text-2xl font-black text-secondary">
+            {weekDays.reduce((acc, d) => acc + getLessonsForDate(d).length, 0)}
           </div>
         </div>
+      </div>
 
-        {/* Stat cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-          {teachers.slice(0, 4).map((t) => {
+      {/* ── Teacher Filter Chips ── */}
+      <div className="mb-4">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <button
+            onClick={() => setSelectedTeacher("all")}
+            className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+              selectedTeacher === "all"
+                ? "bg-primary text-primary-foreground border-primary shadow-md"
+                : "bg-card border-border text-muted-foreground hover:border-primary/30"
+            }`}
+          >
+            All Teachers
+          </button>
+          {teachers.map((t, i) => {
+            const isActive = selectedTeacher === t.email;
+            const color = TEACHER_COLORS[i % TEACHER_COLORS.length];
             const count = lessons.filter((l) => l.teacher_email === t.email).length;
-            const isSelected = selectedTeacher === t.email;
             return (
               <button
                 key={t.email}
-                onClick={() => setSelectedTeacher(isSelected ? "all" : t.email)}
-                className={`flex items-center gap-2.5 p-3 rounded-2xl border transition-all duration-200 text-left ${
-                  isSelected
-                    ? "bg-primary/10 border-primary/30 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)]"
-                    : "bg-card border-border hover:border-primary/20 hover:shadow-md"
+                onClick={() => setSelectedTeacher(isActive ? "all" : t.email)}
+                className={`shrink-0 flex items-center gap-2 px-3 py-2 rounded-full text-xs font-bold transition-all border ${
+                  isActive
+                    ? "border-primary/40 shadow-md"
+                    : "bg-card border-border text-foreground hover:border-primary/30"
                 }`}
+                style={isActive ? { backgroundColor: color + "18", borderColor: color + "50" } : {}}
               >
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black ${
-                  isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}>
-                  {t.name.charAt(0).toUpperCase()}
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black text-white"
+                  style={{ backgroundColor: color }}
+                >
+                  {t.name.charAt(0)}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-foreground truncate">{t.name}</div>
-                  <div className="text-[10px] text-muted-foreground">{count} lesson{count !== 1 ? "s" : ""}</div>
-                </div>
+                <span>{t.name}</span>
+                <span className="bg-muted text-muted-foreground px-1.5 py-0.5 rounded-md text-[9px]">{count}</span>
               </button>
             );
           })}
         </div>
+      </div>
 
-        {/* Controls bar */}
-        <div className="flex items-center justify-between gap-3 p-2.5 rounded-2xl bg-muted/60 border border-border">
-          <div className="flex items-center gap-1.5">
-            <button onClick={() => setCurrentDate(subWeeks(currentDate, 1))} className="w-8 h-8 rounded-xl bg-card border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-all">
-              <ChevronLeft size={15} />
-            </button>
-            <button onClick={() => setCurrentDate(new Date())} className="px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground text-[11px] font-bold shadow-sm hover:shadow-md transition-all">
-              Today
-            </button>
-            <button onClick={() => setCurrentDate(addWeeks(currentDate, 1))} className="w-8 h-8 rounded-xl bg-card border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-all">
-              <ChevronRight size={15} />
-            </button>
-          </div>
-          <h3 className="text-xs sm:text-sm font-bold text-foreground">
-            {format(weekStart, "MMM d")} — {format(weekEnd, "MMM d, yyyy")}
-          </h3>
-          {selectedTeacher !== "all" && (
-            <button
-              onClick={() => setSelectedTeacher("all")}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/10 text-primary text-[10px] font-bold hover:bg-primary/20 transition-colors"
-            >
-              <Filter size={10} /> {teachers.find((t) => t.email === selectedTeacher)?.name}
-              <X size={10} />
-            </button>
-          )}
+      {/* ── Week Navigation ── */}
+      <div className="flex items-center justify-between mb-4 p-3 rounded-2xl bg-card border border-border shadow-sm">
+        <div className="flex items-center gap-2">
+          <button onClick={() => setCurrentDate(subWeeks(currentDate, 1))} className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <ChevronLeft size={16} />
+          </button>
+          <button onClick={() => setCurrentDate(new Date())} className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold shadow-sm hover:shadow-md transition-all active:scale-[0.97]">
+            Today
+          </button>
+          <button onClick={() => setCurrentDate(addWeeks(currentDate, 1))} className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <ChevronRight size={16} />
+          </button>
+        </div>
+        <div className="text-right">
+          <div className="text-sm sm:text-base font-black text-foreground">{format(weekStart, "MMMM yyyy")}</div>
+          <div className="text-[11px] text-muted-foreground font-medium">{format(weekStart, "MMM d")} – {format(weekEnd, "MMM d")}</div>
         </div>
       </div>
 
-      {/* Weekly Grid */}
+      {/* ── Day-by-Day Lesson List ── */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-9 h-9 border-[3px] border-primary/20 border-t-primary rounded-full animate-spin" />
+          <div className="w-10 h-10 border-[3px] border-primary/20 border-t-primary rounded-full animate-spin" />
         </div>
       ) : (
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        <div className="space-y-2.5">
           {weekDays.map((day) => {
             const dayLessons = getLessonsForDate(day);
             const today = isToday(day);
+            const dateKey = format(day, "yyyy-MM-dd");
+            const isExpanded = expandedDay === null || expandedDay === dateKey || today;
+            const dayHasLessons = dayLessons.length > 0;
+
             return (
               <div
                 key={day.toISOString()}
                 className={`rounded-2xl border overflow-hidden transition-all ${
-                  today ? "border-primary/40 ring-2 ring-primary/10" : "border-border"
+                  today
+                    ? "border-primary/30 shadow-[0_4px_24px_-6px_hsl(var(--primary)/0.15)]"
+                    : "border-border"
                 } bg-card`}
               >
-                {/* Day header */}
-                <div className={`px-3 py-2.5 ${today ? "bg-primary" : "bg-muted/70"}`}>
-                  <div className={`text-[10px] font-bold uppercase tracking-widest ${today ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                    {format(day, "EEEE")}
-                  </div>
-                  <div className={`text-xl font-black leading-tight ${today ? "text-primary-foreground" : "text-foreground"}`}>
-                    {format(day, "d")}
-                  </div>
-                </div>
-
-                {/* Lessons list */}
-                <div className="p-2 space-y-1.5 min-h-[120px] sm:min-h-[200px]">
-                  {dayLessons.map((lesson) => (
-                    <div
-                      key={lesson.id}
-                      onClick={() => setDetailLesson(lesson)}
-                      className="rounded-xl p-2.5 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 border border-transparent hover:border-primary/15"
-                      style={{
-                        background: `linear-gradient(135deg, ${lesson.color || "hsl(235,78%,62%)"}12, ${lesson.color || "hsl(235,78%,62%)"}06)`,
-                        borderLeft: `3px solid ${lesson.color || "hsl(235,78%,62%)"}`,
-                      }}
-                    >
-                      {/* Teacher name badge */}
-                      <div className="flex items-center gap-1.5 mb-1.5">
-                        <div
-                          className="w-5 h-5 rounded-md flex items-center justify-center text-[9px] font-black text-white"
-                          style={{ backgroundColor: lesson.color || "hsl(235,78%,62%)" }}
-                        >
-                          {lesson.teacher_name.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-[10px] font-bold text-primary truncate">{lesson.teacher_name}</span>
-                      </div>
-
-                      {/* Period badge */}
-                      <div className="flex items-center gap-1 mb-1">
-                        <Clock size={9} className="text-muted-foreground" />
-                        <span className="text-[9px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">Period {lesson.period_number}</span>
-                      </div>
-
-                      {/* Topic */}
-                      <div className="text-[11px] sm:text-xs font-bold text-foreground leading-snug">{lesson.topic}</div>
-
-                      {/* Class & Subject */}
-                      <div className="flex items-center gap-1 mt-1">
-                        <BookOpen size={9} className="text-muted-foreground" />
-                        <span className="text-[9px] text-muted-foreground">{lesson.class_name} • {lesson.subject}</span>
-                      </div>
+                {/* Day Header Row */}
+                <button
+                  onClick={() => setExpandedDay(expandedDay === dateKey ? null : dateKey)}
+                  className={`w-full flex items-center justify-between px-4 py-3 transition-colors ${
+                    today ? "bg-primary/6" : "hover:bg-muted/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Date block */}
+                    <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center ${
+                      today ? "bg-primary text-primary-foreground shadow-md" : "bg-muted text-foreground"
+                    }`}>
+                      <span className="text-[9px] font-bold uppercase leading-none">{format(day, "EEE")}</span>
+                      <span className="text-lg font-black leading-tight">{format(day, "d")}</span>
                     </div>
-                  ))}
-                  {dayLessons.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-6 sm:py-10 text-muted-foreground/40">
-                      <CalendarDays size={20} strokeWidth={1.5} />
-                      <span className="text-[10px] mt-1.5 font-medium">No lessons</span>
+                    <div>
+                      <div className="text-sm font-bold text-foreground text-left">{format(day, "EEEE")}</div>
+                      <div className="text-[11px] text-muted-foreground">{format(day, "MMMM d, yyyy")}</div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {dayHasLessons && (
+                      <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold ${
+                        today ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+                      }`}>
+                        {dayLessons.length} lesson{dayLessons.length !== 1 ? "s" : ""}
+                      </span>
+                    )}
+                    <ChevronDown size={16} className={`text-muted-foreground transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                  </div>
+                </button>
+
+                {/* Expanded Lessons */}
+                {isExpanded && (
+                  <div className="border-t border-border">
+                    {dayHasLessons ? (
+                      <div className="divide-y divide-border">
+                        {dayLessons.map((lesson) => {
+                          const tColor = lesson.color || getTeacherColor(lesson.teacher_email);
+                          return (
+                            <div
+                              key={lesson.id}
+                              onClick={() => setDetailLesson(lesson)}
+                              className="flex items-stretch cursor-pointer hover:bg-muted/30 transition-colors group"
+                            >
+                              {/* Color accent */}
+                              <div className="w-1.5 shrink-0" style={{ backgroundColor: tColor }} />
+
+                              {/* Period column */}
+                              <div className="w-20 sm:w-24 shrink-0 flex flex-col items-center justify-center py-3 border-r border-border bg-muted/20">
+                                <Clock size={13} className="text-muted-foreground mb-0.5" />
+                                <span className="text-xs font-black text-foreground">P{lesson.period_number}</span>
+                                <span className="text-[9px] text-muted-foreground">Period {lesson.period_number}</span>
+                              </div>
+
+                              {/* Main content */}
+                              <div className="flex-1 px-4 py-3 min-w-0">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="flex-1 min-w-0">
+                                    {/* Topic - most prominent */}
+                                    <h4 className="text-sm font-bold text-foreground mb-1.5 leading-snug group-hover:text-primary transition-colors">
+                                      📘 {lesson.topic}
+                                    </h4>
+
+                                    {/* Info chips */}
+                                    <div className="flex flex-wrap items-center gap-1.5">
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted text-[10px] font-bold text-foreground">
+                                        <GraduationCap size={10} className="text-muted-foreground" />
+                                        {lesson.class_name}
+                                      </span>
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted text-[10px] font-bold text-foreground">
+                                        <BookOpen size={10} className="text-muted-foreground" />
+                                        {lesson.subject}
+                                      </span>
+                                      {lesson.notes && (
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-accent text-[10px] font-medium text-accent-foreground">
+                                          <FileText size={9} />
+                                          Has notes
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Teacher avatar */}
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    <div className="text-right hidden sm:block">
+                                      <div className="text-[11px] font-bold text-foreground">{lesson.teacher_name}</div>
+                                      <div className="text-[9px] text-muted-foreground">Teacher</div>
+                                    </div>
+                                    <div
+                                      className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black text-white shadow-sm"
+                                      style={{ backgroundColor: tColor }}
+                                    >
+                                      {lesson.teacher_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center py-6 text-muted-foreground/50">
+                        <CalendarDays size={16} strokeWidth={1.5} className="mr-2" />
+                        <span className="text-xs font-medium">No lessons scheduled</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
       )}
 
-      {/* Lesson Detail Drawer */}
+      {/* ── Lesson Detail Modal ── */}
       {detailLesson && (
-        <div className="fixed inset-0 z-[200] bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setDetailLesson(null)}>
+        <div className="fixed inset-0 z-[200] bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setDetailLesson(null)}>
           <div
-            className="bg-card w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl border border-border shadow-2xl overflow-hidden"
+            className="bg-card w-full sm:max-w-lg sm:rounded-3xl rounded-t-3xl border border-border shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             style={{ animation: "slideUp 0.35s ease forwards" }}
           >
-            {/* Colored header */}
-            <div className="p-5 pb-4" style={{ background: `linear-gradient(135deg, ${detailLesson.color || "hsl(235,78%,62%)"}25, ${detailLesson.color || "hsl(235,78%,62%)"}08)` }}>
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center text-lg font-black text-white shadow-md"
-                    style={{ backgroundColor: detailLesson.color || "hsl(235,78%,62%)" }}
-                  >
-                    {detailLesson.teacher_name.charAt(0).toUpperCase()}
+            {/* Header with accent */}
+            <div className="relative">
+              <div className="h-2 w-full" style={{ backgroundColor: detailLesson.color || getTeacherColor(detailLesson.teacher_email) }} />
+              <div className="p-5 pb-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center text-base font-black text-white shadow-lg"
+                      style={{ backgroundColor: detailLesson.color || getTeacherColor(detailLesson.teacher_email) }}
+                    >
+                      {detailLesson.teacher_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
+                    </div>
+                    <div>
+                      <div className="text-base font-bold text-foreground">{detailLesson.teacher_name}</div>
+                      <div className="text-xs text-muted-foreground">{detailLesson.teacher_email}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-sm font-bold text-foreground">{detailLesson.teacher_name}</div>
-                    <div className="text-xs text-muted-foreground">{detailLesson.teacher_email}</div>
-                  </div>
+                  <button onClick={() => setDetailLesson(null)} className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center hover:bg-destructive/10 transition-colors">
+                    <X size={15} />
+                  </button>
                 </div>
-                <button onClick={() => setDetailLesson(null)} className="w-8 h-8 rounded-xl bg-card/80 border border-border flex items-center justify-center hover:bg-destructive/10 transition-colors">
-                  <X size={14} />
-                </button>
               </div>
             </div>
 
-            {/* Details grid */}
-            <div className="p-5 space-y-4">
+            {/* Content */}
+            <div className="px-5 pb-6 space-y-5">
+              {/* Topic highlight */}
+              <div className="p-4 rounded-2xl border border-border" style={{ backgroundColor: (detailLesson.color || getTeacherColor(detailLesson.teacher_email)) + "08" }}>
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">📘 Lesson Topic</div>
+                <div className="text-base font-bold text-foreground">{detailLesson.topic}</div>
+              </div>
+
+              {/* Details grid */}
               <div className="grid grid-cols-2 gap-3">
-                <DetailItem icon={<CalendarDays size={14} />} label="Date" value={format(new Date(detailLesson.lesson_date + "T00:00:00"), "EEE, MMM d yyyy")} />
-                <DetailItem icon={<Clock size={14} />} label="Period" value={`Period ${detailLesson.period_number}`} />
-                <DetailItem icon={<User size={14} />} label="Class" value={detailLesson.class_name} />
-                <DetailItem icon={<BookOpen size={14} />} label="Subject" value={detailLesson.subject} />
+                <InfoCard icon={<CalendarDays size={16} />} label="Date" value={format(new Date(detailLesson.lesson_date + "T00:00:00"), "EEEE")} sub={format(new Date(detailLesson.lesson_date + "T00:00:00"), "MMM d, yyyy")} />
+                <InfoCard icon={<Clock size={16} />} label="Period" value={`Period ${detailLesson.period_number}`} sub={`Slot #${detailLesson.period_number} of 8`} />
+                <InfoCard icon={<GraduationCap size={16} />} label="Class" value={detailLesson.class_name} sub="Assigned Class" />
+                <InfoCard icon={<BookOpen size={16} />} label="Subject" value={detailLesson.subject} sub="Subject Area" />
               </div>
 
-              <div>
-                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">Topic</div>
-                <div className="text-sm font-bold text-foreground bg-muted/50 p-3 rounded-xl border border-border">{detailLesson.topic}</div>
-              </div>
-
+              {/* Notes */}
               {detailLesson.notes && (
                 <div>
-                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">Notes</div>
-                  <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border leading-relaxed">{detailLesson.notes}</div>
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <FileText size={11} /> Teacher Notes
+                  </div>
+                  <div className="text-sm text-foreground bg-muted/40 p-4 rounded-2xl border border-border leading-relaxed">{detailLesson.notes}</div>
                 </div>
               )}
             </div>
@@ -267,13 +369,14 @@ const AdminLessonPlanner = () => {
   );
 };
 
-const DetailItem = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
-  <div className="p-2.5 rounded-xl bg-muted/40 border border-border">
-    <div className="flex items-center gap-1.5 mb-1">
+const InfoCard = ({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string; sub: string }) => (
+  <div className="p-3 rounded-2xl bg-muted/40 border border-border">
+    <div className="flex items-center gap-1.5 mb-2">
       <span className="text-primary">{icon}</span>
       <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">{label}</span>
     </div>
-    <div className="text-xs font-bold text-foreground">{value}</div>
+    <div className="text-sm font-bold text-foreground">{value}</div>
+    <div className="text-[10px] text-muted-foreground mt-0.5">{sub}</div>
   </div>
 );
 
