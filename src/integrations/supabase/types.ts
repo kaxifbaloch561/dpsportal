@@ -70,6 +70,38 @@ export type Database = {
           },
         ]
       }
+      announcement_views: {
+        Row: {
+          announcement_id: string
+          id: string
+          seen_at: string
+          teacher_email: string
+          teacher_name: string
+        }
+        Insert: {
+          announcement_id: string
+          id?: string
+          seen_at?: string
+          teacher_email: string
+          teacher_name: string
+        }
+        Update: {
+          announcement_id?: string
+          id?: string
+          seen_at?: string
+          teacher_email?: string
+          teacher_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_views_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           created_at: string
