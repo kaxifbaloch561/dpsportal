@@ -151,6 +151,14 @@ const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
             <HelpCircle size={13} />
             How to create an account?
           </button>
+          <a
+            href="/DPS-Portal.apk"
+            download="DPS-Portal.apk"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold hover:bg-emerald-500/20 transition-all active:scale-[0.97]"
+          >
+            <Download size={13} />
+            Download App (.apk)
+          </a>
         </div>
       </div>
     </div>
