@@ -81,17 +81,17 @@ const Dashboard = () => {
       <DashboardHeader subtitle="Select your class to begin" />
 
       {/* Action buttons row: scrollable */}
-      <div className="px-3 sm:px-6 py-2 overflow-x-auto scrollbar-hide">
-        <div className="flex items-center gap-2 w-full sm:justify-center">
+      <div className="px-3 sm:px-6 py-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:justify-center">
           <button
             id="tour-announcements"
             onClick={() => setShowAnnouncements(true)}
-            className="relative flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
+            className="relative flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-yellow-400/15 to-amber-500/15 border border-yellow-400/30 text-yellow-600 dark:text-yellow-400 hover:from-yellow-400/25 hover:to-amber-500/25 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] flex-1 sm:flex-initial justify-center sm:justify-start"
           >
-            <Megaphone size={16} />
-            <span className="text-xs font-bold whitespace-nowrap">Announcements</span>
+            <Megaphone size={14} className="sm:w-4 sm:h-4 shrink-0" />
+            <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap">Announcements</span>
             {announcementCount > 0 && (
-              <span className="min-w-[18px] h-[18px] flex items-center justify-center bg-gradient-to-br from-yellow-400 to-amber-500 text-black text-[9px] font-bold rounded-full px-1 animate-pulse">
+              <span className="min-w-[16px] sm:min-w-[18px] h-[16px] sm:h-[18px] flex items-center justify-center bg-gradient-to-br from-yellow-400 to-amber-500 text-black text-[8px] sm:text-[9px] font-bold rounded-full px-0.5 sm:px-1 animate-pulse">
                 {announcementCount}
               </span>
             )}
@@ -99,17 +99,17 @@ const Dashboard = () => {
           <button
             id="tour-discussion"
             onClick={() => setShowDiscussion(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary hover:from-primary/20 hover:to-primary/10 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] flex-1 sm:flex-initial justify-center sm:justify-start"
           >
-            <MessagesSquare size={16} />
-            <span className="text-xs font-bold whitespace-nowrap">Discussion</span>
+            <MessagesSquare size={14} className="sm:w-4 sm:h-4 shrink-0" />
+            <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap">Discussion</span>
           </button>
           <button
             onClick={() => navigate("/lesson-planner")}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:from-emerald-500/20 hover:to-teal-500/20 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] shrink-0"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:from-emerald-500/20 hover:to-teal-500/20 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 active:scale-[0.97] flex-1 sm:flex-initial justify-center sm:justify-start"
           >
-            <CalendarDays size={16} />
-            <span className="text-xs font-bold whitespace-nowrap">Lesson Planner</span>
+            <CalendarDays size={14} className="sm:w-4 sm:h-4 shrink-0" />
+            <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap">Lesson Planner</span>
           </button>
         </div>
       </div>
