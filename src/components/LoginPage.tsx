@@ -151,13 +151,46 @@ const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
             <HelpCircle size={13} />
             How to create an account?
           </button>
+        </div>
+
+        {/* Download APK - Futuristic Card */}
+        <div className="mt-5 sm:mt-6" style={{ animation: "slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 1.1s", opacity: 0 }}>
           <a
             href="/DPS-Portal.apk"
             download="DPS-Portal.apk"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold hover:bg-emerald-500/20 transition-all active:scale-[0.97]"
+            className="group relative block w-full rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]"
+            style={{ boxShadow: "0 8px 32px hsl(235, 78%, 62%, 0.25)" }}
           >
-            <Download size={13} />
-            Download App (.apk)
+            {/* Gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-accent opacity-90 group-hover:opacity-100 transition-opacity" />
+            {/* Animated shimmer */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.15) 55%, transparent 60%)",
+                  backgroundSize: "200% 100%",
+                  animation: "shine 3s infinite",
+                }}
+              />
+            </div>
+            {/* Glow dots */}
+            <div className="absolute top-2 right-3 w-1.5 h-1.5 rounded-full bg-white/40 animate-pulse" />
+            <div className="absolute bottom-3 right-6 w-1 h-1 rounded-full bg-white/30 animate-pulse" style={{ animationDelay: "0.5s" }} />
+
+            {/* Content */}
+            <div className="relative z-10 flex items-center gap-3 px-4 py-3">
+              <div className="w-10 h-10 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <Smartphone size={18} className="text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-bold text-white/90 leading-tight">Download Android App</div>
+                <div className="text-[10px] text-white/60 font-medium">DPS-Portal.apk • Install on your phone</div>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0 group-hover:bg-white/30 transition-colors">
+                <Download size={14} className="text-white group-hover:animate-bounce" />
+              </div>
+            </div>
           </a>
         </div>
       </div>
