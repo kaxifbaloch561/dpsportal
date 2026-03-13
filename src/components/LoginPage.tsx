@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, BookOpen, UserPlus, HelpCircle } from "lucide-react";
+import { Eye, EyeOff, BookOpen, UserPlus, HelpCircle, Download } from "lucide-react";
 import schoolLogo from "@/assets/school-logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 
