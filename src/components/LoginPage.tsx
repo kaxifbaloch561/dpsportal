@@ -10,7 +10,7 @@ interface LoginPageProps {
   onCreateAccount: () => void;
 }
 
-const APP_DOWNLOAD_FILENAME = "DPS_PORTAL.apk";
+const APP_DOWNLOAD_FILENAME = "DPS-Portal.apk";
 const APP_DOWNLOAD_URL = `https://dpsportal.lovable.app/${APP_DOWNLOAD_FILENAME}?v=20260313`;
 
 const LoginPage = ({ onLoginSuccess, onCreateAccount }: LoginPageProps) => {
