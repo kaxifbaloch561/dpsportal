@@ -147,18 +147,20 @@ const LessonPlannerPage = () => {
       <DashboardHeader showBack subtitle="Lesson Planner" />
 
       {/* Toolbar */}
-      <div className="px-3 sm:px-6 py-2 flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1.5">
-          <button onClick={navigatePrev} className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors">
-            <ChevronLeft size={16} />
-          </button>
-          <button onClick={goToday} className="px-3 py-1.5 rounded-xl bg-muted text-xs font-bold hover:bg-primary/10 transition-colors">
-            Today
-          </button>
-          <button onClick={navigateNext} className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors">
-            <ChevronRight size={16} />
-          </button>
-          <h3 className="text-sm sm:text-base font-bold text-foreground ml-2">
+      <div className="px-3 sm:px-6 py-2 space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <button onClick={navigatePrev} className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors">
+              <ChevronLeft size={16} />
+            </button>
+            <button onClick={goToday} className="px-3 py-1.5 rounded-xl bg-muted text-xs font-bold hover:bg-primary/10 transition-colors">
+              Today
+            </button>
+            <button onClick={navigateNext} className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors">
+              <ChevronRight size={16} />
+            </button>
+          </div>
+          <h3 className="text-xs sm:text-base font-bold text-foreground">
             {view === "week"
               ? `${format(weekStart, "MMM d")} — ${format(weekEnd, "MMM d, yyyy")}`
               : format(currentDate, "MMMM yyyy")}
@@ -195,61 +197,126 @@ const LessonPlannerPage = () => {
             <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
           </div>
         ) : view === "week" ? (
-          /* WEEKLY VIEW */
-          <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
-            {weekDays.map((day) => {
-              const dayLessons = getLessonsForDate(day);
-              const today = isToday(day);
-              return (
-                <div
-                  key={day.toISOString()}
-                  className={`rounded-2xl border p-2 sm:p-3 min-h-[180px] sm:min-h-[280px] transition-all ${today ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <div className={`text-[10px] font-bold uppercase tracking-wider ${today ? "text-primary" : "text-muted-foreground"}`}>
-                        {format(day, "EEE")}
-                      </div>
-                      <div className={`text-lg sm:text-xl font-black ${today ? "text-primary" : "text-foreground"}`}>
-                        {format(day, "d")}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => openAddForm(day)}
-                      className="w-6 h-6 rounded-lg bg-muted hover:bg-primary/10 flex items-center justify-center transition-colors"
-                    >
-                      <Plus size={12} />
-                    </button>
-                  </div>
-                  <div className="space-y-1.5">
-                    {dayLessons.map((lesson) => (
-                      <div
-                        key={lesson.id}
-                        onClick={() => openEditForm(lesson)}
-                        className="group relative rounded-xl p-2 cursor-pointer hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
-                        style={{ backgroundColor: (lesson.color || COLORS[0]) + "18", borderLeft: `3px solid ${lesson.color || COLORS[0]}` }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-[9px] font-bold text-muted-foreground">P{lesson.period_number}</span>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleDelete(lesson.id); }}
-                            className="opacity-0 group-hover:opacity-100 w-5 h-5 rounded-md bg-destructive/10 text-destructive flex items-center justify-center transition-opacity"
-                          >
-                            <Trash2 size={10} />
-                          </button>
+          /* WEEKLY VIEW - Vertical list on mobile, grid on desktop */
+          <>
+            {/* Mobile: vertical stack */}
+            <div className="flex flex-col gap-2 sm:hidden">
+              {weekDays.map((day) => {
+                const dayLessons = getLessonsForDate(day);
+                const today = isToday(day);
+                return (
+                  <div
+                    key={day.toISOString()}
+                    className={`rounded-2xl border p-3 transition-all ${today ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className={`text-xl font-black ${today ? "text-primary" : "text-foreground"}`}>
+                          {format(day, "d")}
                         </div>
-                        <div className="text-[10px] sm:text-xs font-bold text-foreground leading-tight truncate">{lesson.topic}</div>
-                        <div className="text-[9px] text-muted-foreground truncate">{lesson.class_name} • {lesson.subject}</div>
+                        <div>
+                          <div className={`text-[10px] font-bold uppercase tracking-wider ${today ? "text-primary" : "text-muted-foreground"}`}>
+                            {format(day, "EEEE")}
+                          </div>
+                          <div className="text-[9px] text-muted-foreground">{format(day, "MMM yyyy")}</div>
+                        </div>
                       </div>
-                    ))}
-                    {dayLessons.length === 0 && (
-                      <div className="text-[10px] text-muted-foreground/50 text-center py-4">No lessons</div>
+                      <button
+                        onClick={() => openAddForm(day)}
+                        className="w-7 h-7 rounded-lg bg-muted hover:bg-primary/10 flex items-center justify-center transition-colors"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                    {dayLessons.length > 0 ? (
+                      <div className="space-y-1.5">
+                        {dayLessons.map((lesson) => (
+                          <div
+                            key={lesson.id}
+                            onClick={() => openEditForm(lesson)}
+                            className="group relative rounded-xl p-2.5 cursor-pointer hover:shadow-md transition-all duration-200"
+                            style={{ backgroundColor: (lesson.color || COLORS[0]) + "18", borderLeft: `3px solid ${lesson.color || COLORS[0]}` }}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                <span className="text-[10px] font-bold text-muted-foreground shrink-0">P{lesson.period_number}</span>
+                                <span className="text-xs font-bold text-foreground truncate">{lesson.topic}</span>
+                              </div>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDelete(lesson.id); }}
+                                className="w-6 h-6 rounded-md bg-destructive/10 text-destructive flex items-center justify-center shrink-0 ml-2"
+                              >
+                                <Trash2 size={11} />
+                              </button>
+                            </div>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">{lesson.class_name} • {lesson.subject}</div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-[11px] text-muted-foreground/50 text-center py-2">No lessons scheduled</div>
                     )}
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop: 6-column grid */}
+            <div className="hidden sm:grid grid-cols-6 gap-2">
+              {weekDays.map((day) => {
+                const dayLessons = getLessonsForDate(day);
+                const today = isToday(day);
+                return (
+                  <div
+                    key={day.toISOString()}
+                    className={`rounded-2xl border p-3 min-h-[280px] transition-all ${today ? "border-primary/40 bg-primary/5" : "border-border bg-card"}`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <div className={`text-[10px] font-bold uppercase tracking-wider ${today ? "text-primary" : "text-muted-foreground"}`}>
+                          {format(day, "EEE")}
+                        </div>
+                        <div className={`text-xl font-black ${today ? "text-primary" : "text-foreground"}`}>
+                          {format(day, "d")}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => openAddForm(day)}
+                        className="w-6 h-6 rounded-lg bg-muted hover:bg-primary/10 flex items-center justify-center transition-colors"
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {dayLessons.map((lesson) => (
+                        <div
+                          key={lesson.id}
+                          onClick={() => openEditForm(lesson)}
+                          className="group relative rounded-xl p-2 cursor-pointer hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
+                          style={{ backgroundColor: (lesson.color || COLORS[0]) + "18", borderLeft: `3px solid ${lesson.color || COLORS[0]}` }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-bold text-muted-foreground">P{lesson.period_number}</span>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleDelete(lesson.id); }}
+                              className="opacity-0 group-hover:opacity-100 w-5 h-5 rounded-md bg-destructive/10 text-destructive flex items-center justify-center transition-opacity"
+                            >
+                              <Trash2 size={10} />
+                            </button>
+                          </div>
+                          <div className="text-xs font-bold text-foreground leading-tight truncate">{lesson.topic}</div>
+                          <div className="text-[9px] text-muted-foreground truncate">{lesson.class_name} • {lesson.subject}</div>
+                        </div>
+                      ))}
+                      {dayLessons.length === 0 && (
+                        <div className="text-[10px] text-muted-foreground/50 text-center py-4">No lessons</div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         ) : (
           /* MONTHLY VIEW */
           <div>
